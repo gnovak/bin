@@ -1,0 +1,69 @@
+#! /opt/bin/bash -f
+
+cd /u/novak/bin
+
+talklist=gas.talks
+remind1=gas.rem1
+remind2=gas.rem2
+remind3=gas.rem3
+ann1=gas.ann1
+ann2=gas.ann2
+remind1subject="Your GAS next week"
+remind2subject="Your GAS on Tuesday"
+remind3subject="Your GAS Today!"
+ann1subject="GAS this Tuesday"
+ann2subject="GAS starting now!"
+grademail="grads allgood@physics.ucsc.edu tcox@physics.ucsc.edu"
+#grademail="novak"
+
+# figure out the date 5 days from now
+today=`echo 'puts [clock format [clock scan {0 days}] -format "%m/%d"]' | /opt/bin/tclsh`
+fourdays=`echo 'puts [clock format [clock scan {4 days}] -format "%m/%d"]' | /opt/bin/tclsh`
+sevendays=`echo 'puts [clock format [clock scan {7 days}] -format "%m/%d"]' | /opt/bin/tclsh`
+
+if grep $today $talklist > /dev/null ; then
+    talkinfo=`grep $today $talklist`
+    speakeremail=`echo $talkinfo | sed "s%^[/0-9]*:%%" | sed "s%:.*%%"`
+    speakername=`echo $talkinfo | sed "s%^[/0-9]*:[A-z ]*:%%" | sed "s%:.*%%"`
+    info=`echo $talkinfo | sed "s%^[/0-9]*:[A-z ]*:[A-z ]*:%%" `
+
+    #remind the speaker 
+    sed "s%<date>%$today%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $remind3 | mail $speakeremail -s "$remind3subject"
+    #remind the audience 
+    sed "s%<date>%$today%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $ann2 | mail -s "$ann2subject" $grademail 
+    sed "s%<date>%$today%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $remind3 | mail novak -s "$remind3subject"
+    #remind the audience 
+    sed "s%<date>%$today%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $ann2 | mail novak -s "$ann2subject"
+fi
+
+if grep $fourdays $talklist > /dev/null ; then
+    talkinfo=`grep $fourdays $talklist`
+    speakeremail=`echo $talkinfo | sed "s%^[/0-9]*:%%" | sed "s%:.*%%"`
+    speakername=`echo $talkinfo | sed "s%^[/0-9]*:[A-z ]*:%%" | sed "s%:.*%%"`
+    info=`echo $talkinfo | sed "s%^[/0-9]*:[A-z ]*:[A-z ]*:%%" `
+
+    #remind the speaker 
+    sed "s%<date>%$fourdays%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $remind2 | mail $speakeremail -s "$remind2subject"
+    #remind the audience 
+    sed "s%<date>%$fourdays%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $ann1 | mail -s "$ann1subject" $grademail 
+    sed "s%<date>%$fourdays%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $remind2 | mail novak -s "$remind2subject"
+    #remind the audience 
+    sed "s%<date>%$fourdays%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $ann1 | mail novak -s "$ann1subject"
+fi
+
+if grep $sevendays $talklist > /dev/null ; then
+    talkinfo=`grep $sevendays $talklist`
+    speakeremail=`echo $talkinfo | sed "s%^[/0-9]*:%%" | sed "s%:.*%%"`
+    speakername=`echo $talkinfo | sed "s%^[/0-9]*:[A-z ]*:%%" | sed "s%:.*%%"`
+    info=`echo $talkinfo | sed "s%^[/0-9]*:[A-z ]*:[A-z ]*:%%" `
+
+    #remind the speaker 
+    sed "s%<date>%$sevendays%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $remind1 | mail $speakeremail -s "$remind1subject"
+    sed "s%<date>%$sevendays%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $remind1 | mail novak -s "$remind1subject"
+fi
+
+# finally, delete leftover file
+rm -f /u/novak/mail.record
+
+
+

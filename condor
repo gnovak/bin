@@ -1,0 +1,121 @@
+#!/opt/bin/perl -w 
+
+#@masterhosts = qw(serendipity oxide monster invictus mariachi wrigley cobra anger zoltar hyde isis megatron);
+@masterhosts = qw(serendipity oxide monster invictus mariachi wrigley anger zoltar hyde);
+
+$user="novak";
+$prefix{'hyde'} = "cd /home/public/novak/; ";
+$maxprocesses{'hyde'} = 2;
+$maxprocesses{'wrigley'} = 2;
+
+@hosts = @masterhosts;
+# now fill in other max process #'s
+foreach(@masterhosts) {
+    if (!defined($maxprocesses{$_})) {
+	$maxprocesses{$_}=1;
+    }
+    if (!defined($prefix{$_})) {
+	$prefix{$_}="";
+    }
+    if (!defined($nicelevel{$_})) {
+	$nicelevel{$_} = 10;
+    }
+}
+
+#read process tag from file
+$tag = <>;
+#make sure the user has remembered to put the process tag in
+if (!($tag =~ /TAG/)) {
+    die "No tag for processes!\n";
+}
+$tag =~ s/TAG//;
+$tag =~ s/\W//g;
+
+# read desired commands from file
+while (<>) {
+    chomp;
+    # get host name, recycling list if necessary
+    do {
+	$host = shift(@hosts);
+	if (!defined($host)) {
+	    sleep 60;
+	    @hosts = @masterhosts;
+	    $host = shift(@hosts);	
+	}
+    } until check($host) < $maxprocesses{$host};
+
+    $_ = command($host, $_);
+    $_ = cleanup($_);
+    print "Running $_\n";
+    system("$_");
+}
+
+sub cleanup {
+  my ($command) = @_;
+  $command =~ s/;/\\;/g;
+  $command =~ s/\*/\\\*/g;
+  return $command;
+}
+
+sub command {
+  my ($host, $command) = @_;
+  $command =~ s/$tag/nohup nice +$nicelevel{$host} $tag/;
+  return "ssh $host $prefix{$host} $command &"; 
+}
+
+sub check {
+  my ($host) = @_;
+  $command = "ssh $host ps --User $user --format time,pcpu,comm,user,pid";
+#  $command = "ssh $host ps -u $user -o time,pcpu,comm,user,pid";
+#  $command = "ssh $host ps -o time,pcpu,comm,user,pid";
+
+  open (PS, "$command |");
+  @table = <PS>;
+  undef(@newtable);
+  foreach (@table) {
+      $tabline=$_;
+      if (/$tag/) {
+	  unshift(@newtable, $tabline);
+      }
+  }
+  return @newtable;
+}
+
+#sub check {
+#  my ($host) = @_;
+#  $command = "ssh $host ps --User $user --format time,pcpu,comm,user,pid";
+#  @reject = (' tcsh ', ' xload ', ' ps ', ' COMMAND ');
+#  open (PS, "$command |");
+#  @table = <PS>;
+#  undef(@newtable);
+#  foreach (@table) {
+#      $tabline=$_;
+#      $found=0;
+#      foreach (@reject) {
+#	  if ($tabline =~ /$_/) {
+#	      $found=1;
+#	  }
+#      }
+#      if ($found==0) {
+#	  unshift(@newtable, $tabline);
+#      }
+#  }
+#  return @newtable;
+#}
+
+
+#    chomp;
+#    $host = shift(@hosts);
+#    system("rm -f $_/map.dat");
+#    if ($host eq "hyde") {
+#	chdir $_; 
+#	system("nice -n 18 eject-map > map.dat &");
+#	chdir "..";
+#    }
+#    elsif ($host eq "anger" || $host eq "wrigley") {
+#	system("ssh $host cd NR/ej/$_ \\; nice +18 eject-map \\> map.dat &");
+#    }
+#    else {
+#	system("ssh $host cd NR/ej/$_ \\; nice +16 eject-map \\> map.dat &");
+#    }
+#}

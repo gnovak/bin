@@ -1,0 +1,21 @@
+#!/opt/bin/perl
+
+$zap = shift(@ARGV);
+
+if (!defined($zap)) {
+    die "Usage: Not like that!\n";
+}
+
+open PS, "rps |";
+
+while (<PS>) {
+    if (/$zap/) {
+	# peel off beginning of line
+	@line = split(" ");
+	$pid = $line[3];
+	$name = $line[4];
+	$host = $line[5];
+	print("Killing $name, PID=$pid on $host\n");
+	system("rkill $host $pid");
+    }
+}

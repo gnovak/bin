@@ -1,0 +1,3 @@
+xmemuse -update 2 -scale 0 -fs black -fm black -cm blue -geometry 48x48 &
+xload -update 2 -geometry 48x48 -nolabel -bg black -fg red -hl black &
+

@@ -1,0 +1,28 @@
+#!/opt/bin/perl 
+$user = "novak";
+
+open HOST, "< /u/novak/bin/rhosts";
+$host = <HOST>;
+@hosts = split(" ", $host);
+
+foreach(@hosts) {
+    $host=$_;
+
+# to sort by total cpu time, use this
+#    open (PS, "ssh $host ps -e --format time,pcpu,comm,pid,user |");
+
+# to sort by percent cpu time being used, use this
+#    open (PS, "ssh $host ps -e --format pcpu,time,comm,pid,user |");
+
+# to see only your processes, use this
+    open (PS, "ssh $host ps --User $user --format time,pcpu,user,pid,cmd |");
+
+    @output = <PS>;
+    foreach(@output) {
+	$_ =~ s/\n$/\t $host\n/g;
+	$_ =~ s/.*COMMAND.*//g;
+    }
+    splice @total,0,0,@output;
+}
+@total = sort @total;
+print @total;

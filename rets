@@ -1,0 +1,45 @@
+#!/usr/bin/perl -i.orig
+
+$from = shift;
+$to = shift;
+
+if (!defined($from) || !defined($to)) {
+  usage();
+}
+if ($from eq "m") {
+  $out="\r";
+}
+elsif ($from eq "u") {
+  $out="\n";
+}
+elsif ($from eq "d") {
+  $out="[\r\n]{2}";
+}
+else {
+  usage();
+}
+
+if ($to eq "m") {
+  $in="\r";
+}
+elsif ($to eq "u") {
+  $in="\n";
+}
+elsif ($to eq "d") {
+  $in="\r\n";
+}
+else {
+  usage();
+}
+
+while(<>) {
+	s/$out/$in/g;
+	print;
+}
+
+sub usage {
+  print "Convert carriage returns/line feeds between DOS, Unix, and Mac.\n";
+  print "Usage: rets <from> <to> [file1] [file2] ... \n";
+  print "where <from> and <to> are m, u, or d for mac, dos, or unix\n".
+  die;
+}

@@ -1,0 +1,43 @@
+#!/bin/bash
+if ( test $# = "0" || test $# = "1" ) then
+	echo Usage: slpr printer file
+	exit
+fi
+if ( test $1 = "40-2d-cor" || 
+     test $1 = "40-4d-tekcol" || 
+     test $1 = "40-4d-hpcol" || 
+     test $1 = "40-3b-cor" || 
+     test $1 = "40-3d-cor" || 
+     test $1 = "40-2b-cor" ) then
+	queue=$1
+	host="lxplus001"
+	user="gnovak"
+else
+	echo Unknown Printer
+	exit
+fi
+
+# the second sed regexp: \( -.*\) looks for dashes at the beginning of
+# switches
+# the [..]* part parses to the end of the last switch, accepting
+# alphanumeric characters and #'s
+files=`echo $* | sed s/$1// | sed s/"\( -.*\)*[#A-Za-z0-9]* "//` 
+args=`echo $*  | sed s/$1// | sed s/"$files"//`
+
+#check postscript of file & edit file list
+#echo Please wait while checking postscript...
+#for file in $files; do
+#	if ( gs -dNODISPLAY -dQUIET -- $file ) then
+#		# do nothing command
+#		echo Done with $file
+#	else
+#		echo FAILURE ON $file
+#		files=`echo $files | sed s/$file//`
+#		echo $files
+#	fi
+#done
+
+scp -1 $files $user@$host:.print/
+ssh $user@$host cd .print \; lpr -P $1 $args $files \; rm -f $files  
+
+

@@ -1,0 +1,15 @@
+#!/usr/bin/perl
+
+$count=0;
+
+while (<>) {
+    if (/[0-9]/) {
+	$count++;
+    }
+
+    # if you've found some lines and this is a blank line, quit
+    if ($count!=0 && !(/[0-9]/)) {
+	print "$count\n";
+	exit;
+    }
+}

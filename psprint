@@ -1,0 +1,14 @@
+# blah blah a few comments
+# For some reason, these comments are necessary for this to run (???)
+
+foreach file ($*)
+	# if there are no errors in the PS file, print it
+	# the brackets test for successful completion of the command
+	if ( { (cat $file | gs -dNODISPLAY - > /dev/null) } ) then 
+		cat $file | lpr 
+	# otherwise, print an error
+	else
+		echo FAILURE ON $file
+	endif
+end
+

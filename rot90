@@ -1,0 +1,10 @@
+#!/bin/bash
+# comment
+
+for FILE in $* ; do
+    cp $FILE $FILE~
+    jpegtran -rotate 90 $FILE > $FILE.tmp
+    rm $FILE
+    mv $FILE.tmp $FILE
+done
+

@@ -1,0 +1,27 @@
+#!/opt/bin/perl 
+
+# make sure there are at least two arguments
+if (!defined($ARGV[1])) {
+  print "Usage: not like that!\n";
+  die;
+}
+
+$first=shift(@ARGV);
+$n=shift(@ARGV);
+$line=0;
+$i=0;
+
+while (<>) {	
+	if ($line < $first) {
+		print;
+		$line++;
+		$i=0;
+	}	
+	elsif ($i==$n) {
+		print;
+		$i=0;
+	}
+	else {
+		$i++;
+	}
+}

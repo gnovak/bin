@@ -1,0 +1,34 @@
+#!/opt/bin/perl -w
+
+print "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML//EN\">\n";
+print "<html><head><title>Greg Novak's Bookmarks</title></head>\n";
+print "<body bgcolor=\"\#FFFFFF\">";
+print "<h1>Greg Novak's bookmarks</h1>\n";
+
+$lev=1;
+while (<>) {
+    if (/\#FOLDER/) {
+	$name = <>;
+	chomp $name;
+	$name =~ s/.*= *//;
+	$head = $lev <= 6 ? $lev : 6;
+	print "<p><h$head>$name</h$head><ul>\n";
+	$lev++;
+    }
+
+    if (/\#URL/) {
+	$name = <>;
+	chomp $name;
+	$name =~ s/.*= *//;
+	$url = <>;
+	chomp $url;
+	$url =~ s/.*= *//;
+	print "<li><a href=\"$url\">$name</a>\n"
+    }
+    if (/^-/) {
+	$lev--;
+	print "</ul>\n";
+    }
+}
+
+print "</body></html>\n\n";

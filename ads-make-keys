@@ -1,0 +1,324 @@
+#!/usr/local/bin/perl
+########################################################################
+# Simple perl script to create default format keys for BibTeX entries.
+########################################################################
+# Create input and output file names -> prefix.ads and prefix.bib
+########################################################################
+  $_   = $ARGV[0];
+  $ext = ".ads";
+  if (/$ext$/) {
+    $last = rindex($_,$ext);
+    $prefix = substr($_,0,$last);
+  }
+  else {
+    $prefix  = $_;
+  }
+  $bibfile = $prefix . ".ads";
+  $outfile = $prefix . ".bib";
+  $extrafile = $prefix. ".nonads";
+########################################################################
+# See if we can read from and write to the respective files.
+########################################################################
+  open(INFILE_HANDLE,"<".$bibfile) ||
+      die "\nCan't open file $bibfile for reading.\n\n";
+  open(OUTFILE_HANDLE,">".$outfile) ||
+      die "\nCan't open file $outfile for writing.\n\n";
+########################################################################
+# Look for @ which falls at start of each BibTeX entry.
+# ADS puts year of publication at start of their key, e.g.
+# @ARTICLE{1979SciN..115..371.,
+# Extract the year and first authors last name to create a new key, in
+# the format "first author last name":"year", e.g. Strobel:1998
+########################################################################
+# Initialize variables.
+########################################################################
+  $TRUE       = 1;
+  $FALSE      = 0;
+  $in_entry   = $FALSE;
+  $in_author  = $FALSE;
+  $in_journal = $FALSE;
+  $in_title   = $FALSE;
+  $publishstr = ' ';
+  $editorstr  = ' ';
+  $addressstr = ' ';
+  $adsnotestr = ' ';
+  $schoolstr  = ' ';
+  $journalstr = ' ';
+  @journalext = (' ',' ',' ',' ',' ');
+  $njourext   = 0;
+  $authorstr  = ' ';
+  @authorext  = (' ',' ',' ',' ',' ',' ',' ');
+  $nauthext   = 0;
+  $titlestr   = ' ';
+  @titleext   = (' ',' ',' ',' ',' ');
+  $ntitlext   = 0;
+  $volumestr  = ' ';
+  $pagesstr   = ' ';
+  $monthstr   = ' ';
+  $yearstr    = ' ';
+  $urlstr     = ' ';
+  $title      = ' ';
+  $year       = ' ';
+  $first      = ' ';
+  $keycount   = 0;
+########################################################################
+# Read from input file until we reach the end.
+########################################################################
+  while (<INFILE_HANDLE>) {
+########################################################################
+########################################################################
+    if (/^\s*@/) {                    # Start of entry - Extract entry type
+      ($type[$keycount],$rest) = split(/{/,$_);
+      $in_entry   = $TRUE;
+      $in_author  = $FALSE;
+      $in_title   = $FALSE;
+      $in_journal = $FALSE;
+########################################################################
+########################################################################
+    }
+    elsif (/^\s*}/) {               # End of entry - print it out
+      $in_entry   = $FALSE;
+      $in_author  = $FALSE;
+      $in_title   = $FALSE;
+      $in_journal = $FALSE;
+      $entry[$keycount] = "";
+      if ($first eq ' ') {
+          # gsn - no colons
+          $keyval[$keycount] = "$title:$year:$keycount";
+#        $keyval[$keycount] = "$title$year$keycount";
+      }
+########################################################################
+########################################################################
+      else {
+          # gsn - no colons
+                  $keyval[$keycount] = "$first:$year:$keycount";
+          #$keyval[$keycount] = "$first$year$keycount";
+        $entry[$keycount] = join("",$entry[$keycount],"$authorstr");
+        for ($i=0;$i<$nauthext;$i++) {
+          $entry[$keycount] = join("",$entry[$keycount],"$authorext[$i]");
+        }
+      }
+      if ($titlestr   ne ' ') {
+        $entry[$keycount] = join("",$entry[$keycount],"$titlestr");
+      }
+      for ($i=0;$i<$ntitlext;$i++) {
+        $entry[$keycount] = join("",$entry[$keycount],"$titleext[$i]");
+      }
+      if ($schoolstr  ne ' ') {
+        $entry[$keycount] = join("",$entry[$keycount],"$schoolstr");
+      }
+      if ($journalstr ne ' ') {
+        $entry[$keycount] = join("",$entry[$keycount],"$journalstr");
+      }
+      for ($i=0;$i<$njourext;$i++) {
+        $entry[$keycount] = join("",$entry[$keycount],"$journalext[$i]");
+      }
+      if ($yearstr    ne ' ') {
+        $entry[$keycount] = join("",$entry[$keycount],"$yearstr");
+      }
+      if ($monthstr   ne ' ') {
+        $entry[$keycount] = join("",$entry[$keycount],"$monthstr");
+      }
+      if ($volumestr  ne ' ') {
+        $entry[$keycount] = join("",$entry[$keycount],"$volumestr");
+      }
+      if ($publishstr  ne ' ') {
+        $entry[$keycount] = join("",$entry[$keycount],"$publishstr");
+      }
+      if ($editorstr  ne ' ') {
+        $entry[$keycount] = join("",$entry[$keycount],"$editorstr");
+      }
+      if ($addressstr  ne ' ') {
+        $entry[$keycount] = join("",$entry[$keycount],"$addressstr");
+      }
+      if ($pagesstr   ne ' ') {
+        $entry[$keycount] = join("",$entry[$keycount],"$pagesstr");
+      }
+      # GSN - kill the freaking url field
+      #if ($urlstr     ne ' ') {
+      #  $entry[$keycount] = join("",$entry[$keycount],"$urlstr");
+      #}
+      $keycount++;
+      $publishstr = ' ';
+      $editorstr  = ' ';
+      $addressstr = ' ';
+      $adsnotestr = ' ';
+      $schoolstr  = ' ';
+      $volumestr  = ' ';
+      $pagesstr   = ' ';
+      $monthstr   = ' ';
+      $yearstr    = ' ';
+      $urlstr     = ' ';
+      $title      = ' ';
+      $year       = ' ';
+      $first      = ' ';
+      $journalstr = ' ';
+      @journalext = (' ',' ',' ',' ',' ');
+      $njourext   = 0;
+      $authorstr  = ' ';
+      @authorext  = (' ',' ',' ',' ',' ',' ',' ');
+      $nauthext   = 0;
+      $titlestr   = ' ';
+      @titleext   = (' ',' ',' ',' ',' ');
+      $ntitlext   = 0;
+    }
+########################################################################
+# Match keywords to the appropriate strings.
+########################################################################
+    if (/^\s*booktitle/) {
+      $journalstr=$_;$journalstr =~ s/ +/ $2/g;
+      $in_title=$FALSE;$in_author=$FALSE;$in_journal = $TRUE;
+    }
+    if (/^\s*journal/  ) {
+      $journalstr=$_;$journalstr =~ s/ +/ $2/g;
+      $in_title=$FALSE;$in_author=$FALSE;$in_journal = $TRUE;
+    }
+    if (/^\s*publisher/  ) {
+      $publishstr=$_;$publishstr =~ s/ +/ $2/g;
+      $in_title=$FALSE;$in_author=$FALSE;$in_journal = $FALSE;
+    }
+    if (/^\s*editor/  ) {
+      $editorstr=$_;$editorstr =~ s/ +/ $2/g;
+      $in_title=$FALSE;$in_author=$FALSE;$in_journal = $FALSE;
+    }
+    if (/^\s*address/  ) {
+      $addressstr=$_;$addressstr =~ s/ +/ $2/g;
+      $in_title=$FALSE;$in_author=$FALSE;$in_journal = $FALSE;
+    }
+    if (/^\s*adsnote/  ) {
+      $adsnotestr=$_;$adsnotestr =~ s/ +/ $2/g;
+      $in_title=$FALSE;$in_author=$FALSE;$in_journal = $FALSE;
+    }
+    if (/^\s*volume/   ) {
+      $volumestr =$_;$volumestr =~ s/ +/ $2/g;
+      $in_title=$FALSE;$in_author=$FALSE;$in_journal = $FALSE;
+    }
+    if (/^\s*school/   ) {
+      $schoolstr =$_;$schoolstr =~ s/ +/ $2/g;
+      $in_title=$FALSE;$in_author=$FALSE;$in_journal = $FALSE;
+    }
+    if (/^\s*pages/    ) {
+      $pagesstr  =$_;$pagesstr =~ s/ +/ $2/g;
+      $in_title=$FALSE;$in_author=$FALSE;$in_journal = $FALSE;
+    }
+    if (/^\s*month/    ) {
+      $monthstr  =$_;$monthstr =~ s/ +/ $2/g;
+      $in_title=$FALSE;$in_author=$FALSE;$in_journal = $FALSE;
+    }
+    if (/^\s*url/      ) {
+      $urlstr    =$_;$urlstr =~ s/ +/ $2/g;
+      $in_title=$FALSE;$in_author=$FALSE;$in_journal = $FALSE;
+    }
+########################################################################
+# Process keywords which are used to construct the BibTeX keys.
+# Extract year of publication
+########################################################################
+    if (/^\s*year/) {
+      $in_title   = $FALSE;
+      $in_author  = $FALSE;
+      $in_journal = $FALSE;
+      $yearstr    = $_;
+      $yearstr    =~ s/( +)/ $2/g;
+      ($junk,$year,$rest)=split(/=/,$yearstr); # get stuff to right of =
+      $year =~ s/,//g;                         # strip commas
+      for ($year) {s/^\s+//; s/\s+$//;}        # strip white space at ends
+      # Gsn- get rid of 19-- and 20--
+      $year =~ s/^19//;
+      $year =~ s/^20//;
+    }
+########################################################################
+# Extract first author last name
+########################################################################
+    elsif (/^\s*author/) {
+      $authorstr  = $_;
+      $authorstr  =~ s/( +)/ $2/g;
+      $in_author  = $TRUE;
+      $in_title   = $FALSE;
+      $in_journal = $FALSE;
+      ($junk,$rest)=split(/=/,$authorstr); # get stuff to right of =
+      ($first,$rest)=split(/\}/,$rest);     # get stuff to left of }
+      $first =~ s/\{//g;                    # strip outer brackets
+      $first =~ s/\"//g;                    # strip outer quotes
+      for ($first) {    # strip all white space
+          s/\s+//g;
+      }
+      $first =~ tr/A-Z/a-z/; # GSN - everyone's lower case
+    }
+########################################################################
+# Extract title for use in key when no author info is given.
+########################################################################
+    elsif (/^\s*title/) {
+      $titlestr   = $_;
+      $titlestr   =~ s/ +/ $2/g;
+      $in_title   = $TRUE;
+      $in_author  = $FALSE;
+      $in_journal = $FALSE;
+      ($junk,$rest)=split(/=/,$titlestr); # get stuff to right of =
+      ($title,$rest)=split(/}/,$rest);    # get stuff to left of }
+      $title =~ s/{//g;                   # strip outer brackets
+      for ($title) {s/\s+//g;}            # strip all white space
+      $title =~ s/,//g;                   # strip commas
+      $title =~ s/.//g;                   # strip periods
+    }
+    elsif ($in_entry && $in_author && !/\s+=/ && !/^$/){#Additional author entry
+      $authorext[$nauthext++] = $_;
+    }
+    elsif ($in_entry && $in_title && !/\s+=/ && !/^$/) {#Additional title entry
+      $titleext[$ntitlext++] = $_;
+    }
+    elsif ($in_entry && $in_journal && !/\s+=/ && !/^$/) {#Additional jnl entry
+      $journalext[$njourext++] = $_;
+    }
+  }
+########################################################################
+# Sort keys, adding a,b,c, ... as necessary to ensure uniqueness
+########################################################################
+   @keyval  = sort @keyval;
+   @keyauth = @keyval;
+   @keyyear = @keyval;
+   @keypos  = @keyval;
+   @keyextn = @keyval;
+   for ($i=0;$i<$keycount;$i++) {
+     ($keyauth[$i],$keyyear[$i],$keypos[$i]) = split(/:/,$keyval[$i]);
+     $keyextn[$i] = "";
+   }
+   @extn = ('a','b','c','d','e','f','g','h','i');
+   $eind = 0;
+   for ($i=0;$i<$keycount-1;$i++) {
+     if (($keyauth[$i] eq $keyauth[$i+1]) &&
+         ($keyyear[$i] eq $keyyear[$i+1])) {
+       $keyextn[$i]   = $extn[$eind++];
+       $keyextn[$i+1] = $extn[$eind];
+       print STDOUT "Identical Keys - Modifying ...\n";
+       print STDOUT $keyauth[$i],":",$keyyear[$i],$keyextn[$i],"\n";
+       print STDOUT $keyauth[$i+1],":",$keyyear[$i+1],$keyextn[$i+1],"\n";
+     }
+     else {$eind = 0}
+   }
+########################################################################
+# Print out sorted keys and associated BIBTEX entries.
+########################################################################
+  for ($i=0;$i<$keycount;$i++) {
+    print OUTFILE_HANDLE "$type[$keypos[$i]]\{$keyauth[$i]:";
+    print OUTFILE_HANDLE "$keyyear[$i]$keyextn[$i],\n";
+    print OUTFILE_HANDLE "$entry[$keypos[$i]]";
+    print OUTFILE_HANDLE "\}\n\n";
+  }
+  $isextrafile=1;
+  open(EXTRAFILE_HANDLE,"<".$extrafile) ||
+    ($isextrafile = 0);
+print $isextrafile."\n";
+  if ($isextrafile==1) {
+    while (<EXTRAFILE_HANDLE>) {
+        print OUTFILE_HANDLE;
+    }
+  }
+########################################################################
+# Clean Up and Exit
+########################################################################
+  close(INFILE_HANDLE);
+  close(OUTFILE_HANDLE);
+  close(EXTRAFILE_HANDLE);
+  print STDOUT "\n  Default BibTeX keys created for file $outfile\n\n";
+########################################################################
+########################################################################

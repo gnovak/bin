@@ -1,0 +1,46 @@
+#!/opt/bin/perl -w
+$level=1;
+while (<>) {
+	chomp;
+	if ($_ eq "#FOLDER") {		
+		$name=<>;
+		chomp $name;
+		$name =~ s/.*=//;
+		
+		for ($i=0; $i<$level*4; $i++) {
+			print " ";
+		}	
+		print "<DT><H3 ADD_DATE=\"994371336\">$name</H3>\n";
+		for ($i=0; $i<$level*4; $i++) {
+			print " ";
+		}	
+		print "<DD>\n";
+		for ($i=0; $i<$level*4; $i++) {
+			print " ";
+		}	
+		print "<DL><p>";
+		$level++;
+	}
+
+	if ($_ eq "#URL") {
+		$name=<>;
+		chomp $name;
+		$name =~ s/.*=//;
+		$url=<>;
+		chomp $url;
+		$url =~ s/.*=//;
+	
+		for ($i=0; $i<$level*4; $i++) {
+			print " ";
+		}	
+		print "<DT><A HREF=\"$url\" ADD_DATE=\"994371014\" LAST_VISIT=\"994371021\" LAST_MODIFIED=\"994368379\">$name</A>\n";
+	}
+
+	if ($_ eq "-") {
+		for ($i=0; $i<$level*4; $i++) {
+			print " ";
+		}	
+		print "</DL><p>\n";
+		$level--;
+	}	
+}

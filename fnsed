@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ "$#" = "0" -o "$#" = "1" ]; then
+	echo Usage - not like that
+	exit
+fi
+
+for oldfile in $* ; do
+	# skip the first one b/c it's a sed expression
+	if [ $oldfile != $1 ]; then
+		newfile=`echo $oldfile | sed $1`
+		mv $oldfile $newfile
+	fi 
+done
+

@@ -212,15 +212,15 @@ f_euler_pass(float v[], const float phi, const float the, const float psi)
 
   newx = v[0]*( cpsi*cphi - cthe*sphi*spsi) +
          v[1]*( cpsi*sphi + cthe*cphi*spsi) +
-         v[3]*( spsi*sthe                     );
+         v[2]*( spsi*sthe                     );
 
   newy = v[0]*(-spsi*cphi - cthe*sphi*cpsi) +
          v[1]*(-spsi*sphi + cthe*cphi*cpsi) +
-         v[3]*( cpsi*sthe                     );
+         v[2]*( cpsi*sthe                     );
 
   newz = v[0]*  sthe*sphi +
          v[1]* -sthe*cphi +
-         v[3]*  cthe                           ;
+         v[2]*  cthe                           ;
   v[0]=newx;
   v[1]=newy;
   v[2]=newz;

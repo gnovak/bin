@@ -1,1 +1,1 @@
-/usr/local/bin/mozilla -remote "openURL($1, new-tab)"
+/usr/local/firefox/mozilla-xremote-client "openurl($1,new-tab)"

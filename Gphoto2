@@ -1,1 +1,0 @@
-gphoto2 --camera "Olympus D-460Z" --port serial:/dev/ttyS1 --folder "/DCIM/100OLYMP" $*

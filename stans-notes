@@ -1,3 +1,0 @@
-pdf2ps $1.ps $1.pdf
-psnup -d1 -f -2 $1.ps $1-2.ps 
-

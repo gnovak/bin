@@ -1,0 +1,1 @@
+socket -l -f `date +%y-%m-%d`-%d.html 192.168.1.7 9009

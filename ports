@@ -1,0 +1,5 @@
+ssh -f -N ssh
+ssh -f -N dionysus-ports
+cd ~/.html
+listen &
+

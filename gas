@@ -22,8 +22,8 @@ $annsubjects[0]="GAS this $gas::dayofweek";
 $annsubjects[1]="GAS starting now!";
 
 $grademail="grads\@ucolick.org allgood\@physics.ucsc.edu tcox\@physics.ucsc.edu";
-#$grademail = "novak";
-$myemail = "novak\@ucolick.org";
+#$grademail = "novak\@dionysus.ucolick.org";
+$myemail = "novak\@dionysus.ucolick.org";
 
 # figure out the dates in the future
 $today = Date::Simple->new;

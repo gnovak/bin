@@ -11,7 +11,8 @@ Astronomy Seminar Schedule.">
 
 <!-- tmpl_var name=dayofweek -->,  <!-- tmpl_var name=room --> from <!-- tmpl_var name=time -->. <br>
 
-Here are the abstracts from <a href="2001.html">last year</a>.
+Here are the abstracts from <a href="2002.html">last year</a>, and the
+<a href="2001.html">year before</a>.
 
 <h2>Upcoming talks</h2>
   <ul>

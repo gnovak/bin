@@ -2,6 +2,9 @@ mr
 		macro read "$!HOME/bin/sm/default"
 		macro read mac.sm
 
+exit
+		quit
+
 logasymerr 4
  		# logasymerr x y ylow yup
 		set _errlow = $2-$3
@@ -186,7 +189,11 @@ getrows	1	# read multiple lines columns with names in row 1
 		set $0=names
 
 gd	1	
-		data $1
+		define i LOCAL
+                define rc LOCAL
+                define _type LOCAL
+                set names LOCAL
+ 		data $1
 		READ ROW names 1.s
 		set names = names
 		DEFINE rc " "
@@ -201,6 +208,7 @@ gd	1
 		}
 		LINES 2 0
 		READ < $rc > 
+		LINES 0 0
 
 
 era	0	
@@ -366,6 +374,28 @@ labels	3	# maxerr v
 		   relocate ($2 $(ycoord))
 		   label \line $num 2000 $text
 		   define num ($num+1)
+		}
+		ltype 0
+
+labelsspacing	4	# maxerr v
+		# prints a set of labels on a plot
+		# 1 = array of lables
+		# 2 = x coordinate of first label
+		# 3 = y coordinate of first label
+		# 4 = interlabel spacing
+		define num local
+		#define ycoord local
+		define num 0
+                define lnum 0
+ 		foreach text $1 {
+		   set ycoord = $3-$4*$num
+		   relocate ($2 $(ycoord))
+		   label \line $lnum 2000 $text
+		   define num ($num+1)
+                   define lnum ($lnum+1)
+ 		   if ($lnum == 7) {
+                      define lnum 0
+		   }		
 		}
 		ltype 0
 

@@ -1,2 +1,0 @@
-/opt/bin/acroread $*
-rm ~/AdobeFnt.lst

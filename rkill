@@ -1,6 +1,0 @@
-#!/opt/bin/perl
-
-$host=shift(@ARGV);
-$pid=shift(@ARGV);
-
-system("ssh $host kill $pid");

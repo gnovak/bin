@@ -1,4 +1,0 @@
-#!/usr/bin/perl
-foreach(@ARGV) {
-system("mpeg_play -controls none $_");
-}

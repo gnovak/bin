@@ -1,7 +1,0 @@
-#!/usr/bin/perl
-@hosts = qw(hyde hyde serendipity oxide invictus monster anger cobra zoltar mariachi isis megatron wrigley wrigley);
-
-foreach(@hosts) {
-    system("xterm -exec ssh $_ -title $_ &");
-}
-

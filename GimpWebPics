@@ -1,9 +1,0 @@
-#!/bin/bash
-
-for OLDFILE in $*; do
-	NEWFILE=`echo $OLDFILE | sed s/Camera/Web/g`
-	if [ !  -e $NEWFILE  ]; then 
-		echo "Working on $OLDFILE..."
-		gimp -n -b "(script-fu-web-image \"$OLDFILE\" \"$NEWFILE\")" "(gimp-quit 0)"
- 	fi	
-done

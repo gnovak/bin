@@ -1,4 +1,10 @@
-import scipy, pyx
+import scipy, pyx, pylab
+
+# TODO: 
+# Add a bit to pyx to allow things like this:
+# pyx.graph.data.list(transpose(array([x,y])),x=1,y=2)
+# becomes
+# pyx.graph.data.alist([x,y], x=1,y=2)... or something
 
 ############################
 # Add some stuff to the scipy namespace
@@ -30,6 +36,21 @@ def lirange(l, h, n):
     return 10**irange(scipy.log10(l),scipy.log10(h),n)
 scipy.lirange = lirange
 
+def at(a):
+    """A better name for nonzero"""
+    return nonzero(a)
+scipy.at = at
+
+_rhot_data = {'red':   ((1.0, 1.0, 1.0), (0.365079, 1.000000, 1.000000),  (0., 0.0416, 0.0416)), 
+              'green': ((1.0, 1.0, 1.0), (0.746032, 1.000000, 1.000000),
+                        (0.365079, 0.000000, 0.000000),(0., 0., 0.)),
+              'blue':  ((1.0, 1.0, 1.0), (0.746032, 0.000000, 0.000000), (0., 0., 0.))}                  
+
+rhot = pylab.cm.colors.LinearSegmentedColormap('rhot',
+                                               _rhot_data,
+                                               pylab.rcParams['image.lut'])
+
+pylab.cm.datad['rhot']= _rhot_data
 
 #######################################
 # Pyx Stuff

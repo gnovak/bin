@@ -1,0 +1,67 @@
+PLOTS =  predictive.eps dists.eps all-data-1.eps all-data-2.eps all-data-3.eps all-data-4.eps all-data-5.eps all-data-6.eps all-data-7.eps all-data-8.eps all-data-9.eps all-data-10.eps all-data-11.eps axis.eps
+
+TEXFILES = msigma.tex
+
+PDFFILES = $(TEXFILES:.tex=.pdf)
+PSFILES = $(TEXFILES:.tex=.ps)
+DVIFILES = $(TEXFILES:.tex=.dvi)
+TFILES = $(PDFFILES:.pdf=.thumb.pdf)
+NTFILES = $(PDFFILES:.pdf=.nothumb.pdf)
+PDFPLOTS = $(PLOTS:.eps=.pdf)
+
+BIBTEX = bibtex
+PDFLATEX = pdflatex
+LATEX = latex
+
+RERUN = "(There were undefined references|Rerun to get (cross-references|the bars) right)"
+RERUNBIB = "No file.*\.bbl|Citation.*undefined"
+COPY = if test -r $*.toc; then cp $*.toc $*.toc.bak; fi 
+
+all:	ps pdf
+
+ps:	$(PSFILES)
+
+pdf:	$(PDFFILES)
+
+$(PDFFILES): 	$(PDFPLOTS)
+
+$(PSFILES): $(DVIFILES)
+
+%.bib:	%.ads
+	ads-make-keys $<
+
+%.pdf:         %.tex 
+	$(COPY) ; $(PDFLATEX) $<
+	egrep -c $(RERUNBIB) $*.log && ($(BIBTEX) $*;$(COPY); $(PDFLATEX) $<) ; true
+	egrep $(RERUN) $*.log && ($(COPY) ; $(PDFLATEX) $<) ; true
+	egrep $(RERUN) $*.log && ($(COPY) ; $(PDFLATEX) $<) ; true
+	if cmp -s $*.toc $*.toc.bak ; then true ; else $(PDFLATEX) $< ; fi
+	rm -f $*.toc.bak
+# Display relevant warnings
+	echo ERRORS AND WARNINGS
+	egrep -i "(Reference|Citation).*undefined" $*.log ; true
+#	pp4 $(PDFFILES) $(NTFILES)
+#	pdfthumb $(NTFILES) $(TFILES)	
+
+%.dvi:         %.tex 
+	$(COPY) ; $(LATEX) $<
+	egrep -c $(RERUNBIB) $*.log && ($(BIBTEX) $*;$(COPY); $(LATEX) $<) ; true
+	egrep $(RERUN) $*.log && ($(COPY) ; $(LATEX) $<) ; true
+	egrep $(RERUN) $*.log && ($(COPY) ; $(LATEX) $<) ; true
+	if cmp -s $*.toc $*.toc.bak ; then true ; else $(LATEX) $< ; fi
+	rm -f $*.toc.bak
+# Display relevant warnings
+	echo ERRORS AND WARNINGS
+	egrep -i "(Reference|Citation).*undefined" $*.log ; true
+#	pp4 $(PDFFILES) $(NTFILES)
+#	pdfthumb $(NTFILES) $(TFILES)	
+
+%.ps:	%.dvi
+	dvips $< -o 
+
+%.pdf:          %.eps 
+	epstopdf $< 
+
+clean:
+	rm -f $(DVIFILES) $(PSFILES) $(PDFFILES) $(TFILES) $(NTFILES) $(PDFPLOTS)
+	rm -f *.aux *.log *.bbl *.blg *.brf *.cb *.ind *.idx *.ilg *.inx *.toc *.out

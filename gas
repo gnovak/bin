@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 
 use Date::Simple;
+use gas;
 
 chdir "$ENV{'HOME'}/bin";
 
@@ -9,6 +10,7 @@ $middlewarning = 2;
 $farwarning = 7;
 
 $talklist=$gas::infoFile;
+
 @reminders=qw(gas.rem1 gas.rem2 gas.rem3);
 @announcements=qw(gas.ann1 gas.ann2);
 
@@ -19,9 +21,9 @@ $remsubjects[2]="Your GAS today!";
 $annsubjects[0]="GAS this $gas::dayofweek";
 $annsubjects[1]="GAS starting now!";
 
-#$grademail="grads\@ucolick.org allgood\@physics.ucsc.edu tcox\@physics.ucsc.edu";
-$grademail = "novak";
-$myemail = "novak";
+$grademail="grads\@ucolick.org allgood\@physics.ucsc.edu tcox\@physics.ucsc.edu";
+#$grademail = "novak";
+$myemail = "novak\@ucolick.org";
 
 # figure out the dates in the future
 $today = Date::Simple->new;
@@ -60,7 +62,7 @@ foreach $date (@remdates) {
 	    open TEMPLATE, "< $reminder";
 	    open MESSAGE, "| mail $speakeremail $myemail -s \"$subject\"";
 	    while (<TEMPLATE>) {
-		s/<date>/$prettydate/g;
+		s/<date>/$date/g;
 		s/<speakeremail>/$speakeremail/g;
 		s/<speakername>/$speakername/g;  
 		s/<info>/$talkinfo/g;	

@@ -1,4 +1,4 @@
-mail -s "Cookie Time!" novak <<END
+mail -s "Cookie Time!" grads <<END
 Get your coffee cup, it's time for cookies!
 END
 rm -f /u/novak/mail.record

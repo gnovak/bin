@@ -1,0 +1,6 @@
+mail "grads@ucolick.org allgood@physics.ucsc.edu tcox@physics.ucsc.edu" -s "Order of Magnitude Now!" <<END
+Order of Magnitude Astrophysics is starting in ten minutes!
+
+Hope to see you there!
+Greg
+END

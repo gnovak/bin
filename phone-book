@@ -1,0 +1,32 @@
+#!/usr/bin/python
+import sys,addresses
+
+# Header 
+print r"""
+\documentclass{article}
+\begin{document}"""
+    
+# sort by category, then last name
+db = addresses.db()
+db.read('addresses.db')
+cats = db.values('category')
+cats.sort()
+for cat in cats:
+    print "\n\n", r"\begin{tabular}{llll}", "\n",
+    print "{ \\bf ", cat , "} \\\\"
+    subdb = db.select('category',cat)
+    names = subdb.values('last')
+    names.sort()
+    for name in names:
+	subsubdb = subdb.select('last', name)
+	for rec in subsubdb.data:
+	    # only include people that have some phone numbers
+	    if rec['home'] != "" or rec['work'] != "" or rec['cell'] != "":
+		print rec['first'], " ", rec['last'], " & ", \
+                      rec['home'], " & ", rec['work'], " & ", \
+                      rec['cell'], "\\\\"
+    print r"\end{tabular}", "\n\n"
+	    
+# Footer
+print r"\end{document}"
+	

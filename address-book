@@ -1,0 +1,43 @@
+#!/usr/bin/python
+import sys,addresses
+
+# Header 
+print r"""
+\documentclass[twocolumn]{article}
+\begin{document}"""
+    
+# sort by last name
+db = addresses.db()
+db.read('addresses.db')
+
+for name in db.values('last', sorted=True):
+    for rec in db.select('last', name).data:
+        ####################
+        # Record format
+        print r"\begin{minipage}{\columnwidth}"
+        print r"%s %s \\" % (rec['first'], rec['last'])
+        if rec['title'] != "": print r"%s\\" % rec['title']
+        if rec['category'] != "": print r"%s\\" % rec['category']
+        if rec['company'] != "": print r"%s\\" % rec['company']
+        if rec['work'] != "": print r"%s (work) \\" % rec['work']
+        if rec['home'] != "": print r"%s (home) \\" % rec['home']
+        if rec['cell'] != "": print r"%s (cell) \\" % rec['cell']
+        if rec['fax'] != "": print r"%s (fax) \\" % rec['fax']
+        if rec['other'] != "": print r"%s\\" % rec['other']
+        if rec['email'] != "": print r"%s\\" % rec['email'].replace('_',r'\_')
+        if rec['address'] != "": print r"%s\\" % rec['address'].replace('#',r'\#')
+        if rec['city'] != "":
+            print r"%s, %s  %s  %s \\" % (rec['city'], rec['state'], 
+                                          rec['zip'], rec['country'])
+        if rec['custom1'] != "": print r"%s\\" % rec['custom1']
+        if rec['custom2'] != "": print r"%s\\" % rec['custom2']
+        if rec['custom3'] != "": print r"%s\\" % rec['custom3']
+        if rec['custom4'] != "": print r"%s\\" % rec['custom4']
+        if rec['note'] != "\n": print r"Notes: %s \\" % rec['note']
+        print r"\end{minipage}"
+        print r"\\"
+        
+        	    
+# Footer
+print r"\end{document}"
+	

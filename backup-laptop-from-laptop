@@ -1,0 +1,1 @@
+rsync --archive --compress --verbose --progress --delete --exclude-from=/Users/novak/bin/backup-laptop-exclude /Users/novak/ ssh.ucolick.org:/net/dionysus/data/novak/Laptop/Backup/

@@ -34,7 +34,7 @@ def flatten(L):
     return flatten(L[0]) + flatten(L[1:])
 
 def iterable(obj):
-    """See if you can iterate over an object"""
+    """See if you can iterate over n object"""
     try: len(obj)
     except: return False
     return True
@@ -280,7 +280,7 @@ def histo(x, bins=50, weights=None,
         data = make_pyx_histo_data(bins,hist)        
         g = pyx.graph.graphxy(width=width, **kw)
         g.plot(pyx.graph.data.list(data, x=1, y=2),[pyx.graph.style.line()])
-
+        return g
     elif Pylab:
         width = 0.9*(bins[1]-bins[0])
         pylab.gca().bar(bins, hist, width=width, **kw)        

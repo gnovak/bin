@@ -1,14 +1,85 @@
-#!/bin/bash
-if [[ $# != 5 ]]; then
-	echo Usage sln remote-host remote-file local-file port
-	exit	
-fi
+#!/sw/bin/python
+# Could change this to use ssh style notation.  That'd probably be good...
+# 
+import sys, os, pickle
 
-rhost=$1
-rfile=$2
-lhost=$3
-lfile=$4
-port=$5
+def can(obj, file, *args, **kw):
+    if type(file) is type('string'): f=open(file,'w')
+    else: f=file
 
-ssh -f -R $port:$lhost:$port $rhost watch-file $rfile localhost $port 
-socket -l -f $lfile $lhost $port 
+    pickle.dump(obj, f, *args, **kw)    
+
+    if type(file) is type('string'): f.close()
+
+def uncan(file, *args, **kw):
+    # If filename, should this read until all exhausted?
+    if type(file) is type('string'): f=open(file)
+    else: f=file    
+
+    obj = pickle.load(f, *args, **kw)    
+
+    if type(file) is type('string'): f.close()
+
+    return obj
+
+def usage():
+    print "Usage: Not like that!"
+
+def snarf(cmd):
+    """Run a shell gommand and grab the output as a string."""
+    f=os.popen(cmd)
+    result = f.readline()[:-1] # strip final newline
+    f.close()
+    return result
+
+def ip_address(): return snarf('ip-address')
+    
+args = sys.argv[1:]
+if len(args) == 5:
+    rhost = args[0]
+    rfile = args[1]
+    lhost = args[2]
+    lfile = args[3]
+    port = int(args[4])
+elif len(args) == 4:
+    rhost = args[0]
+    rfile = args[1]
+    lhost = args[2]
+    lfile = args[3]
+    try: port = uncan('/tmp/sln-port')
+    except IOError: port = 10000
+elif len(args) == 2:
+    rhost = args[0]
+    rfile = args[1]
+    lhost = ip_address()
+    lfile = os.path.basename(rfile)
+    try: port = uncan('/tmp/sln-port')
+    except IOError: port = 10000    
+else:
+    usage()
+    sys.exit(1)
+
+# Try to load running pid table.
+# If none, create an empty one
+try: pids = uncan('/tmp/ports-pids')
+except IOError: pids = {}
+
+pid = os.fork()
+if pid != 0: # parent
+    pids['sln-' + lfile + '-port'] = pid
+else: # child
+    command = 'ssh -n -N -R %d:%s:%d %s watch-file %s localhost %d' \
+              % (port, lhost, port, rhost, rfile, port)
+    os.execl('/bin/sh','junk', '-c', command)
+    
+pid = os.fork()
+if pid != 0: #parent
+    pids['sln-' + lfile + '-socket'] = pid
+else: #child
+    command = 'socket -l -f %s %s %d' % (lfile, lhost, port)
+    os.execl('/bin/sh','junk', '-c', command)
+    
+# write pid table
+can(pids, '/tmp/ports-pids')
+can(port+1, '/tmp/sln-port')
+

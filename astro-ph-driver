@@ -6,24 +6,25 @@ cd $THISDIR
 
 if [ -e astro-ph.html ]
 then
-  mv -f astro-ph.html astro-ph-old.html
+  rm -f astro-ph.html
 fi
 
 if [ -z "$1" ]
 then
   ./astro-ph-parser
+  OUTFN=`date '+20%y-%m-%d'`.html
 else
   ./astro-ph-parser "$1"
+  OUTFN=`date --date="$1" '+20%y-%m-%d'`.html
 fi
 
 if [ -e astro-ph.html ]
 then
-    # save yesterday's summary
-    datename=$(date '+20%y-%m-%d').html
-    scp -i /home/novak/.ssh/cron publichost:public_html/astro-ph/index.html ./astro-ph-yesterday.html
-    scp -i /home/novak/.ssh/cron astro-ph-yesterday.html publichost:public_html/astro-ph/"$datename"
-    # publish to pubilc area    
-    scp -i /home/novak/.ssh/cron astro-ph.html publichost:public_html/astro-ph/index.html
+  scp -i /home/novak/.ssh/cron astro-ph.html publichost:public_html/astro-ph/$OUTFN
+  if [ -z "$1" ] 
+      then 
+      scp -i /home/novak/.ssh/cron astro-ph.html publichost:public_html/astro-ph/index.html
+  fi
 
   cd -
 fi

@@ -5,7 +5,7 @@ use Date::Simple;
 chdir "$ENV{'HOME'}/bin";
 
 $soonwarning = 0;
-$middlewarning = 4;
+$middlewarning = 3;
 $farwarning = 7;
 $veryfarwarning = 14;
 

@@ -136,11 +136,11 @@
 \def\\{}
 
 \def\firstline#1#2{% the name and (maybe) the first phone number.
-  {\bf #1}\hfil&\hfil#2&\hskip0pt}
+  {\bf #1}\dotfill&\dotfill#2&\hskip0pt}
 
 \def\name#1{\firstline{#1}{}} % for backwards compatibility
 
-\def\phone#1{\hfil#1&\hskip0pt}
+\def\phone#1{\dotfill#1&\hskip0pt}
 
 \def\address#1{#1\hfil&\hskip0pt}
 

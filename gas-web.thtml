@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<title>Graduate Astronomy Seminar</title>
+<meta name="author" content="Greg Novak">
+<meta name="description" content="UC Santa Cruz Graduate
+Astronomy Seminar Schedule.">
+</head>
+<body bgcolor="#FFFFFF">
+<h1>The Graduate Astronomy Seminar Schedule</h1>
+
+<!-- tmpl_var name=dayofweek -->,  <!-- tmpl_var name=room --> from <!-- tmpl_var name=time -->. <br>
+
+Here are the abstracts from <a href="2001.html">last year</a>.
+
+<h2>Upcoming talks</h2>
+  <ul>
+    <!-- tmpl_loop name=futuretalks -->
+    <li><b><!-- tmpl_var name=date --></b> :
+	<!-- tmpl_var name=name --> will talk about
+	<!-- tmpl_var name=subject --> 
+    <!-- /tmpl_loop -->
+  </ul>
+
+<h2>Past talks</h2>
+  <ul>
+    <!-- tmpl_loop name=pasttalks -->
+    <li><b><!-- tmpl_var name=date --></b> :
+	<!-- tmpl_var name=name --> talked about
+	<!-- tmpl_var name=subject --> 
+    <!-- /tmpl_loop -->
+  </ul>
+
+  <hr>
+  Last modified: <!-- tmpl_var name=modtime -->
+  </body>
+</html>
+  
+
+
+
+
+
+
+
+

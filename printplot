@@ -21,7 +21,8 @@ foreach (@ARGV) {
 print FILE $end;
 
 close(FILE) || die "can't close\n";
-system "dvips article.dvi -P simplex -o";
+#system "dvips article.dvi -P simplex -o";
+system "dvips article.dvi -o";
 system "lpr article.ps";
 system "rm -f article.ps";
 system "rm -f article.aux article.dvi article.log";

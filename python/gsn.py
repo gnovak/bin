@@ -1,4 +1,4 @@
-import gsnext, scipy, matplotlib.matlab, pyx, scipy.gplt
+import gsnext, scipy, scipy.gplt, pylab, pyx
 
 ############################
 # Random stuff
@@ -221,7 +221,7 @@ def make_pyx_histo_data(bins,hist):
     
 def histo(x, bins=50, weights=None,
           normed=False, overflow=True, noplot=False,
-          matplotlib=False, Pyx=False, width=8, **kw):
+          Pylab=False, Pyx=False, width=8, **kw):
     """Make a possibly weighted histogram
     y = data
     b = number of bins or list of bin edges
@@ -245,15 +245,15 @@ def histo(x, bins=50, weights=None,
     if Pyx:
         data = make_pyx_histo_data(bins,hist)        
         g = pyx.graph.graphxy(width=width, **kw)
-        g.plot(pyx.graph.data.list(data, x=1, y=2),pyx.graph.style.line())
+        g.plot(pyx.graph.data.list(data, x=1, y=2),[pyx.graph.style.line()])
         return g
-    elif matplotlib:
+    elif Pylab:
         width = 0.9*(bins[1]-bins[0])
-        matplotlib.matlab.gca().bar(bins, hist, width=width, **kw)        
-        matplotlib.matlab.show()
+        pylab.gca().bar(bins, hist, width=width, **kw)        
+        #pylab.show()
         return None
     else:
-        scipy.gplt.plot(hist,bins,'notitle w impulses')
+        scipy.gplt.plot(bins,hist,'notitle w impulses')
 
 def colorbar(xmin, xmax, 
              palette=pyx.color.palette.ReverseRainbow,

@@ -2,6 +2,7 @@
 ;; Utilities
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
 (defun r-filter (pred lst &optional result)   
   "Filter <lst> with function <pred>"
   (cond ((null lst) (reverse result))

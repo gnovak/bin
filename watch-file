@@ -13,6 +13,4 @@ while True:
     if new_mtime != old_mtime:
         os.system("socket %s %d < %s" % (host, port, file))
         old_mtime=new_mtime
-        print "Sending file!"
-    print "Checking file..."
     time.sleep(interval)

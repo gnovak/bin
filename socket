@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# copyright Greg Novak (novak@ucolick.org) 2004
+# Released under the GPL, available from http://www.gnu.org
 
 import getopt,sys,socket,tempfile,os
 
@@ -71,8 +73,13 @@ if listen:
     filenum = 1;
     
     while True:
-        (cs, addr) = s.accept()
-
+        try:
+            (cs, addr) = s.accept()
+        except KeyboardInterrupt:
+            print "Finished!"
+            s.close()
+            sys.exit()
+            
         # Get the file ready
         if execute:
             filename = tempfile.mktemp()
@@ -115,5 +122,3 @@ else:
             sent += chunk
         ln = sys.stdin.readline()
     s.close()
-
-# print "Finished!"

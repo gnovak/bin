@@ -1,69 +1,107 @@
-#! /opt/bin/bash -f
+#!/usr/bin/perl
 
-cd /u/novak/bin
+chdir "/u/novak/bin";
 
-talklist=gas.talks
-remind1=gas.rem1
-remind2=gas.rem2
-remind3=gas.rem3
-ann1=gas.ann1
-ann2=gas.ann2
-remind1subject="Your GAS next week"
-remind2subject="Your GAS on Tuesday"
-remind3subject="Your GAS Today!"
-ann1subject="GAS this Tuesday"
-ann2subject="GAS starting now!"
-grademail="grads allgood@physics.ucsc.edu tcox@physics.ucsc.edu"
-#grademail="novak"
+$dayofweek = "Monday";
+$room = "ISB 356";
+$time = "12:30-1:30pm";
 
-# figure out the date 5 days from now
-today=`echo 'puts [clock format [clock scan {0 days}] -format "%m/%d"]' | /opt/bin/tclsh`
-fourdays=`echo 'puts [clock format [clock scan {4 days}] -format "%m/%d"]' | /opt/bin/tclsh`
-sevendays=`echo 'puts [clock format [clock scan {7 days}] -format "%m/%d"]' | /opt/bin/tclsh`
+$soonwarning = 0;
+$middlewarning = 3;
+$farwarning = 7;
 
-if grep $today $talklist > /dev/null ; then
-    talkinfo=`grep $today $talklist`
-    speakeremail=`echo $talkinfo | sed "s%^[/0-9]*:%%" | sed "s%:.*%%"`
-    speakername=`echo $talkinfo | sed "s%^[/0-9]*:[A-z ]*:%%" | sed "s%:.*%%"`
-    info=`echo $talkinfo | sed "s%^[/0-9]*:[A-z ]*:[A-z ]*:%%" `
+$talklist="gas.talks";
+@reminders=qw(gas.rem1 gas.rem2 gas.rem3);
+@announcements=qw(gas.ann1 gas.ann2);
 
-    #remind the speaker 
-    sed "s%<date>%$today%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $remind3 | mail $speakeremail -s "$remind3subject"
-    #remind the audience 
-    sed "s%<date>%$today%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $ann2 | mail -s "$ann2subject" $grademail 
-    sed "s%<date>%$today%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $remind3 | mail novak -s "$remind3subject"
-    #remind the audience 
-    sed "s%<date>%$today%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $ann2 | mail novak -s "$ann2subject"
-fi
+$remsubjects[0]="Your GAS next week";
+$remsubjects[1]="Your GAS on $dayofweek";
+$remsubjects[2]="Your GAS today!";
 
-if grep $fourdays $talklist > /dev/null ; then
-    talkinfo=`grep $fourdays $talklist`
-    speakeremail=`echo $talkinfo | sed "s%^[/0-9]*:%%" | sed "s%:.*%%"`
-    speakername=`echo $talkinfo | sed "s%^[/0-9]*:[A-z ]*:%%" | sed "s%:.*%%"`
-    info=`echo $talkinfo | sed "s%^[/0-9]*:[A-z ]*:[A-z ]*:%%" `
+$annsubjects[0]="GAS this $dayofweek";
+$annsubjects[1]="GAS starting now!";
 
-    #remind the speaker 
-    sed "s%<date>%$fourdays%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $remind2 | mail $speakeremail -s "$remind2subject"
-    #remind the audience 
-    sed "s%<date>%$fourdays%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $ann1 | mail -s "$ann1subject" $grademail 
-    sed "s%<date>%$fourdays%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $remind2 | mail novak -s "$remind2subject"
-    #remind the audience 
-    sed "s%<date>%$fourdays%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $ann1 | mail novak -s "$ann1subject"
-fi
+$grademail="grads allgood\@physics.ucsc.edu tcox\@physics.ucsc.edu";
+$myemail = "novak";
 
-if grep $sevendays $talklist > /dev/null ; then
-    talkinfo=`grep $sevendays $talklist`
-    speakeremail=`echo $talkinfo | sed "s%^[/0-9]*:%%" | sed "s%:.*%%"`
-    speakername=`echo $talkinfo | sed "s%^[/0-9]*:[A-z ]*:%%" | sed "s%:.*%%"`
-    info=`echo $talkinfo | sed "s%^[/0-9]*:[A-z ]*:[A-z ]*:%%" `
+# figure out the dates in the future
+$soon=`echo 'puts [clock format [clock scan {$soonwarning days}] -format "%m/%d"]' | /opt/bin/tclsh`;
+$middle=`echo 'puts [clock format [clock scan {$middlewarning days}] -format "%m/%d"]' | /opt/bin/tclsh`;
+$far=`echo 'puts [clock format [clock scan {$farwarning days}] -format "%m/%d"]' | /opt/bin/tclsh`;
 
-    #remind the speaker 
-    sed "s%<date>%$sevendays%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $remind1 | mail $speakeremail -s "$remind1subject"
-    sed "s%<date>%$sevendays%g;s%<speakername>%$speakername%g;s%<speakeremail>%$speakeremail%g;s%<info>%$info%g" $remind1 | mail novak -s "$remind1subject"
-fi
+chomp $soon;
+chomp $middle;
+chomp $far;
+
+$remdates[0] = $far;
+$remdates[1] = $middle;
+$remdates[2] = $soon;
+
+$anndates[0] = $middle;
+$anndates[1] = $soon;
+
+# Speaker Reminders
+foreach $date (@remdates) {
+    $reminder = shift @reminders;
+    $subject = shift @remsubjects;
+    open TALKS, "< $talklist" or die "Can't open file : $!";
+    while (<TALKS>) {
+	if (/$date/) {
+	    chomp;
+	    @talk = split(":");
+	    $date = $talk[0];
+	    $speakeremail = $talk[1];
+	    $speakername = $talk[2];
+	    $talkinfo = $talk[3];
+	    open TEMPLATE, "< $reminder";
+	    open MESSAGE, "| mail $speakeremail $myemail -s \"$subject\"";
+	    while (<TEMPLATE>) {
+		s/<date>/$date/g;
+		s/<speakeremail>/$speakeremail/g;
+		s/<speakername>/$speakername/g;  
+		s/<info>/$talkinfo/g;	
+		s/<room>/$room/g;
+		s/<time>/$time/g;
+		s/<dayofweek>/$dayofweek/g;
+		print MESSAGE;
+	    }
+	    close TEMPLATE;
+	    close MESSAGE;
+	}
+    } 
+    close TALKS;
+}
+# Audience reminders
+foreach $date (@anndates) {
+    $announcement = shift @announcements;
+    $subject = shift @annsubjects;
+    open TALKS, "< $talklist" or die "Can't open file : $!";
+    while (<TALKS>) {
+	if (/$date/) {
+	    chomp;
+	    @talk = split(":");
+	    $date = $talk[0];
+	    $speakeremail = $talk[1];
+	    $speakername = $talk[2];
+	    $talkinfo = $talk[3];
+	    open TEMPLATE, "< $announcement";
+	    open MESSAGE, "| mail $grademail -s \"$subject\"";
+	    while (<TEMPLATE>) {
+		s/<date>/$date/g;
+		s/<speakeremail>/$speakeremail/g;
+		s/<speakername>/$speakername/g;  
+		s/<info>/$talkinfo/g;	
+		s/<room>/$room/g;
+		s/<time>/$time/g;
+		s/<dayofweek>/$dayofweek/g;
+		print MESSAGE;
+	    }
+	    close TEMPLATE;
+	    close MESSAGE;
+	}
+    } 
+    close TALKS;
+}
 
 # finally, delete leftover file
-rm -f /u/novak/mail.record
-
-
-
+# system "rm -f /u/novak/mail.record"

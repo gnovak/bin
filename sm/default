@@ -1,0 +1,305 @@
+interp 3 
+		# interpolate $2 as a function of $1 at point $3
+		# interp x y 3.3 finds the y value that corresponds to
+		# x = 3.3 by interpolating on y
+		set idx = 0,DIMEN($1)-1
+		set pts = $3
+		set DIMEN($0)=DIMEN(pts)
+		DO i=0,DIMEN(pts)-1 {
+		   set low = idx IF ($1 <= pts[$i])
+		   set high = idx IF ($1 > pts[$i])
+		   define lowi $(low[DIMEN(low)-1])
+		   define highi $(high[0])
+		   set $0[$i] = $2[$lowi] + ($2[$highi]-$2[$lowi])*(pts[$i]-$1[$lowi])/($1[$highi]- $1[$lowi])
+ 		}
+
+interps 3 
+		# interpolate $2 as a function of $1 at point $3
+		# interp x y 3.3 finds the y value that corresponds to
+		# x = 3.3 by interpolating on y
+		set idx = 0,DIMEN($1)-1
+		set low = idx IF ($1 <= $3)
+		set high = idx IF ($1 > $3)
+		define lowi $(low[DIMEN(low)-1])
+		define highi $(high[0])
+		set $0[$i] = $2[$lowi] + ($2[$highi]-$2[$lowi])*($3-$1[$lowi])/($1[$highi]- $1[$lowi])
+		
+title	1	
+		relocate ( $(($gx2+$gx1)/2) $gy2 )
+		echo $(($gx2+$gx1)/2) $($gy2 - ($gy2-$gy1)/100)
+ 		putlabel 5 $1
+
+startup2
+		dev x11
+		macro read mac.sm
+
+gd	1	# read multiple lines columns with names in row 1
+		data $1
+		READ ROW names 1.s
+		DEFINE rc <$(names[(0)]) 1>
+		DO i=2,DIMEN(names) {
+		   DEFINE rc <$rc $(names[($i - 1)]) $i>
+		}
+		LINES 2 0
+		READ < $rc > 
+
+getrows	1	# read multiple lines columns with names in row 1
+		data $1
+		READ ROW names 1.s
+		set $0=names
+
+era	0	
+		# I want era *to* appear in the history list, dammit. 
+		erase
+
+vl	2	
+		# view $2 vs. $1, 
+		# setting limits and drawing a box, as connected lines
+		lim $1 $2
+		box
+		con $1 $2
+
+vlsl	2	
+		# view $2 vs. $1, 
+		# setting limits and drawing a box, as connected lines
+		lim (LG($1)) $2
+		ticksize -1 10 0 0 
+		box
+		con (LG($1)) $2
+		ticksize 0 0 0 0			
+
+vlll 2	
+		# view $2 vs. $1, 
+		# setting limits and drawing a box, as connected lines
+		lim (LG($1)) (LG($2))
+		ticksize -1 10 -1 10 
+		box
+		con (LG($1)) (LG($2))
+		ticksize 0 0 0 0
+
+vlsl	2	
+		# view $2 vs. $1, 
+		# setting limits and drawing a box, as connected lines
+		lim $1 (LG($2))
+		ticksize 0 0 -1 10
+		box
+		con $1 (LG($2))
+		ticksize 0 0 0 0
+
+vl2	3	
+		# view $2 and $3 vs. 1, setting limits and drawing a box,
+		# as connected lines
+		define local min
+		define local max
+		vecminmax2 $2 $3 min max
+		lim $1 $min $max
+		box
+		ltype 0
+		con $1 $2
+		ltype 1
+		con $1 $3
+		ltype 0
+
+vp	2	
+		# view $2 vs. $1, setting limits and drawing a box,
+		# as connected points
+		lim $1 $2
+		box
+		poi $1 $2
+
+vh	1	
+		# view $2 vs. $1, setting limits and drawing a box,
+		# as connected points
+		vecminmax $1 _hmin _hmax
+ 		set _hbin = $_hmin,$_hmax,$(($_hmax-$_hmin)/100)
+		set _hist = histogram($1:_hbin)
+                lim _hbin _hist
+		box
+		hist _hbin _hist
+
+vhl	4
+		#1    2   3  4
+		#vec min max nbin
+ 		set _hbin = $2,$3,$(($3-$2)/$4)
+		set _hist = histogram($1:_hbin)
+                lim _hbin _hist
+		box
+		hist _hbin _hist
+                
+vpsl	2	
+		# view $2 vs. $1, setting limits and drawing a box,
+		# as connected points
+		lim $1 (LG($2))
+		ticksize 0 0 -1 10
+		box
+		poi $1 (LG($2))
+		ticksize 0 0 0 0
+
+vpls	2	
+		# view $2 vs. $1, setting limits and drawing a box,
+		# as connected points
+		lim (LG($1)) $2
+		ticksize -1 10 0 0
+		box
+		poi (LG($1)) $2
+		ticksize 0 0 0 0
+
+vpll	2	
+		# view $2 vs. $1, setting limits and drawing a box,
+		# as connected points
+		lim (LG($1)) (LG($2))
+		ticksize -1 10 -1 10
+		box
+		poi (LG($1)) (LG($2))
+		ticksize 0 0 0 0
+
+vp2	3	
+		# view $2 and $3 vs. 1, setting limits and drawing a box,
+		# as connected lines
+		define local min
+		define local max
+		vecminmax2 $2 $3 min max
+		lim $1 $min $max
+		box
+		ltype 0
+		poi $1 $2
+		ltype 1
+		poi $1 $3
+		ltype 0
+
+vecminmax2 4	
+		# get the mutual min/max of both $1 and $2, setting $3 to min
+		# and $4 to max
+		define local min2
+		define local max2
+		define local min3
+		define local max3
+		vecminmax $1 min2 max2
+		vecminmax $2 min3 max3
+		define $3 ($min2 < $min3 ? $min2 : $min3)
+		define $4 ($max2 > $max3 ? $max2 : $max3)
+
+vecminmax3 5	
+		# get the mutual min/max of $1, $2 and $3, setting $4 to min
+		# and $5 to max
+		define local min2
+		define local max2
+		define local min3
+		define local max3
+		vecminmax2 $1 $2 min2 max2
+		vecminmax $3 min3 max3
+		define $4 ($min2 < $min3 ? $min2 : $min3)
+		define $5 ($max2 > $max3 ? $max2 : $max3)
+
+
+labels	3	# maxerr v
+		# prints a set of labels on a plot
+		# 1 = array of lables
+		# 2 = x coordinate of first label
+		# 3 = y coordinate of first label
+		define num local
+		#define ycoord local
+		define num 0
+		foreach text $1 {
+#		   set ycoord = $3-1500*$num
+		   set ycoord = $3-1500*$num
+		   relocate ($2 $(ycoord))
+		   label \line $num 2000 $text
+		   define num ($num+1)
+		}
+
+acon	2	
+		# equivalent to "con" but designed to connect
+		# periodic variables -- angles.  Doesn't connect the points
+		# when they wrap.
+		con $1 $2 if($2 < 3) con $1 $2 if($2 > -3)
+
+adcon	2	
+		# equivalent to "con" but designed to connect
+		# periodic variables -- angles.  Doesn't connect the points
+		# when they wrap.
+		con $1 $2 if($2 < -90) con $1 $2 if($2 > 90)
+
+aconold	2	
+		# equivalent to "con" but designed to connect
+		# periodic variables -- angles.  Doesn't connect the points
+		# when they wrap.
+		con $1 $2 if($2 < 90) con $1 $2 if($2 > 90)
+fold	1	
+		# fold an angular variable into the range -pi to pi
+		# may need to apply this several times if you're
+		# far from this range
+		set $1 = $1 < 3.14 ? $1 : $1-6.28
+		set $1 = $1 > -3.14 ? $1 : $1+6.28
+		set $1 = $1 < 3.14 ? $1 : $1-6.28
+		set $1 = $1 > -3.14 ? $1 : $1+6.28
+		set $1 = $1 < 3.14 ? $1 : $1-6.28
+		set $1 = $1 > -3.14 ? $1 : $1+6.28
+
+folddeg	1	
+		# fold an angular variable into the range -pi to pi
+		# may need to apply this several times if you're
+		# far from this range
+		set $1 = $1 < 180 ? $1 : $1-360
+		set $1 = $1 > -180 ? $1 : $1+360
+		set $1 = $1 < 180 ? $1 : $1-360
+		set $1 = $1 > -180 ? $1 : $1+360
+		set $1 = $1 < 180 ? $1 : $1-360
+		set $1 = $1 > -180 ? $1 : $1+360
+
+fold2pi	1	
+		# fold an angular variable into the range -pi to pi
+		# may need to apply this several times if you're
+		# far from this range
+		set $1 = $1 < 6.28 ? $1 : $1-6.28
+		set $1 = $1 > 0    ? $1 : $1+6.28
+		set $1 = $1 < 6.28 ? $1 : $1-6.28
+		set $1 = $1 > 0    ? $1 : $1+6.28
+		set $1 = $1 < 6.28 ? $1 : $1-6.28
+		set $1 = $1 > 0    ? $1 : $1+6.28
+
+folddeg360 1	
+		# fold an angular variable into the range -pi to pi
+		# may need to apply this several times if you're
+		# far from this range
+		set $1 = $1 < 360 ? $1 : $1-360
+		set $1 = $1 > 0    ? $1 : $1+360
+		set $1 = $1 < 360 ? $1 : $1-360
+		set $1 = $1 > 0    ? $1 : $1+360
+		set $1 = $1 < 360 ? $1 : $1-360
+		set $1 = $1 > 0    ? $1 : $1+360
+
+der	2	
+		set i1=0,dimen($1)-2
+		set i2=1,dimen($1)-1
+		set $2 = $1[i2]-$1[i1]
+		set $2 = 0 CONCAT $2
+
+ave	2	
+		set i1=0,dimen($1)-3	
+		set i2=1,dimen($1)-2	
+		set i3=2,dimen($1)-1	
+		set tmp = (1/3)*($1[i1]+$1[i2]+$1[i3])
+		# now handle edges
+		set tmp = 0.5*($1[0]+$1[1]) CONCAT tmp 
+		set tmp = tmp CONCAT 0.5*($1[dimen($1)-2]+$1[dimen($1)-1])
+		set $2 = tmp
+
+derold	2	
+		set dimen($2) = dimen($1)
+		set $2[0]=0
+		DO i=1,DIMEN($1)-1 {
+		   set $2[$i] = $1[$i] - $1[$i-1]
+		}
+find 3
+		cursor thex they
+		set DIMEN(labs) = DIMEN(thex)
+ 		DO i=0,DIMEN(thex)-1 { 
+		   set dist = ($1-thex[$i])**2 + ($2-they[$i])**2
+		   vecminmax dist dmin dmax
+		   set thelabs = $3
+		   set thelabs = (dist < 1.01*$dmin ? thelabs : 0)
+		   set labs[$i] = sum(thelabs)
+ 		}
+		print {thex they labs}
+		set $0 = labs

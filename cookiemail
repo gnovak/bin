@@ -1,4 +1,4 @@
-mail -s "Cookie Time!" grads <<END
+mail -s "Cookie Time!" grads@ucolick.org <<END
 Get your coffee cup, it's time for cookies!
 END
 #rm -f ~/mail.record

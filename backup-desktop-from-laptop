@@ -1,4 +1,8 @@
-# rsync --archive --delete --exclude-from=/Users/novak/bin/backup-desktop-exclude dionysus.ucolick.org:/home/novak/ /Users/novak/.backup/novak
+#!/bin/bash 
+OPTS="--archive --delete --verbose --progress --stats"
+EXCLUDE=/Users/novak/bin/backup-desktop-exclude
+DIRS=dionysus.ucolick.org:/home/novak/
+DEST=/Users/novak/.backup/novak
 
-rsync --archive --delete --exclude-from=/Users/novak/bin/backup-desktop-exclude dionysus:/home/novak/ /Users/novak/.backup/novak
-
+rsync $OPTS --exclude-from=$EXCLUDE $DIRS $DEST
+  

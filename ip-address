@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# | perl -p -e 'chomp'
+# Look for a file identifying the host
+# This is necessary b/c DHCP sometimes gives the computer a 
+# different hostname
+if ( grep --silent demeter ~/.hostname ); then
+    # Prefer wired connections
+    if ( /sbin/ifconfig en0 | grep --silent inet ); then
+	/sbin/ifconfig en0 | grep inet | grep netmask | \
+	    sed 's/.*inet //g' | sed 's/ .*//' 
+	exit
+    fi
+    # Then wireless connections
+    if ( /sbin/ifconfig en1 | grep --silent inet ); then
+	/sbin/ifconfig en1 | grep inet | grep netmask | \
+	    sed 's/.*inet //g' | sed 's/ .*//' 
+	exit
+    fi
+elif ( grep --silent dionysus ~/.hostname ); then
+    echo Not implemented
+else 
+    echo "Host Unknown!"
+    exit
+fi

@@ -1,15 +1,19 @@
-; The /Users/novak is implicit
-/novak/.backup
+; The /Users is implicit
 /novak/.Trash
-;/novak/Music
-;/novak/Library/Application Support/Firefox/Profiles/default.mjr/Cache
-/orlith/.Trash
-;/orlith/Library/Caches
-;/orlith/Library/Mozilla/Profiles/default/zg96fw1e.slt/Cache
-;/orlith/Library/Application Support/Firefox/Profiles/default.1m7/Cache
-; more temporary stuff
-;/novak/Desktop/vtk
-;/novak/Desktop/emacs
-;/novak/To-Trash
-/novak/.aaa
+/novak/Library/Caches
+/novak/Library/Application Support/Firefox/Profiles/vjie1qxn.default/Cache
+/novak/Pictures/Album/Photos
+/novak/Pictures/CameraGamma
+/novak/Pictures/CamWeb
+/novak/Pictures/CamWebGamma
+/novak/Pictures/CamWebSmall
+/novak/Pictures/CamWebSmallGamma
 
+/orlith/.Trash
+/orlith/Library/Caches
+/orlith/Library/Mozilla/Profiles/default/zg96fw1e.slt/Cache
+/orlith/Library/Application Support/Firefox/Profiles/default.1m7/Cache
+
+; more temporary stuff
+/novak/Desktop/vtk
+/novak/.aaa

@@ -1,0 +1,103 @@
+#!/usr/bin/python
+
+import getopt,sys,socket,tempfile,os
+
+try:
+    opts, args = getopt.getopt(sys.argv[1:], "hlLe:p:f:")
+except getopt.GetoptError:
+    # print help information and exit:
+    usage()
+    sys.exit(2)
+#Global vars
+buffer=1024
+
+#Global switches for options
+listen=False
+execute=False
+pipe=False
+file=False
+LeaveFiles=False
+command=""
+
+for o, a in opts:
+    if o == "-l":
+        listen = True
+    if o == "-h":
+        usage()
+        sys.exit()
+    if o == "-L":
+        LeaveFiles=True
+    if o == "-e":
+        command = a
+        execute = True
+    if o == "-p":
+        command = a
+        pipe = True
+    if o == "-f":
+        command = a
+        file = True
+
+# a little error checking
+if (execute and pipe) or (execute and file) or (pipe and file):
+    usage()
+    sys.exit()
+
+def usage():
+    print "Usage: Not like that!"
+
+# finally, grab the port number
+host = args[0]
+port = int(args[1])
+
+if listen:
+    # Server socket -- receive shit
+    s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind((host, port))    
+    s.listen(5)
+    filenum = 1;
+    
+    while True:
+        (cs, addr) = s.accept()
+
+        # Get the file ready
+        if execute:
+            filename = tempfile.mktemp()
+            f=open(filename, 'w')
+        elif pipe:
+            f=os.popen(command, 'w')
+        elif file:
+            f=open(command % filenum, 'w')
+        else:
+            f = sys.stdout
+
+        # Read the socket
+        chunk = cs.recv(buffer);
+        while len(chunk) > 0:
+            f.write(chunk)
+            chunk = cs.recv(buffer);
+        cs.close()
+
+        # cleanup
+        filenum += 1
+        if execute or pipe or file:
+            f.close()
+            
+        if execute:
+            os.system(command + " " + filename);
+            if not LeaveFiles:
+                os.unlink(filename)
+
+else:    
+    # client socket -- send shit
+    s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((host, port))
+    ln = sys.stdin.readline()
+    while (ln != ''):
+        sent = 0
+        while sent < len(ln):
+            chunk = s.send(ln[sent:])
+            sent += chunk
+        ln = sys.stdin.readline()
+    s.close()
+
+# print "Finished!"

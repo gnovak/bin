@@ -1,0 +1,15 @@
+#!/usr/bin/perl -w
+
+
+while (@ARGV > 0) {
+    $_ = shift(@ARGV);
+    @pair = split(/=/);
+    $subst{$pair[0]} = $pair[1];
+}
+
+while(<>) {   
+    foreach $key (keys %subst) {
+	s/<$key>/$subst{$key}/g;
+    }
+    print;
+}

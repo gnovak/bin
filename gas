@@ -1,10 +1,10 @@
-#!/usr/bin/env perl -w
+#!/usr/bin/env perl
 
-chdir "/u/novak/bin";
+chdir "$ENV{'HOME'}/bin";
 
 $dayofweek = "Wednesday";
 $room = "ISB 356";
-$time = "12:30-1:30pm";
+$time = "12-1pm";
 
 $soonwarning = 0;
 $middlewarning = 2;
@@ -104,4 +104,4 @@ foreach $date (@anndates) {
 }
 
 # finally, delete leftover file
-system "rm -f /u/novak/mail.record"
+#system "rm -f /u/novak/mail.record"

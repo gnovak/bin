@@ -1,4 +1,4 @@
-#!/usr/bin/env perl -w 
+#!/usr/bin/env perl
 
 # make sure there are at least two arguments
 if (!defined($ARGV[1])) {

@@ -1,0 +1,1 @@
+nm --defined-only --print-file-name $*

@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+
+# CSV address: Category, Private, Last, First, Title, Company, Phone1, Phone2, Phone3, Phone4, Phone5, Address, City, State, ZipCode, Country, Custom1, Custom2, Custom3, Custom4, Note, phoneLabel1, phoneLabel2, phoneLabel3, phoneLabel4, phoneLabel5, showPhone
+
+#$i=0;
+#for line in iter(f):
+#while (<>) {
+#  @list = split(/;/);
+#  $len = @list;
+#  print "$i $len\n";
+#  $i++;
+#}
+
+inf = open('addr.csv')
+outf = open('addresses.db', 'w')
+
+for line in iter(inf):
+    out = ""
+    fields = line.split(';')
+    #out += fields[1] + ";" #prif
+    out += fields[2] + ";" #last
+    out += fields[3] + ";" #first
+    out += fields[4] + ";" #title
+    out += fields[0] + ";" #cat
+    out += fields[5] + ";" #company
+    nums = fields[6:11]
+    labs = fields[21:26]
+    for lab in ('0','1','7','2','3','4'):
+	if lab in labs:
+	    out += nums[labs.index(lab)] + ";"
+	else:
+	    out += ";"
+
+    for lab in ('5','6'):
+	if lab in labs and nums[labs.index(lab)] != "": 
+	    print "bad ", lab, " of ", nums[labs.index(lab)], " in ", fields[2]
+
+    out += fields[11] + ";" #addr
+    out += fields[12] + ";" #city
+    out += fields[13] + ";" #state
+    out += fields[14] + ";" #zip
+    out += fields[15] + ";" #country
+    out += fields[16] + ";" #cust1
+    out += fields[17] + ";" #cust2
+    out += fields[18] + ";" #cust3
+    out += fields[19] + ";" #cust4
+    out += fields[20] #note
+    out += "\n"
+    outf.write(out)
+
+inf.close()
+outf.close()

@@ -1,8 +1,32 @@
-import gsnext, scipy, scipy.gplt, pylab, pyx
+import gsnext, scipy, scipy.gplt, pylab, pyx, pickle
 
 ############################
 # Random stuff
 ############################
+
+def can(obj, file, *args, **kw):
+    if type(file) is type('string'): f=open(file,'w')
+    else: f=file
+
+    pickle.dump(obj, f, *args, **kw)    
+
+    if type(file) is type('string'): f.close()
+
+def uncan(file, *args, **kw):
+    # If filename, should this read until all exhausted?
+    if type(file) is type('string'): f=open(file)
+    else: f=file    
+
+    obj = pickle.load(f, *args, **kw)    
+
+    if type(file) is type('string'): f.close()
+
+    return obj
+    
+def meshgrid(x,y):    
+    X=repeat(x[NewAxis,:],len(y))
+    Y=repeat(y[:,NewAxis],len(x),axis=1)
+    return X,Y
 
 def flatten(L):
     if type(L) != type([]): return [L]
@@ -73,13 +97,13 @@ def euler_matrix(phi, the, psi):
 
 def euler_pass(v,  phi,  the,  psi):
     """Passive Euler transform"""
-    m = euler_matrix(phi, the, psi)
-    return (m*v).asarray()[0]
-
+    m=euler_matrix(phi, the, psi)
+    return matrix_multiply(m,v)
+    
 def euler_pass_inv(v,  phi,  the,  psi):
     """Inverse of passive Euler transform"""
     m = scipy.mat(scipy.transpose(euler_matrix(phi, the, psi)))
-    return (m*v).asarray()[0]
+    return matrix_multiply(m,v)
 
 # Goldstein constructs euler x-form as passive 
 # I want it to be active.  Turns out that this means
@@ -87,7 +111,7 @@ def euler_pass_inv(v,  phi,  the,  psi):
 def euler_act(v,  phi,  the,  psi):
     """Active Euler transform"""
     m = scipy.mat(scipy.transpose(euler_matrix(phi, the, psi)))
-    return (m*v).asarray()[0]
+    return matrix_multiply(m,v)
 
 # Goldstein constructs euler x-form as passive 
 # I want it to be active.  Turns out that this means
@@ -96,7 +120,16 @@ def euler_act(v,  phi,  the,  psi):
 def euler_act_inv( v,  phi,  the,  psi):
     """Active Euler transform inverse"""
     m = euler_matrix(phi, the, psi)
-    return (m*v).asarray()[0]
+    return matrix_multiply(m,v)
+
+def matrix_multiply(m, v):    
+    result=scipy.transpose(m*scipy.transpose(v))
+
+    # for one input vector, make output 1d
+    if len(scipy.shape(v)) is 1:
+        return result[:,0]
+
+    return result
 
 def SolveNewton(f, fprime, x0, tol, maxiter = 50):
     """Solve an equation w/ newton's method"""

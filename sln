@@ -1,0 +1,14 @@
+#!/bin/bash
+if [[ $# != 5 ]]; then
+	echo Usage sln remote-host remote-file local-file port
+	exit	
+fi
+
+rhost=$1
+rfile=$2
+lhost=$3
+lfile=$4
+port=$5
+
+ssh -f -R $port:$lhost:$port $rhost watch-file $rfile localhost $port 
+socket -l -f $lfile $lhost $port 

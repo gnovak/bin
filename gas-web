@@ -1,16 +1,22 @@
-#!/usr/bin/perl
+#!/usr/bin/perl 
 
 use Date::Simple;
 use HTML::Template;
-use gas;
+
+$dayofweeks = "Tuesdays";
+$room = "ISB 165";
+$time = "4-5pm";
+
+$separator = "#";
+$infofile = "gas.talks";
 
 chdir "$ENV{'HOME'}/bin";
 
 $templateFile = "gas-web.thtml";
 $outputFile = "gas-web.html";
-$publishcommand = "scp $outputFile publichost:public_html/Gas/index.html";
+#$publishcommand = "scp $outputFile publichost:public_html/Gas/index.html";
 
-@alltalks = Gettalks($gas::infoFile);
+@alltalks = Gettalks($infofile);
 @futuretalks = Futuretalks(@alltalks);
 @pasttalks = Pasttalks(@alltalks);
 
@@ -21,12 +27,10 @@ $template = HTML::Template->new(filename => $templateFile);
 $future = Talklist(@futuretalks);
 $past = Talklist(@pasttalks);
 
-# Add an s to day of week:
-$dayofweeks = $gas::dayofweek."s";
 $template->param(
 		 dayofweek => $dayofweeks,
-		 room => $gas::room,
-		 time => $gas::time,
+		 room => $room,
+		 time => $time,
 		 futuretalks => $future,
 		 pasttalks => $past,
 		 modtime => $modtime,
@@ -41,19 +45,22 @@ close OUTFILE;
 sub Talklist {
     my (@talks) = @_; 
     
-    @groups = ();
+    #@groups = ();
     $talklist = [()];
 
     foreach (@talks) {
-	@talk = split $gas::sep;
-	$date = Date::Simple->new(@talk[0]);
-	$datestring = $date->format("%b %e");
-	$name = @talk[2];
-	$subject = @talk[3];
-
-	push(@{$talklist}, { date => $datestring,
-			     name => $name, 
-			     subject => $subject,
+	@talk = split $separator;
+	$date = $talk[0];
+	$date =~ s/^-//;
+	$prettydate = `date -d $date +"%B %d"`;
+	$room = $talk[1];
+	$time = $talk[2];
+	$speakername = $talk[3];
+	$speakeremail = $talk[4];
+	$talkinfo = $talk[5];
+	push(@{$talklist}, { date => $prettydate,
+			     name => $speakername, 
+			     subject => $talkinfo,
 		     });
     }
     return $talklist;
@@ -73,7 +80,7 @@ sub Pasttalks {
     my (@talks) = @_; 
     $today = Date::Simple->new;
     foreach (@talks) {
-	@talk = split $gas::sep;
+	@talk = split $separator;
 	$date = Date::Simple->new($talk[0]);
 	if ($date < $today) {
 	    push @pasttalks, $_;
@@ -86,7 +93,7 @@ sub Futuretalks {
     my (@talks) = @_; 
     $today = Date::Simple->new;
     foreach (@talks) {
-	@talk = split $gas::sep;
+	@talk = split $separator;
 	$date = Date::Simple->new($talk[0]);
 	if ($date >= $today) {
 	    push @futuretalks, $_;

@@ -1,9 +1,12 @@
 Hello everyone,
 
-<speakername> will give the GAS talk this <dayofweek>, <date>.  <speakername> will be talking about:
+<speakername> will give the GAS talk this <prettydate> in <room> at
+<time>.   <speakername> will be talking about:
+
 <info>
 
-GAS is held in <room> from <time> every <dayofweek>.  You can check out http://www.ucolick.org/~novak/Gas for schedules and additional information.
+You can find schedules and additional information at
+http://www.ucolick.org/~novak/Gas. 
 
 Hope you can make it!
 Greg

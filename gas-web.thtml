@@ -9,7 +9,8 @@ Astronomy Seminar Schedule.">
 <body bgcolor="#FFFFFF">
 <h1>The Graduate Astronomy Seminar Schedule</h1>
 
-<!-- tmpl_var name=dayofweek -->,  <!-- tmpl_var name=room --> from <!-- tmpl_var name=time -->. <br>
+GAS is normally held on <!-- tmpl_var name=dayofweek -->,  in 
+<!--tmpl_var name=room --> from <!-- tmpl_var name=time -->. <br> 
 
 Here are the abstracts from <a href="2003.html">last year</a>, the
 <a href="2002.html">year before</a>, and the <a href="2001.html">year

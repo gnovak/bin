@@ -30,7 +30,7 @@ title	1
  		putlabel 5 $1
 
 startup2
-		dev x11
+#		dev x11
 		macro read mac.sm
 
 gd	1	# read multiple lines columns with names in row 1

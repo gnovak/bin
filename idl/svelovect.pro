@@ -1,4 +1,4 @@
-; $Id: svelovect.pro,v 1.1 2003/01/14 22:40:01 novak Exp $
+; $Id: svelovect.pro,v 1.2 2003/01/15 00:00:37 novak Exp $
 ;
 ; Copyright (c) 1983-1998, Research Systems, Inc.  All rights reserved.
 ;	Unauthorized reproduction prohibited.

@@ -1,0 +1,96 @@
+#!/usr/bin/perl
+
+use Date::Simple;
+use HTML::Template;
+use gas;
+
+chdir "$ENV{'HOME'}/bin";
+
+$templateFile = "gas-web.thtml";
+$outputFile = "gas-web.html";
+$publishcommand = "scp $outputFile publichost:public_html/Gas/index.html";
+
+@alltalks = Gettalks($gas::infoFile);
+@futuretalks = Futuretalks(@alltalks);
+@pasttalks = Pasttalks(@alltalks);
+
+$today = Date::Simple->new;
+$modtime = $today->format("%c");
+
+$template = HTML::Template->new(filename => $templateFile);
+$future = Talklist(@futuretalks);
+$past = Talklist(@pasttalks);
+
+# Add an s to day of week:
+$dayofweeks = $gas::dayofweek."s";
+$template->param(
+		 dayofweek => $dayofweeks,
+		 room => $gas::room,
+		 time => $gas::time,
+		 futuretalks => $future,
+		 pasttalks => $past,
+		 modtime => $modtime,
+		 );
+
+open OUTFILE, "> $outputFile" || die "Can't open $outputfile!\n";
+print OUTFILE $template->output;
+close OUTFILE;
+
+system $publishcommand;
+
+sub Talklist {
+    my (@talks) = @_; 
+    
+    @groups = ();
+    $talklist = [()];
+
+    foreach (@talks) {
+	@talk = split $gas::sep;
+	$date = Date::Simple->new(@talk[0]);
+	$datestring = $date->format("%b %e");
+	$name = @talk[2];
+	$subject = @talk[3];
+
+	push(@{$talklist}, { date => $datestring,
+			     name => $name, 
+			     subject => $subject,
+		     });
+    }
+    return $talklist;
+}
+
+sub Gettalks {
+    my ($fname) = @_;
+    open INF, "< $fname" || die "Can't open $fname!\n";
+    
+    while (<INF>) {
+	push @talks, $_;
+    }
+    return @talks;
+}
+
+sub Pasttalks {
+    my (@talks) = @_; 
+    $today = Date::Simple->new;
+    foreach (@talks) {
+	@talk = split $gas::sep;
+	$date = Date::Simple->new($talk[0]);
+	if ($date < $today) {
+	    push @pasttalks, $_;
+	}
+    }
+    return @pasttalks;
+}
+
+sub Futuretalks {
+    my (@talks) = @_; 
+    $today = Date::Simple->new;
+    foreach (@talks) {
+	@talk = split $gas::sep;
+	$date = Date::Simple->new($talk[0]);
+	if ($date > $today) {
+	    push @futuretalks, $_;
+	}
+    }
+    return @futuretalks;
+}

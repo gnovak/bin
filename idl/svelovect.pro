@@ -1,22 +1,19 @@
-; $Id: svelovect.pro,v 1.2 2003/01/15 00:00:37 novak Exp $
+; $Id: svelovect.pro,v 1.3 2003/06/30 21:03:21 novak Exp $
 ;
-; Copyright (c) 1983-1998, Research Systems, Inc.  All rights reserved.
+; Copyright (c) 1983-2001, Research Systems, Inc.  All rights reserved.
 ;	Unauthorized reproduction prohibited.
 
-PRO SVELOVECT,U,V,X,Y, Missing = Missing, Length = length, Dots = dots,  $
-        Color=color, CLIP=clip, NOCLIP=noclip, _EXTRA = extra
 ;
-;+ 
+;+
 ; NAME:
-;	SVELOVECT
+;	VELOVECT
 ;
 ; PURPOSE:
-;	Produce a two-dimensional velocity field plot. with absolute scaling
-;	This is useful for consistency across plots
+;	Produce a two-dimensional velocity field plot.
 ;
-;	A directed arrow is drawn at each point showing the direction and 
+;	A directed arrow is drawn at each point showing the direction and
 ;	magnitude of the field.
-;               
+;
 ; CATEGORY:
 ;	Plotting, two-dimensional.
 ;
@@ -24,11 +21,11 @@ PRO SVELOVECT,U,V,X,Y, Missing = Missing, Length = length, Dots = dots,  $
 ;	VELOVECT, U, V [, X, Y]
 ;
 ; INPUTS:
-;	U:	The X component of the two-dimensional field.  
+;	U:	The X component of the two-dimensional field.
 ;		U must be a two-dimensional array.
 ;
 ;	V:	The Y component of the two dimensional field.  Y must have
-;		the same dimensions as X.  The vector at point [i,j] has a 
+;		the same dimensions as X.  The vector at point [i,j] has a
 ;		magnitude of:
 ;
 ;			(U[i,j]^2 + V[i,j]^2)^0.5
@@ -38,27 +35,32 @@ PRO SVELOVECT,U,V,X,Y, Missing = Missing, Length = length, Dots = dots,  $
 ;			ATAN2(V[i,j],U[i,j]).
 ;
 ; OPTIONAL INPUT PARAMETERS:
-; 	X:	Optional abcissae values.  X must be a vector with a length 
+; 	X:	Optional abcissae values.  X must be a vector with a length
 ;		equal to the first dimension of U and V.
 ;
 ;	Y:	Optional ordinate values.  Y must be a vector with a length
 ;		equal to the first dimension of U and V.
 ;
 ; KEYWORD INPUT PARAMETERS:
-;      MISSING:	Missing data value.  Vectors with a LENGTH greater
-;		than MISSING are ignored.
+;	COLOR:	The color index used for the plot.
+;
+;	DOTS:	Set this keyword to 1 to place a dot at each missing point.
+;		Set this keyword to 0 or omit it to draw nothing for missing
+;		points.  Has effect only if MISSING is specified.
 ;
 ;	LENGTH:	Length factor.  The default of 1.0 makes the longest (U,V)
 ;		vector the length of a cell.
 ;
-;	DOTS:	Set this keyword to 1 to place a dot at each missing point. 
-;		Set this keyword to 0 or omit it to draw nothing for missing
-;		points.  Has effect only if MISSING is specified.
+;       MISSING: Missing data value.  Vectors with a LENGTH greater
+;		than MISSING are ignored.
 ;
-;	COLOR:	The color index used for the plot.
+;       OVERPLOT: Set this keyword to make VELOVECT "overplot".  That is, the
+;               current graphics screen is not erased, no axes are drawn, and
+;               the previously established scaling remains in effect.
+;
 ;
 ;	Note:   All other keywords are passed directly to the PLOT procedure
-;		and may be used to set option such as TITLE, POSITION, 
+;		and may be used to set option such as TITLE, POSITION,
 ;		NOERASE, etc.
 ; OUTPUTS:
 ;	None.
@@ -75,7 +77,7 @@ PRO SVELOVECT,U,V,X,Y, Missing = Missing, Length = length, Dots = dots,  $
 ;
 ; PROCEDURE:
 ;	Straightforward.  Unrecognized keywords are passed to the PLOT
-;	procedure.  
+;	procedure.
 ;
 ; MODIFICATION HISTORY:
 ;	DMS, RSI, Oct., 1983.
@@ -90,29 +92,20 @@ PRO SVELOVECT,U,V,X,Y, Missing = Missing, Length = length, Dots = dots,  $
 ;	December, 1994, MWR. Added _EXTRA inheritance for PLOTS and OPLOT.
 ;	June, 1995, MWR. Removed _EXTRA inheritance for PLOTS and changed
 ;			 OPLOT to PLOTS.
-;       September, 1996, GGS. Changed denominator of x_step and y_step vars. 
+;       September, 1996, GGS. Changed denominator of x_step and y_step vars.
 ;       February, 1998, DLD.  Add support for CLIP and NO_CLIP keywords.
+;       June, 1998, DLD.  Add support for OVERPLOT keyword.
 ;-
 ;
+PRO SVELOVECT,U,V,X,Y, Missing = Missing, Length = length, Dots = dots,  $
+        Color=color, CLIP=clip, NOCLIP=noclip, OVERPLOT=overplot, _EXTRA=extra
 
-	if      (n_params() lt 2) then begin 
-	print,''
-	print,'USAGE SVELOVECT,U,V,X,Y,Length = length
-	print,'INPUT U - NxM array of x components of velocity field'
-	print,'      V - NxM array of y components of velocity field'
-	print,'      X - N vector of X values'
-	print,'      Y - M vector of Y values'
-	print,'      length - scale factor for entire velocity field
-	print,'      other inputs are as in velovect
-	print,''
-	print,'Plot a velocity field a la velovect, but scaling the entire field by length (instead of the arbitrary scaling imposed by velovect).  This facilitates comparison of different plots.'
-	return
-	endif
+COMPILE_OPT strictarr
 
         on_error,2                      ;Return to caller if an error occurs
         s = size(u)
         t = size(v)
-        if s[0] ne 2 then begin 
+        if s[0] ne 2 then begin
 baduv:   message, 'U and V parameters must be 2D and same size.'
                 endif
         if total(abs(s[0:2]-t[0:2])) ne 0 then goto,baduv
@@ -131,7 +124,7 @@ badxy:                  message, 'X and Y arrays have incorrect size.'
                 ;Subscripts of good elements
         nbad = 0                        ;# of missing points
         if n_elements(missing) gt 0 then begin
-                good = where(mag lt missing) 
+                good = where(mag lt missing)
                 if keyword_set(dots) then bad = where(mag ge missing, nbad)
         endif else begin
                 good = lindgen(n_elements(mag))
@@ -146,7 +139,10 @@ badxy:                  message, 'X and Y arrays have incorrect size.'
 	x_step=(x1-x0)/(s[1]-1.0)   ; Convert to float. Integer math
 	y_step=(y1-y0)/(s[2]-1.0)   ; could result in divide by 0
 
-;	maxmag=max([max(abs(ugood/x_step)),max(abs(vgood/y_step))])
+	; GSN - don't scale to max mag in this plot
+	; maxmag=max([max(abs(ugood/x_step)),max(abs(vgood/y_step))])
+	; sina = length * (ugood/maxmag)
+	; cosa = length * (vgood/maxmag)
 	sina = length * (ugood)
 	cosa = length * (vgood)
 ;
@@ -158,13 +154,27 @@ badxy:                  message, 'X and Y arrays have incorrect size.'
 	x_b1=x1+x_step
 	y_b0=y0-y_step
 	y_b1=y1+y_step
-        if n_elements(position) eq 0 then begin
-          plot,[x_b0,x_b1],[y_b1,y_b0],/nodata,/xst,/yst, $
-            color=color, _EXTRA = extra
-        endif else begin
-          plot,[x_b0,x_b1],[y_b1,y_b0],/nodata,/xst,/yst, $
-            color=color, _EXTRA = extra
-        endelse
+        if (not keyword_set(overplot)) then begin
+          if n_elements(position) eq 0 then begin
+            plot,[x_b0,x_b1],[y_b1,y_b0],/nodata,/xst,/yst, $
+              color=color, _EXTRA = extra
+          endif else begin
+            plot,[x_b0,x_b1],[y_b1,y_b0],/nodata,/xst,/yst, $
+              color=color, _EXTRA = extra
+          endelse
+        endif
+
+	; GSN -- Fix their fucking lame ass goddamned broken fucking 
+	; shitty overplotting routing.  
+        if (keyword_set(overplot)) then begin
+          if n_elements(position) eq 0 then begin
+            plot,[x_b0,x_b1],[y_b1,y_b0],/nodata,/xst,/yst,/noerase, $
+              color=color, _EXTRA = extra
+          endif else begin
+            plot,[x_b0,x_b1],[y_b1,y_b0],/nodata,/xst,/yst,/noerase, $
+              color=color, _EXTRA = extra
+          endelse
+        endif
         if n_elements(clip) eq 0 then $
             clip = [!x.crange[0],!y.crange[0],!x.crange[1],!y.crange[1]]
 ;
@@ -173,24 +183,30 @@ badxy:                  message, 'X and Y arrays have incorrect size.'
         st = r * sin(angle)             ;sin 22.5 degs * length of head
         ct = r * cos(angle)
 ;
-        for i=0,n_elements(good)-1 do begin     ;Each point
+        for i=0L,n_elements(good)-1 do begin     ;Each point
                 x0 = x[good[i] mod s[1]]        ;get coords of start & end
                 dx = sina[i]
                 x1 = x0 + dx
                 y0 = y[good[i] / s[1]]
                 dy = cosa[i]
                 y1 = y0 + dy
-		xd=x_step
-		yd=y_step
+                xd=x_step
+                yd=y_step
                 plots,[x0,x1,x1-(ct*dx/xd-st*dy/yd)*xd, $
-			x1,x1-(ct*dx/xd+st*dy/yd)*xd], $
+                      x1,x1-(ct*dx/xd+st*dy/yd)*xd], $
                       [y0,y1,y1-(ct*dy/yd+st*dx/xd)*yd, $
-			y1,y1-(ct*dy/yd-st*dx/xd)*yd], $
+                      y1,y1-(ct*dy/yd-st*dx/xd)*yd], $
                       color=color,clip=clip,noclip=noclip
-                endfor
+        endfor
         if nbad gt 0 then $             ;Dots for missing?
                 PLOTS, x[bad mod s[1]], y[bad / s[1]], psym=3, color=color, $
                        clip=clip,noclip=noclip
 end
+
+
+
+
+
+
 
 

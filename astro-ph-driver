@@ -1,0 +1,31 @@
+#!/bin/bash
+
+THISDIR=~/bin       # this is the directory containing parser.py.
+
+cd $THISDIR
+
+if [ -e astro-ph.html ]
+then
+  mv -f astro-ph.html astro-ph-old.html
+fi
+
+if [ -z "$1" ]
+then
+  ./astro-ph-parser
+else
+  ./astro-ph-parser "$1"
+fi
+
+if [ -e astro-ph.html ]
+then
+    # save yesterday's summary
+    datename=$(date '+20%y-%m-%d').html
+    scp -i /home/novak/.ssh/cron publichost:public_html/astro-ph/index.html ./astro-ph-yesterday.html
+    scp -i /home/novak/.ssh/cron astro-ph-yesterday.html publichost:public_html/astro-ph/"$datename"
+    # publish to pubilc area    
+    scp -i /home/novak/.ssh/cron astro-ph.html publichost:public_html/astro-ph/index.html
+
+  cd -
+fi
+
+exit 0

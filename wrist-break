@@ -1,0 +1,23 @@
+LOCK=/tmp/wrist-break
+# any arguments => delete lock file
+# do this periodically to avoid having the script stop working.
+if [ "$#" = "1" ]; then
+    rm -f $LOCK
+    exit
+fi
+
+# if file exists, don't do anything
+if [ -e /tmp/wrist-break ] ; then
+    exit
+fi
+
+# if file doesn't exist, create it 
+touch $LOCK
+
+#Now pop a window
+export DISPLAY=:0.0
+zenity --info --text='Wrist Break!' 1> /dev/null 2> /dev/null
+
+# when the user hits ok, delete the file
+rm -f $LOCK
+

@@ -1,0 +1,471 @@
+#!/usr/bin/python
+# taken feb 21 from Mike Kuhlen
+# Anyways, I have attached the python script (parser.py), which scans a
+# local file called 'astro-ph-daily' for an astro-ph mailing entry that
+# matches either today's date (if no arguments are given) or the date
+# specified as a command line argument. In the latter case the argument
+# must have the format "$weekday $month $day", where weekday and month
+# are three letter abbreviations (i.e. Mon, Tue, Wed, etc. and Jan, Feb,
+# Mar, etc.), and day is formatted as %02d.
+
+# An example is: ./parser.py "Mon Feb 07". Note the quotes.
+
+# You also need two files named 'keywords' and 'authors', which, not
+# surprisingly, contain the keywords you want to match in the titles and
+# abstracts, and the last names of the authors, respectively. The output
+# of parser.py is a file named 'index.html'. Oh, you might want to use
+# your own .css file, if you care.
+
+# I set up procmail to filter out astro-ph mails into a special astro-ph
+# mailbox, and then I have a symlink from it to 'astro-ph-daily'. In
+# order to also receive the astro-ph mails in my inbox I use this
+# procmail rule:
+
+# #
+# # astro-ph filter
+# #
+# :0:
+# * ^From:\ .*no\-reply\@arXiv.org
+# * ^Subject:\ astro\-ph\ daily
+# {
+#         :0 c
+#         $DEFAULT
+
+#         :0
+#         astro-ph-daily
+# }
+
+
+# Lastly, I have also included a bash script named 'pdriver', which I
+# run as a cronjob once every day at 10pm. It performs two functions.
+
+# 1) It runs parser.py, producing a file called 'index.html'.
+
+# 2) It cd's into a directory called ~/my_html/astro-ph, which is
+#    visible to the world wide web. Here it first removes the symlink
+#    called index.html, then it moves the 'index.html' file produced by
+#    parser.py to a file called ./yyyy-mm-dd.html, reflecting today's
+#    date, and then it recreates a symlink from yyyy-mm-dd.html to
+#    index.html.
+
+# I fully realize how hokey step 2) is, and there are clearly *much*
+# better ways of doing this, but that was the first thing that I came up
+# with that worked and so I'm sticking with it. The whole point of it is
+# to allow the 'prev' and 'next' links to work.
+
+
+# If you actually use this, you will undoubtedly notice many problems
+# and areas that could be improved. Feel free to modify at will. I ask
+# only that you let me know if you if you improve something.
+
+import sys
+import re
+import time
+import os
+
+class record:
+    Number       = 0
+    Title        = ""
+    Authors      = ""
+    Comments     = ""
+    Size         = ""
+    Abstract     = ""
+    AuthorMatch  = 0
+    NumberOfAuthorMatch  = 0
+    KeywordMatch = 0
+    NumberOfKeywordMatch = 0
+
+def readremaining(f):
+    retstr=""
+    savepos = f.tell()
+    while True:
+        line = f.readline()
+        if line.find("  ") == 0:
+            retstr = retstr + line[1:].rstrip()
+            savepos = f.tell()
+        else:
+            f.seek(savepos,0)
+            break            
+    return retstr
+    
+
+def readabstract(f):
+    savepos = f.tell()
+
+    retstr=""
+    line = f.readline()
+    if line.find("  ") != 0:
+        f.seek(savepos)
+        return retstr
+
+    retstr = line.strip()
+    savepos = f.tell()
+
+    while True:
+        line = f.readline()
+        if line.find("\\") == 0:
+            f.seek(savepos) 
+            break
+        retstr = retstr + ' ' + line.rstrip()
+        savepos = f.tell()
+
+    return retstr
+
+
+
+def cmp_records(r1,r2):
+    total1 = r1.NumberOfAuthorMatch + r1.NumberOfKeywordMatch
+    total2 = r2.NumberOfAuthorMatch + r2.NumberOfKeywordMatch
+
+    if total1<total2: return 1
+    elif total1>total2: return -1
+    else: return 0
+
+
+### set datestring from command line argument or set to today
+datestring = time.strftime("%a %b %d")
+
+if len(sys.argv) > 1:
+    datestring = sys.argv[1]
+
+
+### define lists
+allrecords = []
+authorlist = []
+keywordlist = []
+
+
+
+### parse this astro-ph posting
+##f = open("sample.txt","r")
+f = open("/home/novak/mail/astro-ph-daily","r")
+
+### find astro-ph posting matching today
+
+matchstring = "From no-reply@arXiv.org  "+datestring.replace(" 0","  ")
+print matchstring
+
+found=0
+while True:
+    line = f.readline()
+    if line.find(matchstring) == 0:
+        found=1
+        break
+    if line=="": break
+
+if found == 0:
+    print 'found no astro-ph mailing for today (%s).' % datestring
+    f.close()
+    sys.exit(1)
+
+### convert datestring to desired format
+weekdays = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+months = ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+
+for day in weekdays:
+    r = re.compile(r'%s' % day[:3])
+    datestring = r.sub(day+',',datestring)
+
+for mon in months:
+    r = re.compile(r'%s' % mon[:3])
+    datestring = r.sub(mon,datestring)
+
+toks = datestring.split()
+day = toks[2]
+
+if (day=='1' or day=='21' or day=='31'): suf='st'
+elif day=='2' or day=='22': suf='nd'
+elif day=='3' or day=='23': suf='rd'
+else: suf='th'
+
+datestring = datestring + suf+', ' + time.strftime("%Y")
+
+### skip the email header and initial lines
+count = 0
+while count < 5:
+    line = f.readline()
+    if line.find("--") == 0: count += 1
+
+
+### parse main body
+stop = 0
+while stop == 0:
+
+    r = record()
+    
+    ### parse this submission
+    while True:
+
+        line = f.readline()
+
+        if line == "": break
+        
+        if line.find("Paper:") == 0:
+            pos = line.find("astro-ph/")        
+            r.Number = line[pos+9:].rstrip()
+
+        elif line.find("Date:") == 0:
+            toks = line.split(None)
+            r.Size = toks[len(toks)-1].strip()
+            r.Size = r.Size[1:len(r.Size)-1]
+            
+        elif line.find("Title:") == 0:
+            toks = line.split(None,1)
+            title = toks[1].rstrip()
+            title = str(title) + readremaining(f)
+            r.Title = title
+            
+        elif line.find("Authors:") == 0:
+            toks = line.split(None,1)
+            authors = toks[1].rstrip()
+            authors = authors + readremaining(f)
+            r.Authors = authors
+
+        elif line.find("Comments:") == 0:
+            toks = line.split(None,1)
+            comments = toks[1].rstrip()
+            comments = comments + readremaining(f)
+            r.Comments = comments
+
+        elif line.find("\\") == 0:
+            abstract = readabstract(f)
+            if abstract != "": r.Abstract = abstract
+
+        elif line.find("%-%-") == 0: stop = 1
+        elif line.find("--") == 0: break
+        else: continue
+
+    allrecords.append(r)
+
+f.close()
+
+
+
+
+### print all records to the screen
+## for rec in allrecords:
+##     print "NUMBER   = %s" % rec.Number
+##     print "TITLE    = %s" % rec.Title
+##     print "AUTHORS  = %s" % rec.Authors
+##     print "COMMENTS = %s" % rec.Comments
+##     print "SIZE     = %s" % rec.Size
+##     print "ABSTRACT = %s" % rec.Abstract
+##     print
+
+## sys.exit(0)
+
+
+
+### parse author list
+
+f = open("astro-ph-authors","r")
+
+authors = f.readlines()
+
+for i in xrange(len(authors)):
+    authors[i] = authors[i].strip()
+
+## for auth in authors:
+##    print "AUTHOR = %s" % auth
+
+f.close()
+
+
+### parse keyword list
+
+f = open("astro-ph-keywords","r")
+
+keywords = f.readlines()
+
+for i in xrange(len(keywords)):
+    keywords[i] = keywords[i].strip()
+
+while keywords.count("")>0:
+    keywords.remove("")
+    
+## for keyw in keywords:
+##    print "KEYWORD = %s" % keyw
+
+f.close()
+
+
+
+### scan through all records and mark ones that match either authors
+### or keywords
+
+for rec in allrecords:
+
+    for auth in authors:
+        r = re.compile(r'\b%s\b' % auth,re.IGNORECASE)
+
+        matches = r.findall(rec.Authors)
+
+        if len(matches) > 0: rec.AuthorMatch += 1
+
+        start = 0
+        for matc in matches:
+            rec.NumberOfAuthorMatch += 1
+
+            m = r.search(rec.Authors,start)
+            replace = '<span class="authormatch">' + matc + "</span>"
+            new = r.sub(replace,rec.Authors[m.start():],1)
+            rec.Authors = rec.Authors[:m.start()] + new
+            start = m.start() + len(replace)
+
+    for keyw in keywords:
+        r = re.compile(r'\w*%s\w*' % keyw,re.IGNORECASE)
+
+        matches = r.findall(rec.Title+' '+rec.Abstract)
+
+        if len(matches) > 0: rec.KeywordMatch += 1
+
+        start = 0
+        for matc in matches:
+            m = r.search(rec.Title,start)
+            if m:
+                rec.NumberOfKeywordMatch += 1
+                replace = '<span class="keywordmatch">' + matc + "</span>"
+                new = r.sub(replace,rec.Title[m.start():],1)
+                rec.Title = rec.Title[:m.start()] + new
+                start = m.start() + len(replace)
+
+        start = 0
+        for matc in matches:
+            m = r.search(rec.Abstract,start)
+            if m:
+                rec.NumberOfKeywordMatch += 1
+                replace = '<span class="keywordmatch">' + matc + "</span>"
+                new = r.sub(replace,rec.Abstract[m.start():],1)
+                rec.Abstract = rec.Abstract[:m.start()] + new
+                start = m.start() + len(replace)
+
+
+
+### sort allrecords by (NumberOfAuthorsMatch + NumberOfKeywordMatch)
+allrecords.sort(cmp_records)
+
+
+### print only records that have AuthorMatch+KeywordMatch > 0
+##for rec in allrecords:
+##    if (rec.AuthorMatch+rec.KeywordMatch) > 0:
+##        print "AUTHORMATCH  = %d   NUMBEROFAUTHORMATCH  = %d" % (rec.AuthorMatch,rec.NumberOfAuthorMatch)
+##        print "KEYWORDMATCH = %d   NUMBEROFKEYWORDMATCH = %d" % (rec.KeywordMatch,rec.NumberOfKeywordMatch)
+##        print "NUMBER   = %s" % rec.Number
+##        print "TITLE    = %s" % rec.Title
+##        print "AUTHORS  = %s" % rec.Authors
+##        print "COMMENTS = %s" % rec.Comments
+##        print "SIZE     = %s" % rec.Size
+##        print "ABSTRACT = %s" % rec.Abstract
+##        print ""
+##sys.exit(0)
+
+
+### determine total number of author and keyword matches
+
+total_author_match = 0
+total_keyword_match = 0
+
+for rec in allrecords:
+    if rec.AuthorMatch > 0: total_author_match += 1
+    if rec.KeywordMatch > 0: total_keyword_match += 1
+
+
+### create html file
+
+f = open("astro-ph.html","w")
+
+f.write('<html>\n\n')
+f.write('<head>\n')
+f.write('  <title>astro-ph summary</title>\n')
+f.write('  <link type="text/css" rel="stylesheet" href="http://www.ucolick.org/~mqk/styles/mqk_style.css">\n')
+f.write('  <link type="text/css" rel="stylesheet" href="http://www.ucolick.org/~mqk/styles/astro-ph.css">\n\n')
+f.write('  <script language="javascript" src="http://www.ucolick.org/~mqk/javascript/switch_content.js"></script>\n')
+f.write('</head>\n\n')
+f.write('<body>\n\n')
+f.write('<h1> astro-ph summary &nbsp; &nbsp; &nbsp; <font size="4">')
+#f.write(time.strftime("%A, %B %dth, %Y"))
+f.write(datestring)
+f.write('</font> </h1>\n\n')
+
+
+### calculate filename for previuos and next page (these files won't
+### necessarily exist...)
+toks = datestring.split()
+dstring = toks[1] + " " + (toks[2])[:2] + " " + toks[3]
+timetupel = time.strptime(dstring,"%B %d %Y")
+thistime = time.mktime(timetupel)
+
+numdays=1
+if toks[0] == "Sunday,":
+    numdays=3
+prevtime = thistime - numdays*24*3600
+prevtimetupel = time.localtime(prevtime)
+prevdate = time.strftime("%Y-%m-%d",prevtimetupel)
+
+print prevdate
+
+numdays=1
+if toks[0] == "Thursday,":
+    numdays=3
+nexttime = thistime + numdays*24*3600
+nexttimetupel = time.localtime(nexttime)
+nextdate = time.strftime("%Y-%m-%d",nexttimetupel)
+
+
+f.write('<div class="prevlink"><a href="http://www.ucolick.org/~novak/astro-ph/%s.html">prev</a></div>\n' % prevdate)
+f.write('<div class="todaylink"><a href="http://www.ucolick.org/~novak/astro-ph/index.html">today</a></div>\n\n')
+f.write('<div class="nextlink"><a href="http://www.ucolick.org/~novak/astro-ph/%s.html">next</a></div>\n\n' % nextdate)
+
+
+f.write('<h2> Authors: ')
+f.write(', '.join(authors))
+f.write(' &nbsp;&nbsp;&nbsp (%d articles match)</h2>\n' % total_author_match)
+f.write('<h2> Keywords: ')
+f.write(', '.join(keywords))
+f.write(' &nbsp;&nbsp;&nbsp (%d articles match)</h2>\n\n' % total_keyword_match)
+f.write('<hr>\n\n')
+
+
+
+
+if (total_author_match+total_keyword_match) == 0:
+    f.write('No astro-ph submissions match any of these authors or keywords!\n')
+
+
+for rec in allrecords:
+    if (rec.AuthorMatch+rec.KeywordMatch) > 0:
+        f.write('<div class="counter">A:%d (%d) &nbsp; K:%d (%d) </div>\n' % (rec.AuthorMatch,rec.NumberOfAuthorMatch,rec.KeywordMatch,rec.NumberOfKeywordMatch))
+        f.write('<table>\n')
+        f.write('<tr>\n')
+        f.write('  <td>Number:</td>\n')
+        f.write('  <td>%s</td>\n' % rec.Number)
+        f.write('</tr><tr>\n')
+        f.write('  <td>Title:</td>\n')
+        f.write('  <td><h4>%s</h4></td>\n' % rec.Title)
+        f.write('</tr><tr>\n')
+        f.write('  <td>Authors:</td>\n')
+        f.write('  <td>%s</td>\n' % rec.Authors)
+        f.write('</tr><tr>\n')
+        f.write('  <td>Comments:</td>\n')
+        f.write('  <td>%s</td>\n' % rec.Comments)
+        f.write('</tr><tr>\n')
+        f.write('  <td>Size:</td>\n')
+        f.write('  <td>%s</td>\n' % rec.Size)
+        f.write('</tr><tr>\n')
+        f.write('  <td>Full Text:</td>\n')
+        f.write('  <td><a href="http://lanl.arxiv.org/ps/astro-ph/%s">PostScript</a>,&nbsp;&nbsp;<a href="http://lanl.arxiv.org/pdf/astro-ph/%s">PDF</a></td>\n' % (rec.Number,rec.Number))
+        f.write('</tr>\n')
+        f.write('</table>\n')
+
+        id = "id%d" % allrecords.index(rec)
+    
+        f.write('<h3 onClick="expandcontent(\'%s\')" style="cursor:hand; cursor:pointer" id="%s-1">Show Abstract</h3>\n' % (id,id))
+        f.write('<div id="%s" class="switchcontent">\n' % id)
+        f.write('%s\n' % rec.Abstract)
+        f.write('</div>\n\n')
+        f.write('<hr>\n\n')
+        
+f.write('</body>\n')
+f.write('</html>\n')
+
+f.close()

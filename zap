@@ -10,7 +10,8 @@ while (<FILE>) {
 	    $pid =~ s/[A-z?].*//g;
 	    chomp $pid;
 	    print "Killing $pid from $line";
-	    system "kill $pid\n";
+	    print "kill $pid\n";
+#	    system "kill $pid\n";
 	}
     }
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -i.orig
+#!/usr/bin/env perl -w -i.orig
 
 $from = shift;
 $to = shift;

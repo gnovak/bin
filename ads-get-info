@@ -1,4 +1,4 @@
-#!/u/novak/bin/local/bin/perl
+#!/usr/bin/env perl -w
 use HTTP::Request;
 use LWP;
 use Astro::ADS::Query;

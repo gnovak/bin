@@ -1,4 +1,4 @@
-#!/u/novak/bin/local/bin/perl -w
+#!/usr/bin/env perl -w
 
 use HTTP::Request;
 use LWP;

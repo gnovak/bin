@@ -1,5 +1,5 @@
 mr
-		macro read "/u/novak/bin/sm/default"
+		macro read "$!HOME/bin/sm/default"
 		macro read mac.sm
 
 logasymerr 4

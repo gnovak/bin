@@ -23,7 +23,7 @@ $remsubjects[3]="Your GAS in two weeks";
 $annsubjects[0]="GAS this $gas::dayofweek";
 $annsubjects[1]="GAS starting now!";
 
-$grademail="grads\@ucolick.org allgood\@physics.ucsc.edu tcox\@physics.ucsc.edu";
+$grademail="grads\@ucolick.org allgood\@physics.ucsc.edu";
 #$grademail = "novak\@dionysus.ucolick.org";
 $myemail = "novak\@ucolick.org";
 

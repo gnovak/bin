@@ -1,0 +1,20 @@
+#!/usr/bin/perl
+#
+# pine2mutt-0.2: convert pine's addressbook to mutt's aliases format
+#
+# Michael Velten <michael@michnet.de>
+
+die "Usage: $0 pinefile muttfile\n" if (($P,$M) = @ARGV) != 2;
+open(P) || die "$P: $!";
+open(M, ">$M") || die "$M: $!";
+($_ = join "\0", <P>) =~ s/\n\0\s([\s:])\s/$1eq':'&&' '/ge;
+for (split "\0") {
+    next if m|^#DELETED-\d{2}/\d{2}/\d{2}#|;
+    s/^([^\t]*)\t([^\t]*)\t\(?(.*?)\)?(?:\t[^\t]*\t(.*))?$/
+      "alias $1 ".($2&&"\($2\) ").$3.($4&&" # $4")/e;
+    print M;
+}
+close(M);
+close(P);
+
+

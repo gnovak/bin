@@ -1599,7 +1599,7 @@ dmatrix_interp(double **mat, double *rval, double *cval,
 
   tr = (xr-rval[ir])/(rval[ir+1]-rval[ir]);
   tc = (xc-cval[ic])/(cval[ic+1]-cval[ic]);
-  
+
   result = 
     (1-tr)*(1-tc)*mat[ir  ][ic  ] +
        tr *(1-tc)*mat[ir+1][ic  ] +

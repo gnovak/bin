@@ -1,0 +1,11 @@
+#!/usr/bin/perl
+
+while (<>) {
+    # line refers to a person, not a list
+    if (/(.*)/) {
+	if (/alias ([A-z.]+).*\(.*\) ([A-z]+@[A-z.]+)/) {
+#	if (/alias ([A-z]+) \(.*\) ([A-z]+@[A-z.]+)/) {
+	    print "save-hook ^$2\$ +$1\n"
+	}
+    }
+}

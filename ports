@@ -1,5 +1,31 @@
 #!/usr/bin/python
-# output
+#
+# For version 0.11:
+# 1) What to do when you run a command twice?
+#    Kill processes?  Just tell you?
+#
+# For version 0.2:
+# 1) Dependencies instead of priorities?
+# 2) Handling sln:
+#   a) arguments for commands?
+#   b) more than one of each command type?
+#   c) Killing remote programs? (ie, the remote watch-file)
+#
+# Looking like this is a little mini proc filesystem with remote processes...
+# Maybe I should just get more proficient with ps and kill...
+#
+# Thinking a bit more: remote killing is out b/c I have no reliable
+# way to get the PIDs I'll just have to do that manually: Maybe make
+# watch-file look for errors when writing to the socket + exit when
+# there is one
+#
+# Start/Kill w/ regexps or globbing.
+# 
+# Could start procs w/ extended naems: ie, sln-gsn.eps or something.
+# Could have second file which reads /tmp/ports + hacks it up in order
+# to keep this simple.
+#
+# To make this work: Need kill w/ regexp, second one to start.
 
 import getopt,sys,os,pickle,time
 
@@ -17,7 +43,7 @@ def todays_date(): return snarf('date +%y-%m-%d')
 
 def socket_command():
     """Return command to do my socket-listening mail forwarding thing"""
-    str = 'cd ~/.html; socket -l -f %s-percentd.html %s 2025' % \
+    str = 'socket -l -d ~/.html -f %s-percentd.html %s 2025' % \
           (todays_date(), ip_address())
     return str.replace("percentd", "%d")
 
@@ -37,7 +63,8 @@ pids = {}
 # 'sleep_before': (int) seconds to sleep _before_ running this task
 #                 (to allow some earlier thing to finish).
 # 'sleep_after': (int) seconds to sleep _after_ running this task before
-#                running any other tasks (because those tasks depend on this one).
+#                running any other tasks (because those tasks depend
+#                on this one).
 
 def cmd(command,priority=0,sleep_after=0, sleep_before=0):
     """Produce "Command info dictionary" with some defaults"""
@@ -58,7 +85,8 @@ commands = dict(
 
     # Aliases   
     dionysus=['dionysusssh', 'dionysusweb', 'dionysusmail','dionysussock'],
-    home=['dionysus', 'sunhost', 'linuxhost', 'twopiter', 'upsand'],    
+    home=['dionysus'],
+#    home=['dionysus', 'sunhost', 'linuxhost', 'twopiter', 'upsand'],    
     work=['twopiter','upsand']
     )
 
@@ -66,6 +94,7 @@ commands['all'] = commands.keys()
 ##################################################
 
 def prioritize(name1, name2):
+    """Sort named commands by priority"""
     if commands[name1]['priority'] == commands[name2]['priority']:
         return 0
     if commands[name1]['priority'] < commands[name2]['priority']:
@@ -74,6 +103,7 @@ def prioritize(name1, name2):
         return 1
 
 def unprioritize(name1, name2):
+    """Sort named commands by reverse priority"""
     if commands[name1]['priority'] == commands[name2]['priority']:
         return 0
     if commands[name1]['priority'] < commands[name2]['priority']:
@@ -107,6 +137,8 @@ def expand_aliases(names):
     return uniqueify(filter(is_not_alias, names))
     
 def uniqueify(names):
+    """Given a list, return a new list with duplicate entries
+    removed (order is not preserved)!"""
     if len(names) == 0: return []
 
     names = list(names)    # work on a copy
@@ -117,6 +149,7 @@ def uniqueify(names):
     return result
 
 def run_processes(names):
+    """Run the commands associated with a list of names"""
     global pids
     # if no args, list availalbe processes
     if len(names) == 0:
@@ -137,9 +170,11 @@ def run_processes(names):
             time.sleep(commands[name]['sleep_after'])
                 
 def kill_processes(names):
+    """Kill the processes associated with a list of names"""
     # if no args, list availalbe processes
     if len(names):
-        list(names).sort(unprioritize) # sort a copy
+        names = list(names)
+        names.sort(unprioritize) # sort a copy
         for name in names:            
             if pids.has_key(name):
                 print "Killing %s, pid %d" % (name, pids[name])
@@ -152,6 +187,10 @@ def kill_processes(names):
         print pids
 
 def can(obj, file, *args, **kw):
+    """Store an object in a file.  This is a slightly more compact
+    form of the build-in 'pickle.'  It allows you to just give a
+    filename and let this function open and close the file"""
+
     if type(file) is type('string'): f=open(file,'w')
     else: f=file
 
@@ -160,6 +199,9 @@ def can(obj, file, *args, **kw):
     if type(file) is type('string'): f.close()
 
 def uncan(file, *args, **kw):
+    """Read an object from a file.  This is a slightly more compact
+    form of the build-in 'pickle.'  It allows you to just give a
+    filename and let this function open and close the file"""
     # If filename, should this read until all exhausted?
     if type(file) is type('string'): f=open(file)
     else: f=file    
@@ -171,15 +213,16 @@ def uncan(file, *args, **kw):
     return obj
 
 def usage():
-    print "Usage: ports [-k] [-h] [-v] [-q] [-u] [names]"
+    print "Usage: ports [-k] [-h] [-v] [names]"
     print "       -h display this message"
     print "       -v display version"
-    print "       -k to kill processes, no -k runs them"
-    print "       -t test mode"
+    print "       -k to kill processes"
+    print "       no swithces => run processes."
     print "       run 'ports' to see a list of possibilities"
     print "       run 'ports -k' to see a list of running processes"    
 
 def main():
+    """Where the action is"""
     global pids
 
     try: opts, args = getopt.getopt(sys.argv[1:],"hktv")
@@ -189,13 +232,11 @@ def main():
         
     # Figure out what to do
     run_flag = True
-    test_flag = False
     
     for o,a in opts:
         if o == '-k': run_flag = False
-        if o == '-t': test_flag = True
         if o == '-v':
-            print "Ports version %d" % VERSION
+            print "Ports version ", VERSION
             sys.exit(0)
         if o == '-h':
             usage()
@@ -203,21 +244,15 @@ def main():
 
     # Try to load running pid table.
     # If none, create an empty one
-    try: pids = uncan('/tmp/gsn')
+    try: pids = uncan('/tmp/ports-pids')
     except IOError: pids = {}
 
     names = expand_aliases(args)
     
-    if test_flag:
-        names.sort(prioritize)
-        print "Running ", pids        
-        print "To run ", names
-        sys.exit(0)
-
     if run_flag: run_processes(names)
     else: kill_processes(names)
 
     # write pid table
-    can(pids, '/tmp/gsn')
+    can(pids, '/tmp/ports-pids')
 
 main()

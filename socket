@@ -4,8 +4,26 @@
 
 import getopt,sys,socket,tempfile,os
 
+def usage():
+    print """
+Read or write things from sockets.
+
+Usage: socket [-hl] [-d <directory>]
+              [-e <command> [-L] | -p <command> | -f <file> ]
+              host port
+     -h : help
+     -l : listen (default: print to stdout)
+     -e : execute <command> on data
+     -L : Leave files after <command> finishes
+     -p : pipe data to <command>
+     -d : use directory <dir>
+     -f : write data to <file>
+        : to get sequential files, include a %d
+        : otherwise, files will be overwritten
+"""
+
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "hlLe:p:f:")
+    opts, args = getopt.getopt(sys.argv[1:], "hlLe:p:f:d:")
 except getopt.GetoptError:
     # print help information and exit:
     usage()
@@ -28,6 +46,8 @@ for o, a in opts:
     if o == "-h":
         usage()
         sys.exit()
+    if o == "-d":
+        os.chdir(a)
     if o == "-L":
         LeaveFiles=True
     if o == "-e":
@@ -45,21 +65,6 @@ for o, a in opts:
 if (execute and pipe) or (execute and file) or (pipe and file):
     usage()
     sys.exit()
-
-def usage():
-    print """
-Read or write things from sockets.
-
-Usage: socket [-h -l [-e <command> [-L] | -p <command> | -f <file> ] host port
-     -h : help
-     -l : listen (default: print to stdout)
-     -e : execute <command> on data
-     -L : Leave files after <command> finishes
-     -p : pipe data to <command>
-     -f : write data to <file>
-        : to get sequential files, include a %d
-        : otherwise, files will be overwritten
-"""
 
 # finally, grab the port number
 host = args[0]

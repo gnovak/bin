@@ -1,3 +1,60 @@
+ibox 2
+		# xaxis yaxis, index values assumed to
+		# be in i$1, i$2
+ 		define oldfx1 local define oldfx1 $fx1
+		define oldfx2 local define oldfx2 $fx2
+		define oldfy1 local define oldfy1 $fy1
+		define oldfy2 local define oldfy2 $fy2
+		define newx1 local
+		define newx2 local
+		define newy1 local
+		define newy2 local
+ 		define vxmin  local 
+		define vymin  local 
+		define ixmin  local 
+		define iymin  local 
+ 		vecminmax $1 vxmin vxmax
+		vecminmax $2 vymin vymax
+		vecminmax i$1 ixmin ixmax
+		vecminmax i$2 iymin iymax
+		define newx1 $($fx1*($vxmax-$vxmin)/$ixmax + $vxmin)
+		define newx2 $($fx2*($vxmax-$vxmin)/$ixmax + $vxmin)
+		define newy1 $($fy1*($vymax-$vymin)/$iymax + $vymin)
+		define newy2 $($fy2*($vymax-$vymin)/$iymax + $vymin)
+		limits $newx1 $newx2 $newy1 $newy2
+  		box
+		limits $oldfx1 $oldfx2 $oldfy1 $oldfy2
+		 		
+mat 8
+		# xmin xmax nx ymin ymax ny xv yv
+		define _xmin local define _xmin $1
+		define _xmax local define _xmax $2
+		define _nx local   define _nx $3
+		define _ymin local define _ymin $4
+		define _ymax local define _ymax $5
+		define _ny  local  define _ny $6
+		define _dx local   define _dx $(($_xmax-$_xmin)/($_nx-1))
+		define _dy local   define _dy $(($_ymax-$_ymin)/($_ny-1))
+		set _xv local   set dimen(_xv) = $($_nx*$_ny)
+		set _yv local   set dimen(_yv) = $($_nx*$_ny)
+		set _ivx local  set dimen(_ivx) = $($_nx*$_ny)
+		set _ivy local  set dimen(_ivy) = $($_nx*$_ny)
+		set _yidx local set _yidx = 0,$_ny-1		
+		set _yaxis local set _yaxis = $_ymin,$_ymax,$_dy
+  		do _ix=0,$_nx-1 {
+		   set _ivx[_yidx+$_ix*$_ny] = $_ix
+		   set _ivy[_yidx+$_ix*$_ny] = _yidx
+		   set _xv[_yidx+$_ix*$_ny] = $_xmin + $_ix*$_dx
+		   set _yv[_yidx+$_ix*$_ny] = _yaxis
+ 		}
+		set i$7 = _ivx
+		set i$8 = _ivy
+		set $7 = _xv
+		set $8 = _yv
+
+epsf 1
+		dev postfile $1
+
 interp 3 
 		# interpolate $2 as a function of $1 at point $3
 		# interp x y 3.3 finds the y value that corresponds to
@@ -30,7 +87,7 @@ title	1
  		putlabel 5 $1
 
 startup2
-#		dev x11
+		#dev x11
 		macro read mac.sm
 
 gd	1	# read multiple lines columns with names in row 1
@@ -201,7 +258,6 @@ labels	3	# maxerr v
 		#define ycoord local
 		define num 0
 		foreach text $1 {
-#		   set ycoord = $3-1500*$num
 		   set ycoord = $3-1500*$num
 		   relocate ($2 $(ycoord))
 		   label \line $num 2000 $text

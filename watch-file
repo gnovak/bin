@@ -1,0 +1,18 @@
+#!/usr/bin/python
+
+import time, os.path
+interval=1
+file=sys.argv[1]
+host=sys.argv[2]
+port=int(sys.argv[3])
+
+old_mtime = os.path.getmtime(file)
+
+while True:
+    new_mtime = os.path.getmtime(file)
+    if new_mtime != old_mtime:
+        os.system("socket %s %d < %s" % (host, port, file))
+        old_mtime=new_mtime
+        print "Sending file!"
+    print "Checking file..."
+    time.sleep(interval)

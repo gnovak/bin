@@ -16,6 +16,7 @@ listen=False
 execute=False
 pipe=False
 file=False
+overwriting_file=False
 LeaveFiles=False
 command=""
 
@@ -35,8 +36,9 @@ for o, a in opts:
         pipe = True
     if o == "-f":
         command = a
-        file = True
-
+        if command.find("%d") > 0: file = True
+        else: overwriting_file=True
+        
 # a little error checking
 if (execute and pipe) or (execute and file) or (pipe and file):
     usage()
@@ -53,6 +55,8 @@ Usage: socket [-h -l [-e <command> [-L] | -p <command> | -f <file> ] host port
      -L : Leave files after <command> finishes
      -p : pipe data to <command>
      -f : write data to <file>
+        : to get sequential files, include a %d
+        : otherwise, files will be overwritten
 """
 
 # finally, grab the port number
@@ -77,6 +81,8 @@ if listen:
             f=os.popen(command, 'w')
         elif file:
             f=open(command % filenum, 'w')
+        elif overwriting_file:
+            f=open(command, 'w')
         else:
             f = sys.stdout
 
@@ -89,7 +95,7 @@ if listen:
 
         # cleanup
         filenum += 1
-        if execute or pipe or file:
+        if execute or pipe or file or overwriting_file:
             f.close()
             
         if execute:

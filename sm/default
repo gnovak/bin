@@ -90,20 +90,38 @@ startup2
 		#dev x11
 		macro read mac.sm
 
-gd	1	# read multiple lines columns with names in row 1
-		data $1
-		READ ROW names 1.s
-		DEFINE rc <$(names[(0)]) 1>
-		DO i=2,DIMEN(names) {
-		   DEFINE rc <$rc $(names[($i - 1)]) $i>
-		}
-		LINES 2 0
-		READ < $rc > 
+	#gd	1	# read multiple lines columns with names in row 1
+	#	data $1
+	#	READ ROW names 1.s
+	#	DEFINE rc <$(names[(0)]) 1>
+	#	DO i=2,DIMEN(names) {
+	#	   DEFINE rc <$rc $(names[($i - 1)]) $i>
+	#	}
+	#	LINES 2 0
+	#	READ < $rc > 
 
 getrows	1	# read multiple lines columns with names in row 1
 		data $1
 		READ ROW names 1.s
 		set $0=names
+
+gd 1
+		data $1
+		READ ROW names 1.s
+		set names = names
+		DEFINE rc " "
+		DO i=1,DIMEN(names) {
+		  define _type " " 
+		  set ind = index(names[$i-1], '.')
+		  if (ind != -1) {
+		    define _type $(substr(names[$i-1], ind, 0))
+		    set names[$i-1] = '$(substr(names[$i-1], 0, ind))'
+	  	  }
+		  DEFINE rc <$rc $(names[($i - 1)]) $i""$_type>
+		}
+		LINES 2 0
+		READ < $rc > 
+
 
 era	0	
 		# I want era *to* appear in the history list, dammit. 
@@ -200,6 +218,12 @@ vpls	2
 		box
 		poi (LG($1)) $2
 		ticksize 0 0 0 0
+
+labelpoints 3
+		do i=1,DIMEN($1)-1 {
+		  relocate $($1[$i]) $($2[$i])
+		  label $($3[$i])
+		}
 
 vpll	2	
 		# view $2 vs. $1, setting limits and drawing a box,

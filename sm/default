@@ -3,22 +3,11 @@ mr
 		macro read mac.sm
 
 logasymerr 4
-#		logasymerr x y ylow yup
+ 		# logasymerr x y ylow yup
 		set _errlow = $2-$3
  		set _errhigh = $4-$2
 		errorbar $1 $2 _errhigh 2
  		errorbar $1 $2 _errlow 4
-
-oldlookupsome 4
-		# new, gvec dict, dictvals
-#		set dimen($0) = dimen($1)		
-		set dimen(_gvec) = dimen($4)
-		do _i=0,dimen($1)-1 {   
-		   if ($2[$_i] != 0) {
-		      set _gvec = ($3 == $1[$_i] ? 1 : 0)
-		      set $0[$_i] = sum(_gvec*$4)	
-		   }
-		}
 
 lookup 3
  		# veckeys dictkeys dictvals
@@ -41,10 +30,7 @@ replace 4
 replacesome 5
  		# veckeys vecvals vecchange dictkeys dictvals
 		# The following means a value is not in the dictionary
- 		# Vector _tmp has no elements
-		# Vectors (scalar) and _tmp have different sizes at "\n" in macro replacesome
-		# set _vecvals [ 1 ] = _tmp \n
- 
+ 		# Vector _tmp has no elements 
 		set _veckeys = $1
 		set _vecvals = $2
 		set _vecchange = $3
@@ -60,6 +46,20 @@ replacesome 5
 		   }                          
 		}                    
 		set $2 = _vecvals
+
+prune 3
+		# vals keys keepkeys
+		set _vals = $1
+		set _name = $2
+		set _gname = $3
+		set dimen(_gvec) = dimen(_name)
+		# zero out gvec
+		set _gvec = 0*_gvec
+		do _i=0,dimen(_gname)-1 {
+		   set _theone = (_name==_gname[$_i] ? 1 : 0)
+		   set _gvec = _gvec + _theone
+		}
+		set $0 = _vals if (_gvec)
 		
 lookup	3	
 		# new, dict, dictvals
@@ -132,6 +132,8 @@ mat	8
 
 epsf	1	
 		dev postfile $1
+		#define fn "/u/novak/Laptop/Out/$1"
+		#dev postfile $fn
 
 interp	3	
 		# interpolate $2 as a function of $1 at point $3
@@ -161,7 +163,7 @@ interps	3
 		
 title	1	
 		relocate ( $(($gx2+$gx1)/2) $gy2 )
-		echo $(($gx2+$gx1)/2) $($gy2 - ($gy2-$gy1)/100)
+		#echo $(($gx2+$gx1)/2) $($gy2 - ($gy2-$gy1)/100)
  		putlabel 5 $1
 
 startup2
@@ -365,6 +367,17 @@ labels	3	# maxerr v
 		   label \line $num 2000 $text
 		   define num ($num+1)
 		}
+		ltype 0
+
+cumul 2
+		# x values, dist
+		define _nx dimen($1)
+		define _ndist dimen($2)
+		set dimen($0) = dimen($1)
+		do _i=0,$_nx-1 {
+		  set $0[$_i] = sum($2 < $1[$_i] ? 1 : 0)/$_ndist
+		}
+		
 
 acon	2	
 		# equivalent to "con" but designed to connect

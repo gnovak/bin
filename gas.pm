@@ -1,7 +1,7 @@
 package gas;
 
 # initialize package globals, first exported ones
-$dayofweek = "Thursday";
+$dayofweek = "Wednesday";
 $room = "ISB 356";
 $time = "12-1pm";
 $sep = "#";

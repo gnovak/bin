@@ -88,7 +88,7 @@ sub Futuretalks {
     foreach (@talks) {
 	@talk = split $gas::sep;
 	$date = Date::Simple->new($talk[0]);
-	if ($date > $today) {
+	if ($date >= $today) {
 	    push @futuretalks, $_;
 	}
     }

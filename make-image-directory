@@ -1,0 +1,18 @@
+#!/usr/bin/python
+import os,re
+
+f = os.popen('find . -name \*.jpg')
+
+def canonize(fn):
+    return re.sub('[0-9]','',fn)
+
+keys = []
+files = []
+
+for file in iter(f):
+    file = file[:-1]
+    key = canonize(file)
+    if not key in keys:
+	keys.append(key)
+	print file
+

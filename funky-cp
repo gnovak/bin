@@ -1,0 +1,6 @@
+#!/usr/bin/python
+# Put destination at the beginning of cp command, for use with xargs
+import sys,os
+
+cmd = reduce(lambda x,y:x+' '+y, ['cp'] + sys.argv[2:] + [sys.argv[1]])
+os.system(cmd)

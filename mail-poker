@@ -1,0 +1,8 @@
+ADDRS="jmel@ucolick.org npk@astro.ucsc.edu alexm@ucolick.org anne@ucolick.org david@ucolick.org lisewhitfield@yahoo.com ammons@astro.ucsc.edu ser@astro.ucsc.edu strader@astro.ucsc.edu yasmin@cruzio.com patrik@ucolick.org jharker@ucolick.org portia.halbert@gmail.com"
+
+mail $ADDRS -s "Poker Tonight!" <<END
+Poker tonight, 7pm, 256 Dufour St.
+
+Bring your six-shooter.
+Greg
+END

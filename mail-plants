@@ -1,0 +1,3 @@
+mail novak -s 'Water the plants!' <<END
+Water the plants!
+END

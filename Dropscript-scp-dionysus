@@ -1,4 +1,4 @@
 #!/bin/sh
 
-/usr/bin/scp -r -p  "$@" dionysus:~/Inbox
+/usr/bin/scp -r -p  "$@" dionysus:~/Desktop/In
 

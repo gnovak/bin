@@ -1,4 +1,4 @@
-#!/opt/bin/perl -w
+#!/usr/bin/perl -w
 
 print "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML//EN\">\n";
 print "<html><head><title>Greg Novak's Bookmarks</title></head>\n";

@@ -1,32 +1,9 @@
 ;; Version 2:
-;; 1) more generality: function should take strings, return strings
-;; 2) But don't lose efficiency... most (all?) use is on numbers, don't
-;;    want to convert them back and forth to strings consantly
-;;    Could do this by mapping function plus reduction function, w/ defaults.
-;; 3) Unify regexps.
-;; 4) More rational functions: Entities are: 
-;;      data rectangles => data lists
-;;      name regexps => data lists
-;;      results
-;; 5) pre/post functions... more important than I thought.
-;; Notation: result = [(regexp)] [pre] [op] [post] name (...  )
-;; [re-beg-char regexp re-end-char] [name-char] name [pre] [op] [post] 
-;;   [result-beg-char] ... [result-end-char].
-;; AND
-;; regexp name-char [A-z0-9-] or something
-;; [rect-beg-char]name ... [rect-end-char] name or something
-;; "eform char" is customizeable, 
-;; 6) recalc until buffer stops changing?
-;; 7) use buffer local lisp variables for results of computations?
-;; 8) Lispier syntax?
-;; 9) Thin rectangles: #(gsn 1 2 3 gsn#) gives  #gsn + (   6 )
-;;    Or, don't need elaborate open + close for a single line
-;; 10) Can do 9 w/ pre, map, reduce, post functions.
-;;     heirarchy should be: nothing; pre=id map=string-to-number reduce=+ post=number-to-string
-;;                           one -- pre=id map=string-to-number reduce=one post=number-to-string
-;;                           one two -- pre=id           map=one     reduce=two   post=number-to-string
-;;                           one two three -- pre=id  map=one reduce=two post=three
-;;                           one two three four -- pre=one map=two red=three post=four
+;; 1) recalc until buffer stops changing.
+;; 2) use buffer local lisp variables for results of computations?
+;; 3) Figure out how to exclude open/close characters from .* regexp in result field
+;; 4) Clear all results function
+;; 5) Bug when total-d-dec starts with a d..
 
 (require 'gsn)
 
@@ -34,30 +11,29 @@
 (make-variable-buffer-local 'eform-mode)
 (add-to-list 'minor-mode-alist '(eform-mode " EForm"))
 
-(setq *eform-beg* "(")
-(setq *eform-end* ")")
-(setq *eform-tag* "#")
-(setq *eform-error* "#")
-(setq *eform-char* "[A-z0-9+/\*-]")
-(setq *eform-ws* "[ \t]")
-(setq *eform-result-regexp-format* (concat 
-			     "\\(?:" *eform-beg* "\\(.*\\)" *eform-end* "\\)?" *eform-ws* "*"
-			     ; *eform-tag* "\\(" *eform-char* "+\\)" *eform-ws* "*" 
-			     *eform-tag* "\\(%s\\)" *eform-ws* "*"
-			     "\\(" *eform-char* "*\\)" *eform-ws* "*"
-			     "\\(" *eform-char* "*\\)" *eform-ws* "*"
-			     "\\(" *eform-char* "*\\)" *eform-ws* "*"
-			     "\\(" *eform-char* "*\\)" *eform-ws* "*"
-			     *eform-beg* "\\(.*\\)" *eform-end*))
+(setq eform-beg "(")
+(setq eform-end ")")
+(setq eform-tag "#")
+(setq eform-char "[A-z0-9+/\*-]")
+(setq eform-ws "[ \t]")
+(setq eform-result-regexp-format (concat 
+			     "\\(?:" eform-beg "\\(.*\\)" eform-end "\\)?" eform-ws "*"
+			     ; eform-tag "\\(" eform-char "+\\)" eform-ws "*" 
+			     eform-tag "\\(%s\\)" eform-ws "*"
+			     "\\(" eform-char "*\\)" eform-ws "*"
+			     "\\(" eform-char "*\\)" eform-ws "*"
+			     "\\(" eform-char "*\\)" eform-ws "*"
+			     "\\(" eform-char "*\\)" eform-ws "*"
+			     eform-beg "\\(.*\\)" eform-end))
 
 ;; Should the whitespace be allowed?  Causes problems for whitespace splits
-(setq *eform-beg-rectangle-format* (concat *eform-beg* 
-					   *eform-ws* "*"
-					   *eform-tag* "%s"))
+(setq eform-beg-rectangle-format (concat eform-beg 
+					   eform-ws "*"
+					   eform-tag "%s"))
 
-(setq *eform-end-rectangle-format* (concat *eform-tag* "%s" 
-					   *eform-ws* "*"
-					   *eform-end*))
+(setq eform-end-rectangle-format (concat eform-tag "%s" 
+					   eform-ws "*"
+					   eform-end))
 
 (defun split (lst)
   ;; Assumes that list has only one element
@@ -75,7 +51,7 @@
 ;; from number of minutes to hour minute
   (let ((hour (/ total 60))
 	(min (mod total 60)))
-    (format "%d:%2d" hour min)))
+    (format "%d:%02d" hour min)))
 
 (defun eform-mode (&optional arg)
   (interactive "P")
@@ -83,7 +59,7 @@
 	(if (null arg) (not eform-mode)
 	  (> (prefix-numeric-value arg) 0))))
 
-(defun eform-extract-regexp (regexp)
+(defun eform-extract-regexp (&optional regexp)
   (mapcar (lambda (x) (nth 6 x)) (eform-find-all-results regexp)))
 
 (defun eform-extract-rectangle (name)
@@ -93,9 +69,9 @@ returns a list of strings"
   (save-excursion
     (let (start end)
       (goto-char (point-max))
-      (setq start (re-search-backward (format *eform-beg-rectangle-format* name) nil t))
+      (setq start (re-search-backward (format eform-beg-rectangle-format name) nil t))
       (goto-char (point-min))
-      (setq end   (re-search-forward  (format *eform-end-rectangle-format* name) nil t))
+      (setq end   (re-search-forward  (format eform-end-rectangle-format name) nil t))
       (extract-rectangle start end))))
 
 (defun eform-incremental-find-result (&optional name)
@@ -111,9 +87,9 @@ Return list containing:
 7 result start (int)
 8 result end (int)"
   (if (not (re-search-forward 
-	    (format *eform-result-regexp-format*
+	    (format eform-result-regexp-format
 		    (if (not (null name)) name
-		      (concat *eform-char* "+"))) nil t))
+		      (concat eform-char "+"))) nil t))
       ;; if no match, return nil
       nil
     ;; otherwise, do a bunch of shit
@@ -175,7 +151,7 @@ Return list containing:
 	(setq this-result (eform-incremental-find-result name))))
     (reverse results)))
 
-(defun eform-find-all-names ()
+(defun eform-find-all-names (&optional regexp)
   (mapcar (lambda (x) (nth 1 x)) (eform-find-all-results regexp)))
 
 (defun eform-reduce (data pre map op post)
@@ -202,8 +178,13 @@ Return list containing:
 (defun eform-update ()
   "Update all electric forms"
   (interactive)
-  (dolist result (eform-find-all-names)
-	  (message "Doing something")
-	  (eform-update-result result)))
-
+  (message (concat "Found names: "
+		   (reduce 'concat 
+			   (mapcar (lambda (x) (concat x " ")) 
+				(eform-find-all-names)))))
+  (if eform-mode 
+      (dolist (result (eform-find-all-names))
+	(message (concat "Working on " result))
+	(eform-update-result result))))
+  
 (provide 'eform)

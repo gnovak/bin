@@ -35,6 +35,8 @@ while (<>) {
 	    $num++;
 	}
     }
+    system("mpgjoin $prefix-* -o $prefix.mpg");
+    system("rm -f $prefix-*");
     $prefix++;
     print "Ready...\n";
 }

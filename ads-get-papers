@@ -5,7 +5,7 @@ use LWP;
 use Astro::ADS::Query;
 use Astro::ADS::Result::Paper;
 
-@authors = qw(faber);
+@authors = ("White,M");
 
 $ua = LWP::UserAgent->new;
 $ua->cookie_jar({ file => "$ENV{HOME}/.cookies.txt" });

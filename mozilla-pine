@@ -1,0 +1,1 @@
+/opt/bin/mozilla -remote "openURL($1, new-tab)"

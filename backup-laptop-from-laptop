@@ -1,9 +1,11 @@
 #!/bin/bash 
-#OPTS="--bwlimit=1 --archive --delete --compress --verbose --progress --stats"
+RSYNC_RSH="ssh -F /Users/novak/.ssh/config"
+REMOTE_USER="novak"
+#OPTS="--bwlimit=10 --archive --delete --compress --verbose --progress --stats"
 OPTS="--archive --delete --compress --verbose --progress --stats"
 EXCLUDE=/Users/novak/bin/backup-laptop-exclude
-DIRS=/Users/novak/
-DEST=dionysus.ucolick.org:/data/novak/Backup
+DIRS=/Users/
+DEST=$REMOTE_USER@dionysus:/data/novak/Backup
 
 rsync $OPTS --exclude-from=$EXCLUDE $DIRS $DEST
 

@@ -349,7 +349,13 @@ folddeg360 1
 		set $1 = $1 < 360 ? $1 : $1-360
 		set $1 = $1 > 0    ? $1 : $1+360
 
-der	2	
+der	1	
+		set i1=0,dimen($1)-2
+		set i2=1,dimen($1)-1
+		set _tmp = $1[i2]-$1[i1]
+		set $0 = 0 CONCAT _tmp
+
+derold	2	
 		set i1=0,dimen($1)-2
 		set i2=1,dimen($1)-1
 		set $2 = $1[i2]-$1[i1]
@@ -365,7 +371,14 @@ ave	2
 		set tmp = tmp CONCAT 0.5*($1[dimen($1)-2]+$1[dimen($1)-1])
 		set $2 = tmp
 
-derold	2	
+integ 2
+		set i1=0,dimen($1)-2
+		set i2=1,dimen($1)-1
+		set _dx = $1[i2]-$1[i1]
+		set _ay = 0.5*($2[i2]+$2[i1])
+		set $0 = sum(_ay*_dx)
+
+deroldold	2	
 		set dimen($2) = dimen($1)
 		set $2[0]=0
 		DO i=1,DIMEN($1)-1 {

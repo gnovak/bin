@@ -104,4 +104,4 @@ foreach $date (@anndates) {
 }
 
 # finally, delete leftover file
-# system "rm -f /u/novak/mail.record"
+system "rm -f /u/novak/mail.record"

@@ -1,3 +1,3 @@
-socket -l -f `date +%y-%m-%d`-%d.html 192.168.1.7 9009
-#socket -l -f `date +%y-%m-%d`-%d.html 192.168.1.128 9009
+IP=`ip-address`
+socket -l -f `date +%y-%m-%d`-%d.html $IP 9009
 

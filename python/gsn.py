@@ -1,4 +1,4 @@
-import gsnext, scipy, matplotlib.matlab, pyx
+import gsnext, scipy, matplotlib.matlab, pyx, scipy.gplt
 
 ############################
 # Random stuff
@@ -14,6 +14,12 @@ def iterable(obj):
     try: len(obj)
     except: return False
     return True
+
+def rms(y):
+    return sqrt(sum(y**2)/len(y))
+    
+def stddev(y):
+    return rms(y-mean(y))
 
 def permutations(z):
     """Given a list of lists, generate all permutations
@@ -247,7 +253,7 @@ def histo(x, bins=50, weights=None,
         matplotlib.matlab.show()
         return None
     else:
-        gplt.plot(hist,bins,'notitle w impulses')
+        scipy.gplt.plot(hist,bins,'notitle w impulses')
 
 def colorbar(xmin, xmax, 
              palette=pyx.color.palette.ReverseRainbow,

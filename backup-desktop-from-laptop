@@ -1,7 +1,8 @@
 #!/bin/bash 
 OPTS="--archive --delete --delete-excluded --verbose --progress --stats"
 EXCLUDE=/Users/novak/bin/backup-desktop-exclude
-SRC=192.168.1.113:/home/novak/
+#SRC=192.168.1.113:/home/novak/
+SRC=dionysus:/home/novak/
 DEST=/Users/novak/.backup/novak
 
 rsync $OPTS --exclude-from=$EXCLUDE $SRC $DEST

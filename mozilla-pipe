@@ -1,0 +1,24 @@
+#!/usr/bin/perl -s
+use IO::File;
+use POSIX qw(tmpnam);
+
+$name1 = tmpnam();
+$name2 = tmpnam();
+
+open FILE, "> $name1";
+while (<>) {
+    print FILE;
+}
+close FILE;
+
+if ($t) {
+    system("txt2html $name1 > $name2.html");
+}
+else {
+    system("cp $name1 $name2.html");
+}
+
+system("/usr/local/firefox/mozilla-xremote-client \"openurl($name2.html,new-tab)\"");
+
+# END { unlink($name) or die "Couldn't unlink $name : $!" }
+

@@ -1,5 +1,223 @@
-ssh -f -N ssh
-ssh -f -N dionysus-ports
-cd ~/.html
-listen &
+#!/usr/bin/python
+# output
 
+import getopt,sys,os,pickle,time
+
+VERSION = 0.1
+
+def snarf(cmd):
+    """Run a shell gommand and grab the output as a string."""
+    f=os.popen(cmd)
+    result = f.readline()[:-1] # strip final newline
+    f.close()
+    return result
+
+def ip_address(): return snarf('ip-address')
+def todays_date(): return snarf('date +%y-%m-%d')
+
+def socket_command():
+    """Return command to do my socket-listening mail forwarding thing"""
+    str = 'cd ~/.html; socket -l -f %s-percentd.html %s 2025' % \
+          (todays_date(), ip_address())
+    return str.replace("percentd", "%d")
+
+##################################################
+# Info about running processes.  Dictionary where the keys are process
+# names (strings), values are process id's (ints)
+pids = {}
+
+# Commands and priorities for executing them.  Dictionary of where the
+# keys are process names (strings) and the values are dictionaries of
+# command info.
+#
+# Command info dictionaries contain keys:
+# 'command': command line to run the program (string)
+# 'priority': (int) that determines the order in which to run the
+#             tasks.  Lower numbers => run sooner.
+# 'sleep_before': (int) seconds to sleep _before_ running this task
+#                 (to allow some earlier thing to finish).
+# 'sleep_after': (int) seconds to sleep _after_ running this task before
+#                running any other tasks (because those tasks depend on this one).
+
+def cmd(command,priority=0,sleep_after=0, sleep_before=0):
+    """Produce "Command info dictionary" with some defaults"""
+    return dict(command=command, priority=priority,
+                sleep_after=sleep_after, sleep_before=sleep_before)
+    
+commands = dict(
+    dionysusssh =cmd('ssh -n -N -L2022:dionysus:22 ssh'),
+    dionysusweb =cmd('ssh -n -N -L2080:dionysus:80 ssh'),
+    dionysusmail=cmd('ssh -n -N -R2025:%s:2025 dionysus' % ip_address(),
+                     priority=20, sleep_before=5),
+    dionysussock=cmd(socket_command()),
+    desktop=cmd('ssh -n -N -L2022:dionysus.ucolick.org:22 dionysus.ucolick.org'),
+    sunhost     =cmd(command='ssh -n -N -L3022:publichost:22 ssh'),
+    linuxhost   =cmd(command='ssh -n -N -L4022:rumba:22 ssh'),
+    upsand      =cmd(command='ssh -n -N -L5022:upsand:22 andromeda.ucsc.edu'),
+    twopiter    =cmd(command='ssh -n -N -L6022:twopiter:22 andromeda.ucsc.edu'),
+
+    # Aliases   
+    dionysus=['dionysusssh', 'dionysusweb', 'dionysusmail','dionysussock'],
+    home=['dionysus', 'sunhost', 'linuxhost', 'twopiter', 'upsand'],    
+    work=['twopiter','upsand']
+    )
+
+commands['all'] = commands.keys()
+##################################################
+
+def prioritize(name1, name2):
+    if commands[name1]['priority'] == commands[name2]['priority']:
+        return 0
+    if commands[name1]['priority'] < commands[name2]['priority']:
+        return -1
+    if commands[name1]['priority'] > commands[name2]['priority']:
+        return 1
+
+def unprioritize(name1, name2):
+    if commands[name1]['priority'] == commands[name2]['priority']:
+        return 0
+    if commands[name1]['priority'] < commands[name2]['priority']:
+        return 1
+    if commands[name1]['priority'] > commands[name2]['priority']:
+        return -1
+
+def is_not_alias(name):
+    """Return true if name is an alias for other commands rather
+    than a command itself.  Used to filter out the aliases after
+    they've been expaneded."""
+    if type(commands[name]) is type([]):
+        return False
+    return True
+
+def expand_aliases(names):
+    """Expand commands that are really aliases for other commands"""
+    # Check to make sure they're all there.
+    for name in names:
+        if not commands.has_key(name):
+            print "No command for ", name
+            print "Possibilities:"
+            print commands.keys()
+            sys.exit(1)
+            
+    #expand all aliases
+    for name in names:
+        if type(commands[name]) is type([]):
+            names += commands[name]        
+    #Now filter out the (expanded) aliases
+    return uniqueify(filter(is_not_alias, names))
+    
+def uniqueify(names):
+    if len(names) == 0: return []
+
+    names = list(names)    # work on a copy
+    names.sort()
+    result = [names[0]]
+    for name in names:
+        if name != result[-1]: result.append(name)            
+    return result
+
+def run_processes(names):
+    global pids
+    # if no args, list availalbe processes
+    if len(names) == 0:
+        print "Possibilities:"
+        print commands.keys()
+    else:
+        names = list(names)
+        names.sort(prioritize) # sort a copy
+        for name in names:
+            time.sleep(commands[name]['sleep_before'])
+            pid = os.fork()
+            if pid != 0: # parent
+                pids[name] = pid
+                print "Running %s, pid=%d: %s" % (name, pid,
+                                                  commands[name]['command'])
+            else: # child
+                os.execl('/bin/sh','junk', '-c', commands[name]['command'])
+            time.sleep(commands[name]['sleep_after'])
+                
+def kill_processes(names):
+    # if no args, list availalbe processes
+    if len(names):
+        list(names).sort(unprioritize) # sort a copy
+        for name in names:            
+            if pids.has_key(name):
+                print "Killing %s, pid %d" % (name, pids[name])
+                os.system("kill %d" % pids[name])
+                del pids[name]
+            else:
+                print "Couldn't find pid for ", name
+    else:
+        print "Running Processes:"
+        print pids
+
+def can(obj, file, *args, **kw):
+    if type(file) is type('string'): f=open(file,'w')
+    else: f=file
+
+    pickle.dump(obj, f, *args, **kw)    
+
+    if type(file) is type('string'): f.close()
+
+def uncan(file, *args, **kw):
+    # If filename, should this read until all exhausted?
+    if type(file) is type('string'): f=open(file)
+    else: f=file    
+
+    obj = pickle.load(f, *args, **kw)    
+
+    if type(file) is type('string'): f.close()
+
+    return obj
+
+def usage():
+    print "Usage: ports [-k] [-h] [-v] [-q] [-u] [names]"
+    print "       -h display this message"
+    print "       -v display version"
+    print "       -k to kill processes, no -k runs them"
+    print "       -t test mode"
+    print "       run 'ports' to see a list of possibilities"
+    print "       run 'ports -k' to see a list of running processes"    
+
+def main():
+    global pids
+
+    try: opts, args = getopt.getopt(sys.argv[1:],"hktv")
+    except getopt.GetoptError:
+        usage()
+        sys.exit(1)
+        
+    # Figure out what to do
+    run_flag = True
+    test_flag = False
+    
+    for o,a in opts:
+        if o == '-k': run_flag = False
+        if o == '-t': test_flag = True
+        if o == '-v':
+            print "Ports version %d" % VERSION
+            sys.exit(0)
+        if o == '-h':
+            usage()
+            sys.exit(1)
+
+    # Try to load running pid table.
+    # If none, create an empty one
+    try: pids = uncan('/tmp/gsn')
+    except IOError: pids = {}
+
+    names = expand_aliases(args)
+    
+    if test_flag:
+        names.sort(prioritize)
+        print "Running ", pids        
+        print "To run ", names
+        sys.exit(0)
+
+    if run_flag: run_processes(names)
+    else: kill_processes(names)
+
+    # write pid table
+    can(pids, '/tmp/gsn')
+
+main()

@@ -29,4 +29,8 @@ for oldfile in $* ; do
 	fi
 done 
 
-xmv tmp 
+for file in *.tmp ; do 
+    mv $file `echo $file | sed s/.tmp$//` 
+done
+
+#xmv tmp 

@@ -6,7 +6,8 @@ REMOTE_USER="novak"
 OPTS="--archive --delete --delete-excluded --verbose --progress --stats"
 EXCLUDE=/Users/novak/bin/backup-laptop-exclude
 DIRS=/Users/
-DEST=$REMOTE_USER@dionysus:/data/novak/Backup
+#DEST=$REMOTE_USER@dionysus:/data/novak/Backup
+DEST=novak@192.168.1.113:/data/novak/Backup
 
 rsync $OPTS --exclude-from=$EXCLUDE $DIRS $DEST
 

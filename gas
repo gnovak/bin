@@ -1,37 +1,40 @@
 #!/usr/bin/env perl
 
-chdir "$ENV{'HOME'}/bin";
+use Date::Simple;
 
-$dayofweek = "Wednesday";
-$room = "ISB 356";
-$time = "12-1pm";
+chdir "$ENV{'HOME'}/bin";
 
 $soonwarning = 0;
 $middlewarning = 2;
 $farwarning = 7;
 
-$talklist="gas.talks";
+$talklist=$gas::infoFile;
 @reminders=qw(gas.rem1 gas.rem2 gas.rem3);
 @announcements=qw(gas.ann1 gas.ann2);
 
 $remsubjects[0]="Your GAS next week";
-$remsubjects[1]="Your GAS on $dayofweek";
+$remsubjects[1]="Your GAS on $gas::dayofweek";
 $remsubjects[2]="Your GAS today!";
 
-$annsubjects[0]="GAS this $dayofweek";
+$annsubjects[0]="GAS this $gas::dayofweek";
 $annsubjects[1]="GAS starting now!";
 
-$grademail="grads allgood\@physics.ucsc.edu tcox\@physics.ucsc.edu";
+#$grademail="grads\@ucolick.org allgood\@physics.ucsc.edu tcox\@physics.ucsc.edu";
+$grademail = "novak";
 $myemail = "novak";
 
 # figure out the dates in the future
-$soon=`echo 'puts [clock format [clock scan {$soonwarning days}] -format "%m/%d"]' | /opt/bin/tclsh`;
-$middle=`echo 'puts [clock format [clock scan {$middlewarning days}] -format "%m/%d"]' | /opt/bin/tclsh`;
-$far=`echo 'puts [clock format [clock scan {$farwarning days}] -format "%m/%d"]' | /opt/bin/tclsh`;
+$today = Date::Simple->new;
+$soon = $today + $soonwarning;
+$middle = $today + $middlewarning;
+$far = $today + $farwarning;
 
-chomp $soon;
-chomp $middle;
-chomp $far;
+#$soon=`echo 'puts [clock format [clock scan {$soonwarning days}] -format "%m/%d"]' | /opt/bin/tclsh`;
+#$middle=`echo 'puts [clock format [clock scan {$middlewarning days}] -format "%m/%d"]' | /opt/bin/tclsh`;
+#$far=`echo 'puts [clock format [clock scan {$farwarning days}] -format "%m/%d"]' | /opt/bin/tclsh`;
+#chomp $soon;
+#chomp $middle;
+#chomp $far;
 
 $remdates[0] = $far;
 $remdates[1] = $middle;
@@ -48,21 +51,22 @@ foreach $date (@remdates) {
     while (<TALKS>) {
 	if (/$date/) {
 	    chomp;
-	    @talk = split("#");
+	    @talk = split $gas::sep;
 	    $date = $talk[0];
+	    $date =~ s/^-//;
 	    $speakeremail = $talk[1];
 	    $speakername = $talk[2];
 	    $talkinfo = $talk[3];
 	    open TEMPLATE, "< $reminder";
 	    open MESSAGE, "| mail $speakeremail $myemail -s \"$subject\"";
 	    while (<TEMPLATE>) {
-		s/<date>/$date/g;
+		s/<date>/$prettydate/g;
 		s/<speakeremail>/$speakeremail/g;
 		s/<speakername>/$speakername/g;  
 		s/<info>/$talkinfo/g;	
-		s/<room>/$room/g;
-		s/<time>/$time/g;
-		s/<dayofweek>/$dayofweek/g;
+		s/<room>/$gas::room/g;
+		s/<time>/$gas::time/g;
+		s/<dayofweek>/$gas::dayofweek/g;
 		print MESSAGE;
 	    }
 	    close TEMPLATE;
@@ -79,8 +83,9 @@ foreach $date (@anndates) {
     while (<TALKS>) {
 	if (/$date/) {
 	    chomp;
-	    @talk = split("#");
+	    @talk = split $gas::sep;
 	    $date = $talk[0];
+	    $date =~ s/^-//;
 	    $speakeremail = $talk[1];
 	    $speakername = $talk[2];
 	    $talkinfo = $talk[3];
@@ -91,9 +96,9 @@ foreach $date (@anndates) {
 		s/<speakeremail>/$speakeremail/g;
 		s/<speakername>/$speakername/g;  
 		s/<info>/$talkinfo/g;	
-		s/<room>/$room/g;
-		s/<time>/$time/g;
-		s/<dayofweek>/$dayofweek/g;
+		s/<room>/$gas::room/g;
+		s/<time>/$gas::time/g;
+		s/<dayofweek>/$gas::dayofweek/g;
 		print MESSAGE;
 	    }
 	    close TEMPLATE;

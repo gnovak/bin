@@ -36,7 +36,7 @@ open OUTFILE, "> $outputFile" || die "Can't open $outputfile!\n";
 print OUTFILE $template->output;
 close OUTFILE;
 
-system $publishcommand;
+#system $publishcommand;
 
 sub Talklist {
     my (@talks) = @_; 

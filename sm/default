@@ -307,6 +307,15 @@ vpls	2
 		poi (LG($1)) $2
 		ticksize 0 0 0 0
 
+vlls	2	
+		# view $2 vs. $1, setting limits and drawing a box,
+		# as connected points
+		lim (LG($1)) $2
+		ticksize -1 10 0 0
+		box
+		con (LG($1)) $2
+		ticksize 0 0 0 0
+
 labelpoints 3	
 		do i=0,DIMEN($1)-1 {
 		   relocate $($1[$i]) $($2[$i])

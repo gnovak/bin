@@ -1,4 +1,4 @@
-#!/usr/bin/env perl 
+#!/usr/bin/perl 
 ########################################################################
 # Simple perl script to create default format keys for BibTeX entries.
 ########################################################################

@@ -1,0 +1,7 @@
+#!/usr/bin/perl
+
+open FILE, "> /Users/novak/Desktop/arguments.txt";
+foreach(@ARGV) {
+    print FILE "*$_*\n";
+}
+close FILE;

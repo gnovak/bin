@@ -1,0 +1,5 @@
+#!/bin/sh
+
+#/usr/X11R6/bin/xterm -display :0.0 -exec scp "$@" ssh.ucolick.org:/home/hyde/novak/Laptop/In
+/usr/bin/scp -r -p  "$@" ssh.ucolick.org:/net/dionysus/data/novak/Laptop/In
+

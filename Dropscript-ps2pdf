@@ -1,0 +1,19 @@
+#!/usr/bin/perl -w
+
+use Env qw(PATH);
+
+#Connect tcsh to a pipe into which it'll spit the path
+open ENVFILE, "tcsh -c \'source ~/.cshrc; echo \$PATH\' |";
+#Grab the path
+$cshpath = <ENVFILE>;
+close ENVFILE;
+# Add it to the path in the current environment
+$PATH = "$cshpath:".$PATH;
+
+foreach $in (@ARGV) {
+    $out = $in;
+    $out =~ s/ps$/pdf/;
+    system "ps2pdf $in $out";
+    system "open $out";
+}
+

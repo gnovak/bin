@@ -1,0 +1,74 @@
+#!/u/novak/bin/local/bin/perl
+use IO::Select;
+
+# See if there's anything on stdin
+$stdin = 0;
+$select = IO::Select->new();
+$select->add(*STDIN);
+if (@ready = $select->can_read(0)) {
+    $stdin = 1;
+}
+
+#The filename is the last argument.
+$tmpfile = "/tmp/psfile.tmp.$$";
+
+if (!$stdin) {
+    die "$0 requires at least one argument.\n" if ($#ARGV < 0);
+    $file = $ARGV[$#ARGV];
+    #Just TRY to find this file to look at it!  Mwahahahaha!
+    &printpsfile($file, $tmpfile);
+    pop(@ARGV);
+    $args = join(' ', @ARGV);
+    if ($args =~ /(.*)(-s\s?)(.*)/) {
+	print "The -s option will not work with this script\n";
+	print "Sending the file to the printer without the -s option\n";
+	$args = $1.$3;
+    }
+}
+else {
+    &printpsstdin($tmpfile);
+}
+
+system("lpr $args $tmpfile");
+system("rm $tmpfile");
+
+sub printpsfile {
+    my($file) = $_[0];
+    my($tmpfile) = $_[1];
+
+    open(PSFILE, "$file");
+    open(TMPFILE, ">$tmpfile") || die "Can't open $tmpfile: $!\n";
+    my($oldfh) = select(TMPFILE);
+    print "%!\n";
+    print "gsave\n";
+    print "%%BeginFeature: *Duplex\n";
+    print "<< /Duplex true >> setpagedevice\n\n";
+    print "%%EndFeature\n";
+
+    while (<PSFILE>) {
+	print;
+    }
+    print "grestore\n";
+    select($oldfh);
+    close(PSFILE);
+    close(TMPFILE);
+}
+
+sub printpsstdin {
+    my($tmpfile) = $_[0];
+
+    open(TMPFILE, ">$tmpfile") || die "Can't open $tmpfile: $!\n";
+    my($oldfh) = select(TMPFILE);
+    print "%!\n";
+    print "gsave\n";
+    print "%%BeginFeature: *Duplex\n";
+    print "<< /Duplex true >> setpagedevice\n\n";
+    print "%%EndFeature\n";
+
+    while (<STDIN>) {
+	print;
+    }
+    print "grestore\n";
+    select($oldfh);
+    close(TMPFILE);
+}

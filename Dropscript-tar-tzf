@@ -1,0 +1,4 @@
+#!/bin/sh
+
+/sw/bin/tar tzf "$@" | /sw/bin/xless -display :0.0 
+

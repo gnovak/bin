@@ -1,0 +1,51 @@
+#!/usr/bin/perl 
+
+#/sw/bin/tar czf "/Users/novak/Desktop/New Archive.tar.gz" "$@" 
+
+if (@ARGV == 0) {
+    # this should never happen since the script should always get 
+    # arguments via drag+drop
+    die;
+}
+elsif (@ARGV == 1) {
+    # Only one argument probably means the user dragged 
+    # a folder.  Also possibly a single file.  
+    # Strip everything except the filename
+    @sheep = split("/", $ARGV[0]);
+    pop @sheep;
+    $pattern = join("/", @sheep);    
+}
+else {
+    # if there's more than one argument, the user is trying
+    # to make an archive of a bunch of files...  Strip common 
+    # parts of the path before making the archive b/c the script 
+    # always gets the full pathname.
+    $sheep = $ARGV[0];
+    @sheep = split("/", $sheep);
+    $n = @sheep;
+    
+    for ($i=1; $i<=$n; $i++) {
+	$success = 1;
+	$pattern = join("/", @sheep);
+	foreach(@ARGV) {
+	    if (!/^$pattern/) {
+		$success=0;
+	    }
+	}
+	if ($success==1) {
+	    last;
+	}
+	else {
+	    pop(@sheep);
+	}
+    }
+}
+foreach (@ARGV) {
+    s+$pattern/++;
+    push @args, $_;
+}
+
+$args = join("\" \"", @args);
+$args = "\"$args\"";
+print "/sw/bin/tar czf /Users/novak/Desktop/Archive.tgz --directory \"$pattern\" $args";
+

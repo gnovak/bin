@@ -8,7 +8,7 @@
 \address
 {
   Greg Novak \\ 
-  126 Maple Street \\
+  256 DuFour Street \\
   Santa Cruz, CA, 95060 \\
   831-459-0424 \\
   novak@ucolick.org 

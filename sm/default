@@ -378,11 +378,13 @@ labels	3	# maxerr v
 		define num local
 		#define ycoord local
 		define num 0
+		define lt 0
 		foreach text $1 {
 		   set ycoord = $3-1500*$num
 		   relocate ($2 $(ycoord))
-		   label \line $num 2000 $text
+		   label \line $lt 2000 $text
 		   define num ($num+1)
+		   define lt $($num < 7 ? $num : $num - 7)
 		}
 		ltype 0
 

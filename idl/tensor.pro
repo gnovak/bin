@@ -10,7 +10,6 @@ totallines=nlines(fname)
 cols=ncols(fname)
 rows=ntensorrows(fname)
 matricies=totallines/rows
-
 print,"Creating ",matricies,"x",rows,"x",cols," tensor"
 tens = fltarr(cols, rows, matricies)
 openr,lun,fname,/Get_Lun

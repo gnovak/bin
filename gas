@@ -48,7 +48,7 @@ foreach $date (@remdates) {
     while (<TALKS>) {
 	if (/$date/) {
 	    chomp;
-	    @talk = split(":");
+	    @talk = split("#");
 	    $date = $talk[0];
 	    $speakeremail = $talk[1];
 	    $speakername = $talk[2];
@@ -79,7 +79,7 @@ foreach $date (@anndates) {
     while (<TALKS>) {
 	if (/$date/) {
 	    chomp;
-	    @talk = split(":");
+	    @talk = split("#");
 	    $date = $talk[0];
 	    $speakeremail = $talk[1];
 	    $speakername = $talk[2];

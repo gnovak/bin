@@ -8,15 +8,17 @@ chdir "$ENV{'HOME'}/bin";
 $soonwarning = 0;
 $middlewarning = 2;
 $farwarning = 7;
+$veryfarwarning = 14;
 
 $talklist=$gas::infoFile;
 
-@reminders=qw(gas.rem1 gas.rem2 gas.rem3);
+@reminders=qw(gas.rem1 gas.rem2 gas.rem3 gas.rem4);
 @announcements=qw(gas.ann1 gas.ann2);
 
 $remsubjects[0]="Your GAS next week";
 $remsubjects[1]="Your GAS on $gas::dayofweek";
 $remsubjects[2]="Your GAS today!";
+$remsubjects[3]="Your GAS in two weeks";
 
 $annsubjects[0]="GAS this $gas::dayofweek";
 $annsubjects[1]="GAS starting now!";
@@ -30,6 +32,7 @@ $today = Date::Simple->new;
 $soon = $today + $soonwarning;
 $middle = $today + $middlewarning;
 $far = $today + $farwarning;
+$veryfar = $today + $veryfarwarning;
 
 #$soon=`echo 'puts [clock format [clock scan {$soonwarning days}] -format "%m/%d"]' | /opt/bin/tclsh`;
 #$middle=`echo 'puts [clock format [clock scan {$middlewarning days}] -format "%m/%d"]' | /opt/bin/tclsh`;
@@ -41,6 +44,7 @@ $far = $today + $farwarning;
 $remdates[0] = $far;
 $remdates[1] = $middle;
 $remdates[2] = $soon;
+$remdates[3] = $veryfar;
 
 $anndates[0] = $middle;
 $anndates[1] = $soon;

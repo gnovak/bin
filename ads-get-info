@@ -1,0 +1,30 @@
+#!/u/novak/bin/local/bin/perl
+use HTTP::Request;
+use LWP;
+use Astro::ADS::Query;
+use Astro::ADS::Result::Paper;
+
+@authors = qw(faber);
+
+$ua = LWP::UserAgent->new;
+$ua->cookie_jar({ file => "$ENV{HOME}/.cookies.txt" });
+$query = new Astro::ADS::Query( Authors => \@authors);
+$query->url( "adsabs.harvard.edu" );
+$query->journal("REFEREED");
+$result = $query->querydb();
+@papers = $result->papers;
+
+foreach $paper (@papers) {
+    @authors = $paper->authors();
+    @affil = $paper->affil();
+    for ($i=0; $i < @authors-1; $i++) {
+	$coi = $authors[$i];
+	$coiaffil = $affil[$i];
+#	print "$coi \t\t $coiaffil\n";    
+	$output = sprintf("%10s \t\t $coi\n", $coiaffil);    
+	print $output;
+    }
+}
+
+
+

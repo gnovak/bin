@@ -1,0 +1,84 @@
+#!/usr/bin/perl
+use HTTP::Request;
+use LWP;
+use Astro::ADS::Query;
+use Astro::ADS::Result::Paper;
+
+@authors = qw(faber);
+
+$ua = LWP::UserAgent->new;
+$ua->cookie_jar({ file => "$ENV{HOME}/.cookies.txt" });
+$query = new Astro::ADS::Query( Authors => \@authors);
+$query->url( "adsabs.harvard.edu" );
+#$query->endyear( "1998" );
+$query->journal("REFEREED");
+$result = $query->querydb();
+@papers = $result->papers;
+
+foreach $paper (@papers) {
+    # set filename
+    $author = $authors[0];
+    # get # citations
+    $citeresult = $paper->citations();
+    if (defined($citeresult)) {
+	@cpapers = $citeresult->papers();
+	$citations = @cpapers;
+    }
+    else {
+	$citations = 0;
+    }
+    $year = $paper->published();
+    $year =~ s/.*\///;
+    $month = $paper->published();
+    $month =~ s/\/.*//;
+    $journal = $paper->origin();
+    $title = $paper->title();
+    $title =~ s/\W/_/g;
+    $fname = sprintf("$author-%04d-$year-$journal-%s.pdf", $citations, $title);
+    $fname =~ s/\s//g;
+    
+    #status...
+    print "Working on $fname...\n";
+
+    #prep URL to get electronic version
+    $url = $paper->url();
+    $url =~ s/nph-bib_query/nph-data_query/;
+    $url =~ s/&amp;/&link_type=ARTICLE&/;
+    # get elec. version
+    $request = $ua->request(HTTP::Request->new(GET => $url));
+    # see if I got the actual pdf or a page referring to it
+    $head = $request->headers_as_string();    
+    if ($head =~ /application\/pdf/) {	
+	# good, got pdf, grab paper
+	open FILE, "> $fname" || die "Uh oh...";
+	print FILE $request->content; 
+	close FILE;
+    }
+    elsif ($head =~ /text\/html/) {
+	#damn it, got a referring page
+	#try to pull out URL
+	$url = $request->content;
+	$url =~ s/.*<a href=\"//s;
+	$url =~ s/\">.*//s;
+	#get the url
+	$request = $ua->request(HTTP::Request->new(GET => $url));
+	#again, see if I'm getting PDF
+	$head = $request->headers_as_string();
+	if ($head =~ /application\/pdf/) {	
+	    #ok, got pdf
+	    open FILE, "> $fname" || die "Uh oh...";
+	    print FILE $request->content; 
+	    close FILE;	    
+	}
+	else {
+	    #sick of this, give up
+	    print "Problem with $fname!\n";
+	}
+    }
+    else {
+	print "Other problem with $fname!\n";
+    }
+}
+
+
+

@@ -1,0 +1,25 @@
+Package: sm
+Version: 2.4.19
+Revision: 1
+Maintainer: Greg Novak <novak@ucolick.org>
+Source: ftp://www.astro.princeton.edu/rhl/sm/release/sm2_4_19.tar.gz
+SourceDirectory: sm2_4_19
+DocFiles: README LICENSE sm.install
+Patch: sm.patch
+CompileScript: <<
+chmod 755 edit_options_h
+chmod 755 get_response
+./set_opts -i /sw
+./edit_options_h src/options.h
+./get_response
+make 
+<<
+InstallScript: <<
+make install FINKPREFIX=%i
+<<
+Description: Cool scientific plots
+DescDetail: <<
+You too can draw plots on your iBook.
+<<
+License: Commercial
+Homepage: http://www.astro.princeton.edu/~rhl/sm/

@@ -1,4 +1,5 @@
-#!/usr/bin/perl
+#!/u/novak/bin/local/bin/perl -w
+
 use HTTP::Request;
 use LWP;
 use Astro::ADS::Query;
@@ -10,12 +11,13 @@ $ua = LWP::UserAgent->new;
 $ua->cookie_jar({ file => "$ENV{HOME}/.cookies.txt" });
 $query = new Astro::ADS::Query( Authors => \@authors);
 $query->url( "adsabs.harvard.edu" );
-#$query->endyear( "1998" );
+$query->endyear( "1998" );
 $query->journal("REFEREED");
 $result = $query->querydb();
 @papers = $result->papers;
 
 foreach $paper (@papers) {
+    $bibcode = $paper->bibcode();
     # set filename
     $author = $authors[0];
     # get # citations
@@ -38,7 +40,7 @@ foreach $paper (@papers) {
     $fname =~ s/\s//g;
     
     #status...
-    print "Working on $fname...\n";
+    print "Working on $bibcode $fname...\n";
 
     #prep URL to get electronic version
     $url = $paper->url();
@@ -72,11 +74,11 @@ foreach $paper (@papers) {
 	}
 	else {
 	    #sick of this, give up
-	    print "Problem with $fname!\n";
+	    print "Problem with $bibcode $fname!\n";
 	}
     }
     else {
-	print "Other problem with $fname!\n";
+	print "Other problem with $bibcode $fname!\n";
     }
 }
 

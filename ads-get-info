@@ -4,7 +4,17 @@ use LWP;
 use Astro::ADS::Query;
 use Astro::ADS::Result::Paper;
 
-@authors = qw(faber);
+@authors = qw(woosley);
+$exclauthor = $authors[0];
+
+$sortbyinst = 1;
+
+format STDOUT =
+@<<<<<<<<<<<<<<<<<<<< ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
+$auth,                $aff
+~~                    ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
+                      $aff
+.
 
 $ua = LWP::UserAgent->new;
 $ua->cookie_jar({ file => "$ENV{HOME}/.cookies.txt" });
@@ -14,17 +24,49 @@ $query->journal("REFEREED");
 $result = $query->querydb();
 @papers = $result->papers;
 
+#$paper = @papers[-1];
+#$yr = $paper->published();
+#print "$yr\n";
+#die;
+
 foreach $paper (@papers) {
     @authors = $paper->authors();
     @affil = $paper->affil();
     for ($i=0; $i < @authors-1; $i++) {
-	$coi = $authors[$i];
-	$coiaffil = $affil[$i];
-#	print "$coi \t\t $coiaffil\n";    
-	$output = sprintf("%10s \t\t $coi\n", $coiaffil);    
-	print $output;
+	$auth = $authors[$i];
+	$aff = $affil[$i];
+	if ($sortbyinst) {
+	    $output = join("\t", $aff, $auth);
+	}
+	else {
+	    $output = join("\t", $auth, $aff);
+	}
+	push @output, $output;
     }
 }
 
+#sort
+@output = sort @output;
 
+#ensure unique entries
+for ($i=1; $i<@output-1; $i++) {
+    if ($output[$i] eq $output[$i-1]) {
+	splice @output,$i,1;
+	$i--;
+    }
+}
 
+foreach (@output) {
+    @line = split /\t/;
+    if ($sortbyinst) {
+	$auth = $line[1];
+	$aff = $line[0];
+    }
+    else {
+	$auth = $line[0];
+	$aff = $line[1];
+    }
+    if (!($auth =~ /$exclauthor/i)) {
+	write;
+    }
+}

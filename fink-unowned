@@ -1,0 +1,19 @@
+#!/usr/bin/perl -w
+
+open PKGS, "dpkg -l |";
+
+<PKGS>;
+<PKGS>;
+<PKGS>;
+<PKGS>;
+<PKGS>;
+
+while (<PKGS>) {
+    @line = split '\s';
+    open PKG, "dpkg -L $line[2] |";
+    while (<PKG>) {
+	print;
+    }
+    close PKG
+}
+close PKGS;

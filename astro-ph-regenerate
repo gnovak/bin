@@ -1,0 +1,17 @@
+#!/usr/bin/python
+
+import sys,os
+
+def snarf(cmd):
+    """Run a shell gommand and grab the output as a string."""
+    f=os.popen(cmd)
+    result = f.readline()[:-1] # strip final newline
+    f.close()
+    return result
+
+for month in range(1,4):
+	for day in range(1,32):
+		command = 'date --date="%d/%d" "+percenta percentb percentd"' % (month,day)
+		command = command.replace('percent','%')
+		date = snarf(command)
+		os.system('astro-ph-driver "%s"' % date)

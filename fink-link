@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+open FILE, "locate $ARGV[0].info |";
+
+while (<FILE>) {
+    if (/\/$ARGV[0]\.info/ && /10.3/ && !/fink.old/) {  
+        /(.*\/)(.*)/;
+        $oldpath = $1;
+        $infoname = $2;
+
+        $newpath = $oldpath;
+        $newpath =~ s/unstable/local/;
+        $patchname = $infoname;
+        $patchname =~  s/info$/patch/;
+
+        system "sudo ln -s $oldpath$infoname $newpath$infoname\n";
+        system "sudo ln -s $oldpath$patchname $newpath$patchname\n";
+    }
+}
+

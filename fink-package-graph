@@ -2,11 +2,8 @@
 print "digraph packages {\n";
 # screen
 print "size=\"72,24\"\n";
-
 #printer
 #print "rotate=90\n";
-
-
 print "node [fontname=luxirr];\n";
 
 open STATUS, "/sw/var/lib/dpkg/status";

@@ -1,1 +1,3 @@
-rsync --archive --delete --exclude-from=/Users/novak/bin/backup-laptop-exclude /Users/novak/ dionysus.ucolick.org:/data/novak/Backup
+# rsync --archive --delete --exclude-from=/Users/novak/bin/backup-laptop-exclude /Users/novak/ dionysus.ucolick.org:/data/novak/Backup
+
+rsync --archive --delete --exclude-from=/Users/novak/bin/backup-laptop-exclude /Users/novak/ dionysus:/data/novak/Backup

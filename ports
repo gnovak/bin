@@ -89,8 +89,8 @@ commands = dict(
     desktop=cmd('ssh -n -N -L2022:dionysus.ucolick.org:22 dionysus.ucolick.org'),
     sunhost     =cmd(command='ssh -n -N -L3022:publichost:22 ssh'),
     linuxhost   =cmd(command='ssh -n -N -L4022:rumba:22 ssh'),
-    upsand      =cmd(command='ssh -n -N -L5022:upsand:22 andromeda.ucsc.edu'),
-    twopiter    =cmd(command='ssh -n -N -L6022:twopiter:22 andromeda.ucsc.edu'),
+    upsand      =cmd(command='ssh -n -N -L5022:upsand:22 andromeda'),
+    twopiter    =cmd(command='ssh -n -N -L6022:twopiter:22 andromeda'),
 
     # Aliases   
     dionysus=['dionysusssh', 'dionysusweb', 'dionysusmail','dionysussock'],

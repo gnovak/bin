@@ -75,10 +75,10 @@
 ;    (ad-disable-advice 'bbdb-prompt-for-new-field-value 'around 'dont-ask)
 ;    (ad-activate 'bbdb-prompt-for-new-field-value)))
 
-(setq bbdb-display-layout-alist
-  '((one-line   (order     . (notes net mail-alias phones ))
-                (name-end  . 24)
-                (toggle    . t))
-    (multi-line (indention . 14)
-                (toggle    . t))
-    (pop-up-multi-line (indention . 14)))
+;; (setq bbdb-display-layout-alist
+;;   '((one-line   (order     . (notes net mail-alias phones ))
+;;                 (name-end  . 24)
+;;                 (toggle    . t))
+;;     (multi-line (indention . 14)
+;;                 (toggle    . t))
+;;     (pop-up-multi-line (indention . 14)))

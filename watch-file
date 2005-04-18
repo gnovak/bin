@@ -1,4 +1,5 @@
 #!/usr/bin/python
+#socket -l -f gsn.eps 192.168.1.7 10000
 
 import time, os.path, sys
 interval=1
@@ -6,11 +7,36 @@ file=sys.argv[1]
 host=sys.argv[2]
 port=int(sys.argv[3])
 
-old_mtime = os.path.getmtime(file)
+# Wait here until the file exists
+file_exists = False
+while not file_exists:
+    try:
+        old_mtime = os.path.getmtime(file)
+        file_exists=True
+    except:
+        #no op
+        file_exists=False
+    time.sleep(interval)
+        
+# File is about to be fired, loaded like a gun.
+loaded = False
 
 while True:
     new_mtime = os.path.getmtime(file)
-    if new_mtime != old_mtime:
+            
+    if not loaded and new_mtime != old_mtime:
+        # If changed, get ready to send
+        loaded=True
+        old_mtime = new_mtime
+
+    elif loaded and new_mtime != old_mtime:
+        print "File hasn't stabilized?"
+        old_mtime = new_mtime
+        
+    elif loaded and new_mtime == old_mtime:
+        # File has stabiliized?
+        print "Firing off file!"
         os.system("socket %s %d < %s" % (host, port, file))
         old_mtime=new_mtime
+        loaded=False
     time.sleep(interval)

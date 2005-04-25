@@ -9,6 +9,6 @@ DIRS=/Users/
 DEST=$REMOTE_USER@dionysus:/data/novak/Backup
 #DEST=novak@192.168.1.113:/data/novak/Backup
 
-rsync $OPTS --exclude-from=$EXCLUDE $DIRS $DEST
+echo rsync $OPTS --exclude-from=$EXCLUDE $DIRS $DEST
 
   

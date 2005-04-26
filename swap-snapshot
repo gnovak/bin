@@ -1,0 +1,8 @@
+#!/sw/bin/python
+import sys
+import os
+for file in sys.argv[1:]:
+	temp_file = os.tmpnam()
+	os.system('swap-single-snapshot %s %s' % (file, temp_file))
+	os.system('swap-double-snapshot %s' % temp_file)
+	os.system('mv %s %s' % (temp_file, file))

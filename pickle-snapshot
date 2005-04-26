@@ -1,0 +1,10 @@
+#!/sw/bin/python
+
+import sys
+sys.path += ['/Users/novak/Projects/Thesis']
+import pn
+import gsn
+
+[gsn.can(pn.read_snap(file), file.split('/')[-1]+'.dat', bin=True)
+         for file in sys.argv[1:]]
+    

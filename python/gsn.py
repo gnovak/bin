@@ -1,8 +1,24 @@
-import gsnext, scipy, scipy.gplt, pylab, pyx, pickle
+import gsnext, scipy, scipy.gplt, pylab, pyx, pickle, os
 
 ############################
 # Random stuff
 ############################
+
+def snarf(cmd, force_list=False):
+    """Run a shell command and grab the output as a list of strings
+    The newlines are stripped from the end of each line.  If the output
+    consists of a single line, just a string is returned, not a list.
+    If force_list is true, then a list is always returned even if it consists
+    of only one element."""    
+    f=os.popen(cmd)
+    output = f.readlines() 
+    f.close()
+    # strip newlines
+    output = [line[:-1] for line in output]
+    # If output is a single line, just return that line (not a list)
+    if not force_list and len(output) is 1: output = output[0]
+
+    return output
 
 def can(obj, file, *args, **kw):
     if type(file) is type('string'): f=open(file,'w')
@@ -228,7 +244,7 @@ def make_histo(y,bins,weights,overflow,normed):
 
     if normed:
         db = bins[1]-bins[0]
-        hist /= len(y)*db
+        hist = hist/(len(y)*db)
 
     return hist,bins
 
@@ -253,11 +269,11 @@ def make_pyx_histo_data(bins,hist):
     return d
     
 # Need a way to overlay histograms
-def histo(x, bins=50, weights=None,
+def histo(data, bins=50, weights=None,
           normed=False, overflow=True, noplot=False,
           Pylab=False, Pyx=False, width=8, **kw):
     """Make a possibly weighted histogram
-    y = data
+    data = data
     b = number of bins or list of bin edges
     w = weights (None if unweighted)
     overflow = whether or not to keep overflow bins
@@ -273,7 +289,7 @@ def histo(x, bins=50, weights=None,
              else: None
     """
 
-    hist,bins = make_histo(x,bins,weights,overflow,normed)
+    hist,bins = make_histo(data,bins,weights,overflow,normed)
     if noplot:
         return hist,bins
     if Pyx:

@@ -1,4 +1,4 @@
-#!/sw/bin/python
+#!/usr/bin/env python
 import sys
 import os
 for file in sys.argv[1:]:

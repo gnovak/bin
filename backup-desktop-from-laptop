@@ -5,5 +5,5 @@ EXCLUDE=/Users/novak/bin/backup-desktop-exclude
 SRC=dionysus:/home/novak/
 DEST=/Users/novak/.backup/novak
 
-rsync $OPTS --exclude-from=$EXCLUDE $SRC $DEST
+/usr/bin/rsync $OPTS --exclude-from=$EXCLUDE $SRC $DEST
   

@@ -1,5 +1,5 @@
 #!/bin/bash 
-RSYNC_RSH="ssh -F /Users/novak/.ssh/config"
+RSYNC_RSH="/usr/bin/ssh -F /Users/novak/.ssh/config"
 REMOTE_USER="novak"
 #OPTS="--bwlimit=10 --archive --delete --delete-excluded --compress --verbose --progress --stats"
 #OPTS="--archive --delete --delete-excluded --compress --verbose --progress --stats"
@@ -9,6 +9,6 @@ DIRS=/Users/
 DEST=$REMOTE_USER@dionysus:/data/novak/Backup
 #DEST=novak@192.168.1.113:/data/novak/Backup
 
-echo rsync $OPTS --exclude-from=$EXCLUDE $DIRS $DEST
+/usr/bin/rsync $OPTS --exclude-from=$EXCLUDE $DIRS $DEST
 
   

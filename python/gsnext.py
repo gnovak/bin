@@ -159,6 +159,9 @@ class none:
             tick.label = ''        
 pyx.graph.axis.texter.none = none
 
+# This seems to be missing when you do from pyx.graph import *
+pyx.graph.__all__ += ['graphxy', 'axis']
+
 # Should morph this into something useful
 # def plot_panel(pan, mn = None, mx=None, **kw):
 #     """Take an array of numbers and make a color plot"""

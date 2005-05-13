@@ -1,0 +1,48 @@
+diff --context orig/programs/xload/get_load.c xc/programs/xload/get_load.c
+*** orig/programs/xload/get_load.c	Fri May 13 01:26:56 2005
+--- xc/programs/xload/get_load.c	Fri May 13 01:50:53 2005
+***************
+*** 456,461 ****
+--- 456,462 ----
+      host_priv_port = mach_host_self();
+  }
+  
++ #define NSAMPLES 12
+  /* ARGSUSED */
+  void GetLoadPoint( w, closure, call_data )
+      Widget	w;		/* unused */
+***************
+*** 468,479 ****
+--- 469,500 ----
+      int host_count;
+      kern_return_t kr;
+  
++     int i;
++     static double history[NSAMPLES];
++     static int firstCall = 1;
++     static int newvalue = 0;
++ 
+      host_count = sizeof(load_data)/sizeof(integer_t);
+      kr = host_statistics(host_priv_port, HOST_LOAD_INFO,
+                          (host_info_t)&load_data, &host_count);
+      if (kr != KERN_SUCCESS)
+          xload_error("cannot get host statistics", "");
+      *loadavg = (double)load_data.avenrun[0]/LOAD_SCALE;
++ 
++     if (firstCall) {
++         firstCall=0;
++         for (i=0; i<NSAMPLES; i++) 
++             history[i] = *loadavg;
++     }
++   
++     history[newvalue] = *loadavg;
++     newvalue = (newvalue+1) % NSAMPLES;
++ 
++     *loadavg = 0;
++     for (i=0; i<NSAMPLES; i++) 
++       *loadavg += history[i];
++     *loadavg /= NSAMPLES;
++ 
+      return;
+  }
+  

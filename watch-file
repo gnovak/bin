@@ -1,6 +1,8 @@
 #!/usr/bin/python
 #socket -l -f gsn.eps 192.168.1.7 10000
 
+debug=True
+
 import time, os.path, sys
 interval=1
 file=sys.argv[1]
@@ -8,6 +10,7 @@ host=sys.argv[2]
 port=int(sys.argv[3])
 
 # Wait here until the file exists
+if debug: print 'Waiting for file to exist...'
 file_exists = False
 while not file_exists:
     try:
@@ -17,7 +20,9 @@ while not file_exists:
         #no op
         file_exists=False
     time.sleep(interval)
-        
+
+
+if debug: print 'File exists, getting ready to rock n roll.'
 # File is about to be fired, loaded like a gun.
 loaded = False
 
@@ -26,6 +31,7 @@ while True:
             
     if not loaded and new_mtime != old_mtime:
         # If changed, get ready to send
+        print 'Loading up file...'
         loaded=True
         old_mtime = new_mtime
 
@@ -36,6 +42,7 @@ while True:
     elif loaded and new_mtime == old_mtime:
         # File has stabiliized?
         print "Firing off file!"
+        os.system("echo socket %s %d < %s" % (host, port, file))
         os.system("socket %s %d < %s" % (host, port, file))
         old_mtime=new_mtime
         loaded=False

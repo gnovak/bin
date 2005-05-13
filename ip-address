@@ -4,7 +4,7 @@
 # Look for a file identifying the host
 # This is necessary b/c DHCP sometimes gives the computer a 
 # different hostname
-if ( grep --silent demeter ~/.hostname ); then
+if ( grep --silent demeter ~/.hostname || grep --silent euterpe ~/.hostname ); then
     # Prefer wired connections
     if ( /sbin/ifconfig en0 | grep --silent inet ); then
 	/sbin/ifconfig en0 | grep inet | grep netmask | \

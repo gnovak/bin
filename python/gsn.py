@@ -271,7 +271,7 @@ def make_pyx_histo_data(bins,hist):
 # Need a way to overlay histograms
 def histo(data, bins=50, weights=None,
           normed=False, overflow=True, noplot=False,
-          Pylab=False, Pyx=False, width=8, **kw):
+          Pylab=False, Pyx=False, width=8, logy=False, **kw):
     """Make a possibly weighted histogram
     data = data
     b = number of bins or list of bin edges
@@ -293,7 +293,10 @@ def histo(data, bins=50, weights=None,
     if noplot:
         return hist,bins
     if Pyx:
-        data = make_pyx_histo_data(bins,hist)        
+        if logy:
+            hist = hist + .5
+            kw['y'] = pyx.graph.axis.log(min=min(hist),max=max(hist))
+        data = make_pyx_histo_data(bins,hist)
         g = pyx.graph.graphxy(width=width, **kw)
         g.plot(pyx.graph.data.list(data, x=1, y=2),[pyx.graph.style.line()])
         return g

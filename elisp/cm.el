@@ -27,6 +27,9 @@
 
 ;; edit fields in a full buffer
 
+; Remove "emacs" as default country.
+(setq bbdb-default-country "")
+
 (defadvice bbdb-prompt-for-new-field-value (around dont-ask)
   "Force BBDB to accept new fields w/o asking"
   (flet ((bbdb-y-or-n-p (&rest args) t))

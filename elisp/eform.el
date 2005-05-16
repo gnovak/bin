@@ -314,14 +314,16 @@ Return list containing:
 (defun eform-update ()
   "Update all electric forms"
   (interactive)
-  (message (concat "Found names: "
-		   (reduce 'concat 
-			   (mapcar (lambda (x) (concat x " ")) 
-				(eform-find-all-names)))))
-  (if eform-mode 
-      (dolist (result (eform-find-all-names))
-	(message (concat "Working on " result))
-	(eform-update-result result))))
-  
+  (if (not eform-mode)
+      (message "Eform mode not enabled.  Doing nothing...")
+    (message (concat "Found names: "
+		     (reduce 'concat 
+			     (mapcar (lambda (x) (concat x " ")) 
+				     (eform-find-all-names)))))
+    
+    (dolist (result (eform-find-all-names))
+      (message (concat "Working on " result))
+      (eform-update-result result))))
+
 (provide 'eform)
 ;;; eform.el ends here

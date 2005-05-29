@@ -248,10 +248,12 @@ def make_histo(y,bins,weights,overflow,normed):
 
     return hist,bins
 
-def make_pyx_histo_data(bins,hist):
+def make_pyx_histo_data(*args):
     """Take a list of bin edges and counts and make it into something
     that PyX can plot nicely as a histogram"""
-
+    #Allow arguments as single tuple or separately
+    if len(args)==1: hist,bins = args[0]
+    else: hist,bins = args
     # first bin
     d = [[bins[0],0]]
 
@@ -296,7 +298,7 @@ def histo(data, bins=50, weights=None,
         if logy:
             hist = hist + .5
             kw['y'] = pyx.graph.axis.log(min=min(hist),max=max(hist))
-        data = make_pyx_histo_data(bins,hist)
+        data = make_pyx_histo_data(hist,bins)
         g = pyx.graph.graphxy(width=width, **kw)
         g.plot(pyx.graph.data.list(data, x=1, y=2),[pyx.graph.style.line()])
         return g

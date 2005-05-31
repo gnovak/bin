@@ -1,19 +1,22 @@
-/.Trash
-/.mozilla/firefox/default.kk9/Cache
-/.phoenix/default/iy8n731i.slt/Cache
-/.java/deployment/cache
-/.python22_compiled
-/bin/AVO
-/bin/VTKData
-/Desktop/VTK
-/Desktop/vtkcvs
-/Projects/Thesis/little-endian-data
-/Projects/Thesis/big-endian-data
-/Projects/Thesis/little-endian-holding-data
-/Projects/Thesis/big-endian-holding-data
-/Projects/Thesis/be
-/Projects/Thesis/le
-/Projects/Thesis/data
-/Projects/Thesis/alldata
-/Projects/Thesis/Plots
-/Projects/Thesis/AllPlots
+; /.Trash
+; /.mozilla/firefox/default.kk9/Cache
+; /.phoenix/default/iy8n731i.slt/Cache
+; /.java/deployment/cache
+; /.python22_compiled
+; /.python23_compiled
+; /.python24_compiled
+; /bin/AVO
+; /bin/VTKData
+; /bin/build
+; /Desktop/VTK
+; /Desktop/vtkcvs
+; /Projects/Thesis/little-endian-data
+; /Projects/Thesis/big-endian-data
+; /Projects/Thesis/little-endian-holding-data
+; /Projects/Thesis/big-endian-holding-data
+; /Projects/Thesis/be
+; /Projects/Thesis/le
+; /Projects/Thesis/data
+; /Projects/Thesis/alldata
+; /Projects/Thesis/Plots
+; /Projects/Thesis/AllPlots

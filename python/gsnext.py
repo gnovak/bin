@@ -1,3 +1,5 @@
+dionysus_flag = False
+
 import scipy, pyx, pylab
 
 # TODO: 
@@ -48,19 +50,19 @@ scipy.at = at
 pylab.cmap = pylab.cm
 
 rhot_data = {'red':   ((1-1.0, 1.0, 1.0),
-                        (1-0.365079, 1.000000, 1.000000),
-                        (1-0., 0.0416, 0.0416)),
-              'green': ((1-1.0, 1.0, 1.0),
-                        (1-0.746032, 1.000000, 1.000000),
-                        (1-0.365079, 0.000000, 0.000000),
-                        (1-0., 0., 0.)),
-              'blue':  ((1-1.0, 1.0, 1.0),
-                        (1-0.746032, 0.000000, 0.000000),
-                        (1-0., 0., 0.))}                  
+		       (1-0.365079, 1.000000, 1.000000),
+		       (1-0., 0.0416, 0.0416)),
+	     'green': ((1-1.0, 1.0, 1.0),
+		       (1-0.746032, 1.000000, 1.000000),
+		       (1-0.365079, 0.000000, 0.000000),
+		       (1-0., 0., 0.)),
+	     'blue':  ((1-1.0, 1.0, 1.0),
+		       (1-0.746032, 0.000000, 0.000000),
+		       (1-0., 0., 0.))}                  
 
 rhot_cmap = pylab.cm.colors.LinearSegmentedColormap('rhot',
-                                                    rhot_data,
-                                                    pylab.rcParams['image.lut'])
+						    rhot_data,
+						    pylab.rcParams['image.lut'])
 
 def rhot ():
     """set the default colormap to rhot and apply to current
@@ -68,25 +70,25 @@ def rhot ():
     rc('image', cmap='rhot')
     im = gci()
     if im is not None:
-        im.set_cmap(rhot)
+	im.set_cmap(rhot)
     draw_if_interactive()
-
+	    
 pylab.cm.datad['rhot']= rhot_data
 pylab.cm.rhot = rhot_cmap
 pylab.rhot = rhot
-
+    
 redblue_data = {'red':   ((0., 1., 1.),
-                      (.5, 0., 0.),
-                      (1., 0., 0.)),
-            'green': ((0., 0., 0.),
-                      (1., 0., 0.)),
-            'blue':  ((0., 0., 0.),
-                      (.5, 0., 0.),
-                      (1., 1., 1.))}
+			  (.5, 0., 0.),
+			  (1., 0., 0.)),
+		'green': ((0., 0., 0.),
+			  (1., 0., 0.)),
+		'blue':  ((0., 0., 0.),
+			  (.5, 0., 0.),
+			  (1., 1., 1.))}
 
 redblue_cmap = pylab.cm.colors.LinearSegmentedColormap('redblue',
-                                             redblue_data,
-                                             pylab.rcParams['image.lut'])
+						       redblue_data,
+						       pylab.rcParams['image.lut'])
 
 def redblue():
     """set the default colormap to redblue and apply to current image
@@ -94,39 +96,39 @@ def redblue():
     rc('image', cmap='redblue')
     im = gci()
     if im is not None:
-        im.set_cmap(redblue)
+	im.set_cmap(redblue)
     draw_if_interactive()
-
+	
 pylab.cm.datad['redblue']= redblue_data
 pylab.cm.redblue = redblue_cmap
 pylab.redblue = redblue
-
+	
 rainbow_pts = [0., .15, .45, .5, .55, .85, 1.]
 rainbow_data = {'red':((rainbow_pts[0], 0., 0.),
-                       (rainbow_pts[1], 0., 0.),
-                       (rainbow_pts[2], 0., 0.),
-                       (rainbow_pts[3], 0., 0.),
-                       (rainbow_pts[4], 1., 1.),
-                       (rainbow_pts[5], 1., 1.),
-                       (rainbow_pts[6], 1., 1.)),
-                'green':((rainbow_pts[0], 0., 0.),
-                        (rainbow_pts[1], 0., 0.),
-                        (rainbow_pts[2], 1., 1.),
-                        (rainbow_pts[3], 1., 1.),
-                        (rainbow_pts[4], 1., 1.),
-                        (rainbow_pts[5], 0., 0.),
-                        (rainbow_pts[6], 1., 1.)),
-                'blue':((rainbow_pts[0], 0., 0.),
-                        (rainbow_pts[1], 1., 1.),
-                        (rainbow_pts[2], 1., 1.),
-                        (rainbow_pts[3], 0., 0.),
-                        (rainbow_pts[4], 0., 0.),
-                        (rainbow_pts[5], 0., 0.),
-                        (rainbow_pts[6], 1., 1.))}
+		       (rainbow_pts[1], 0., 0.),
+		       (rainbow_pts[2], 0., 0.),
+		       (rainbow_pts[3], 0., 0.),
+		       (rainbow_pts[4], 1., 1.),
+		       (rainbow_pts[5], 1., 1.),
+		       (rainbow_pts[6], 1., 1.)),
+		'green':((rainbow_pts[0], 0., 0.),
+			 (rainbow_pts[1], 0., 0.),
+			 (rainbow_pts[2], 1., 1.),
+			 (rainbow_pts[3], 1., 1.),
+			 (rainbow_pts[4], 1., 1.),
+			 (rainbow_pts[5], 0., 0.),
+			 (rainbow_pts[6], 1., 1.)),
+		'blue':((rainbow_pts[0], 0., 0.),
+			(rainbow_pts[1], 1., 1.),
+			(rainbow_pts[2], 1., 1.),
+			(rainbow_pts[3], 0., 0.),
+			(rainbow_pts[4], 0., 0.),
+			(rainbow_pts[5], 0., 0.),
+			(rainbow_pts[6], 1., 1.))}
 
 rainbow_cmap = pylab.cm.colors.LinearSegmentedColormap('rainbow',
-                                                  rainbow_data,
-                                                  pylab.rcParams['image.lut'])
+						       rainbow_data,
+						       pylab.rcParams['image.lut'])
 
 def rainbow():
     """set the default colormap to rainbow and apply to current image
@@ -134,7 +136,7 @@ def rainbow():
     rc('image', cmap='rainbow')
     im = gci()
     if im is not None:
-        im.set_cmap(rainbow)
+	im.set_cmap(rainbow)
     draw_if_interactive()
 
 pylab.cm.datad['rainbow']= rainbow_data

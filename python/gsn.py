@@ -1,4 +1,5 @@
 import gsnext, scipy, scipy.gplt, pylab, pyx, pickle, os
+import gsnext, scipy, scipy.gplt, pyx, pickle, os
 
 ############################
 # Random stuff

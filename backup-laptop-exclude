@@ -1,27 +1,27 @@
 ; The /Users is implicit
-/novak/.Trash
+; /novak/.Trash
 /novak/.backup
-/novak/Library/Caches
-/novak/Library/Application Support/Firefox/Profiles/vjie1qxn.default/Cache
-/novak/Pictures/Album/Photos
-/novak/Pictures/CameraGamma
-/novak/Pictures/CamWeb
-/novak/Pictures/CamWebGamma
-/novak/Pictures/CamWebSmall
-/novak/Pictures/CamWebSmallGamma
-/novak/Projects/Thesis/data
-/novak/Projects/Thesis/big-endian-data
-/novak/Projects/Thesis/little-endian-data
-/novak/Projects/Thesis/be
-/novak/Projects/Thesis/le
-/novak/Projects/Thesis/big-endian-holding-data
-/novak/Projects/Thesis/little-endian-holding-data
-/novak/Projects/Thesis/Plots
+; /novak/Library/Caches
+; /novak/Library/Application Support/Firefox/Profiles/vjie1qxn.default/Cache
+; /novak/Pictures/Album/Photos
+; /novak/Pictures/CameraGamma
+; /novak/Pictures/CamWeb
+; /novak/Pictures/CamWebGamma
+; /novak/Pictures/CamWebSmall
+; /novak/Pictures/CamWebSmallGamma
+; /novak/Projects/Thesis/data
+; /novak/Projects/Thesis/big-endian-data
+; /novak/Projects/Thesis/little-endian-data
+; /novak/Projects/Thesis/be
+; /novak/Projects/Thesis/le
+; /novak/Projects/Thesis/big-endian-holding-data
+; /novak/Projects/Thesis/little-endian-holding-data
+; /novak/Projects/Thesis/Plots
 
-/orlith/.Trash
-/orlith/Library/Caches
-/orlith/Library/Mozilla/Profiles/default/zg96fw1e.slt/Cache
-/orlith/Library/Application Support/Firefox/Profiles/default.1m7/Cache
+; /orlith/.Trash
+; /orlith/Library/Caches
+; /orlith/Library/Mozilla/Profiles/default/zg96fw1e.slt/orlith
+; /Cache/Library/Application Support/Firefox/Profiles/default.1m7/Cache
 
 ; more temporary stuff
-/novak/Desktop/vtk
+; /novak/Desktop/vtk

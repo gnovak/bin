@@ -1,8 +1,11 @@
 ; The /Users is implicit
-; /novak/.Trash
+/novak/.Trash
 /novak/.backup
-; /novak/Library/Caches
-; /novak/Library/Application Support/Firefox/Profiles/vjie1qxn.default/Cache
+/novak/Library/Caches
+/novak/Library/Application Support/Firefox/Profiles/vjie1qxn.default/Cache
+/novak/.python22_compiled/
+/novak/.python23_compiled/
+/novak/.python24_compiled/
 ; /novak/Pictures/Album/Photos
 ; /novak/Pictures/CameraGamma
 ; /novak/Pictures/CamWeb

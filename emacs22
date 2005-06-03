@@ -1,0 +1,5 @@
+if ( grep --silent dionysus ~/.hostname );  then 
+   /Users/novak/bin/build/build-emacs/src/emacs $*
+elif ( grep --silent euterpe ~/.hostname ); then 
+   open /Applications/Emacs.app 
+fi

@@ -3,7 +3,7 @@ RSYNC_RSH="/usr/bin/ssh -F /Users/novak/.ssh/config"
 REMOTE_USER="novak"
 #OPTS="--bwlimit=10 --archive --delete --delete-excluded --compress --verbose --progress --stats"
 #OPTS="--archive --delete --delete-excluded --compress --verbose --progress --stats"
-OPTS="--bwlimit=5 --archive --delete --delete-excluded --verbose --progress --stats"
+OPTS="--archive --delete --delete-excluded --verbose --progress --stats"
 EXCLUDE=/Users/novak/bin/backup-laptop-exclude
 DIRS=/Users/
 DEST=$REMOTE_USER@dionysus:/data/novak/Backup

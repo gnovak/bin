@@ -81,7 +81,7 @@ def cmd(command,priority=0,sleep_after=0, sleep_before=0):
                 sleep_after=sleep_after, sleep_before=sleep_before)
     
 commands = dict(
-    dionysusssh =cmd('ssh -n -N -L2022:dionysus:22 ssh'),
+    dionysus    =cmd('ssh -n -N -L2022:dionysus:22 ssh'),
     dionysusweb =cmd('ssh -n -N -L2080:dionysus:80 ssh'),
     dionysusmail=cmd('ssh -n -N -R2025:%s:2025 dionysus' % ip_address(),
                      priority=20, sleep_before=5),
@@ -93,7 +93,7 @@ commands = dict(
     twopiter    =cmd(command='ssh -n -N -L6022:twopiter:22 andromeda'),
 
     # Aliases   
-    dionysus=['dionysusssh', 'dionysusweb', 'dionysusmail','dionysussock'],
+    dionysusall=['dionysusssh', 'dionysusweb', 'dionysusmail','dionysussock'],
     home=['dionysus'],
 #    home=['dionysus', 'sunhost', 'linuxhost', 'twopiter', 'upsand'],    
     work=['twopiter','upsand']

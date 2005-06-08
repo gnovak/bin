@@ -1,0 +1,75 @@
+diff --recursive --context pstoedit-3.40-pristine/src/drvlplot.cpp pstoedit-3.40-modified/src/drvlplot.cpp
+*** pstoedit-3.40-pristine/src/drvlplot.cpp	2005-01-01 14:41:04.000000000 -0800
+--- pstoedit-3.40-modified/src/drvlplot.cpp	2005-06-07 19:27:36.000000000 -0700
+***************
+*** 963,969 ****
+  			plotter = new TekPlotter(cin, outf, errf);
+  		}
+  #ifndef NO_LIBPLOTTER_X_SUPPORT
+! 		else if (options->type.value == "X"0)
+  			plotter = new XPlotter(cin, outf, errf);
+  #endif
+  		else if (options->type.value == "meta") {
+--- 963,969 ----
+  			plotter = new TekPlotter(cin, outf, errf);
+  		}
+  #ifndef NO_LIBPLOTTER_X_SUPPORT
+! 		else if (options->type.value == "X")
+  			plotter = new XPlotter(cin, outf, errf);
+  #endif
+  		else if (options->type.value == "meta") {
+***************
+*** 1236,1242 ****
+  	set_line_style();
+  	set_filling_and_edging_style();
+  	print_coords();
+! };
+  
+  void drvplot::show_rectangle(const float llx, const float lly, const float urx, const float ury)
+  {
+--- 1236,1242 ----
+  	set_line_style();
+  	set_filling_and_edging_style();
+  	print_coords();
+! }
+  
+  void drvplot::show_rectangle(const float llx, const float lly, const float urx, const float ury)
+  {
+***************
+*** 1291,1298 ****
+  												DriverDescription::noimage,
+  												DriverDescription::normalopen,	// may close, reopen as binary
+  												true,	// format supports multiple pages in one file
+! 												false, /*clipping */ 
+! 												driveroptions);
+  #endif
+  //#ifndef NO_LIBPLOTTER_GIF_SUPPORT
+  //      else if (strcmp (type, "gif") == 0)
+--- 1291,1298 ----
+  												DriverDescription::noimage,
+  												DriverDescription::normalopen,	// may close, reopen as binary
+  												true,	// format supports multiple pages in one file
+! 						false/*,*/ /*clipping */ 
+! 						/*driveroptions*/);
+  #endif
+  //#ifndef NO_LIBPLOTTER_GIF_SUPPORT
+  //      else if (strcmp (type, "gif") == 0)
+***************
+*** 1390,1397 ****
+  											  DriverDescription::noimage,
+  											  DriverDescription::normalopen,	// may close, reopen as binary
+  											  true,	// format supports multiple pages in one file
+! 											  false, /*clipping */
+! 											  driveroptions);
+  #endif
+  
+  #endif							// WITHSHORTCUTS
+--- 1390,1397 ----
+  											  DriverDescription::noimage,
+  											  DriverDescription::normalopen,	// may close, reopen as binary
+  											  true,	// format supports multiple pages in one file
+! 					      false/*,*/ /*clipping */
+! 					      /*driveroptions*/);
+  #endif
+  
+  #endif							// WITHSHORTCUTS

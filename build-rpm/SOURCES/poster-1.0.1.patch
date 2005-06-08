@@ -1,0 +1,53 @@
+diff --recursive --context poster.pristine/Makefile poster.hacked/Makefile
+*** poster.pristine/Makefile	2005-06-07 13:55:31.000000000 -0700
+--- poster.hacked/Makefile	2005-06-07 14:07:36.000000000 -0700
+***************
+*** 1,5 ****
+--- 1,6 ----
+  CFLAGS = -g -Wall
+  #CFLAGS = -O2 -Wall
++ PREFIX=/usr/local
+  
+  poster: poster.c
+  	gcc $(CFLAGS) -o poster poster.c -lm
+***************
+*** 12,19 ****
+  
+  install: poster
+  	strip poster
+! 	cp poster /usr/local/bin
+! 	cp poster.1 /usr/local/man/man1
+  
+  clean:
+  	rm -f poster core poster.o getopt.o
+--- 13,20 ----
+  
+  install: poster
+  	strip poster
+! 	cp poster $(PREFIX)/bin
+! 	cp poster.1 $(PREFIX)/share/man/man1
+  
+  clean:
+  	rm -f poster core poster.o getopt.o
+diff --recursive --context poster.pristine/poster.c poster.hacked/poster.c
+*** poster.pristine/poster.c	2005-06-07 13:55:31.000000000 -0700
+--- poster.hacked/poster.c	2005-06-07 13:57:26.000000000 -0700
+***************
+*** 45,52 ****
+  */
+  
+  #define Gv_gs_orientbug 1
+! #define DefaultMedia  "A4"
+! #define DefaultImage  "A4"
+  #define DefaultCutMargin "5%"
+  #define DefaultWhiteMargin "0"
+  #define BUFSIZE 1024
+--- 45,52 ----
+  */
+  
+  #define Gv_gs_orientbug 1
+! #define DefaultMedia  "Letter"
+! #define DefaultImage  "Letter"
+  #define DefaultCutMargin "5%"
+  #define DefaultWhiteMargin "0"
+  #define BUFSIZE 1024

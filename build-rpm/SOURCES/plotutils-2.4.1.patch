@@ -1,0 +1,165 @@
+diff --recursive --context plotutils-2.4.1-pristine/libplot/g_write.c plotutils-2.4.1-edited/libplot/g_write.c
+*** plotutils-2.4.1-pristine/libplot/g_write.c	2000-05-19 09:10:01.000000000 -0700
+--- plotutils-2.4.1-edited/libplot/g_write.c	2005-06-07 16:45:34.000000000 -0700
+***************
+*** 40,46 ****
+      }
+  #ifdef LIBPLOTTER
+    else if (data->outstream)
+!     data->outstream->write(c, n);
+  #endif
+  }
+  
+--- 40,46 ----
+      }
+  #ifdef LIBPLOTTER
+    else if (data->outstream)
+!     data->outstream->write( (const char *) c, n);
+  #endif
+  }
+  
+diff --recursive --context plotutils-2.4.1-pristine/libplot/i_rle.c plotutils-2.4.1-edited/libplot/i_rle.c
+*** plotutils-2.4.1-pristine/libplot/i_rle.c	1999-06-27 09:58:10.000000000 -0700
+--- plotutils-2.4.1-edited/libplot/i_rle.c	2005-06-07 16:45:19.000000000 -0700
+***************
+*** 78,84 ****
+    else if (rle->outstream)
+      {
+        rle->outstream->put ((unsigned char)(rle->oblen));
+!       rle->outstream->write (&(rle->oblock[0]), rle->oblen);
+      }
+  #endif  
+  
+--- 78,84 ----
+    else if (rle->outstream)
+      {
+        rle->outstream->put ((unsigned char)(rle->oblen));
+!       rle->outstream->write ((const char *) &(rle->oblock[0]), rle->oblen);
+      }
+  #endif  
+  
+diff --recursive --context plotutils-2.4.1-pristine/libplot/n_write.c plotutils-2.4.1-edited/libplot/n_write.c
+*** plotutils-2.4.1-pristine/libplot/n_write.c	2000-06-15 22:42:13.000000000 -0700
+--- plotutils-2.4.1-edited/libplot/n_write.c	2005-06-07 16:45:47.000000000 -0700
+***************
+*** 208,214 ****
+  		  linebuf[pos++] = '0';
+  		if (pos >= MAX_PBM_PIXELS_PER_LINE || i == (width - 1))
+  		  {
+! 		    stream->write (linebuf, pos);
+  		    stream->put ('\n');
+  
+  		    pos = 0;
+--- 208,214 ----
+  		  linebuf[pos++] = '0';
+  		if (pos >= MAX_PBM_PIXELS_PER_LINE || i == (width - 1))
+  		  {
+! 		    stream->write ( (const char *) linebuf, pos);
+  		    stream->put ('\n');
+  
+  		    pos = 0;
+***************
+*** 253,259 ****
+  		  rowbuf[bytecount++] = outbyte;
+  		}
+  	      /* emit row of bytes */
+! 	      stream->write (rowbuf, bytecount);
+  	    }
+  
+  	  free (rowbuf);
+--- 253,259 ----
+  		  rowbuf[bytecount++] = outbyte;
+  		}
+  	      /* emit row of bytes */
+! 	      stream->write ( (const char *) rowbuf, bytecount);
+  	    }
+  
+  	  free (rowbuf);
+***************
+*** 366,372 ****
+  		num_pixels++;
+  		if (num_pixels >= MAX_PGM_PIXELS_PER_LINE || i == (width - 1))
+  		  {
+! 		    stream->write (linebuf, pos);
+  		    stream->put ('\n');
+  
+  		    num_pixels = 0;
+--- 366,372 ----
+  		num_pixels++;
+  		if (num_pixels >= MAX_PGM_PIXELS_PER_LINE || i == (width - 1))
+  		  {
+! 		    stream->write ( (const char *) linebuf, pos);
+  		    stream->put ('\n');
+  
+  		    num_pixels = 0;
+***************
+*** 392,398 ****
+  	    {
+  	      for (i = 0; i < width; i++)
+  		rowbuf[i] = pixmap[j][i].u.rgb[0];
+! 	      stream->write (rowbuf, width);
+  	    }
+  	  free (rowbuf);
+  	}
+--- 392,398 ----
+  	    {
+  	      for (i = 0; i < width; i++)
+  		rowbuf[i] = pixmap[j][i].u.rgb[0];
+! 	      stream->write ( (const char *) rowbuf, width);
+  	    }
+  	  free (rowbuf);
+  	}
+***************
+*** 514,520 ****
+  		num_pixels++;
+  		if (num_pixels >= MAX_PPM_PIXELS_PER_LINE || i == (width - 1))
+  		  {
+! 		    stream->write (linebuf, pos);
+  		    stream->put ('\n');
+  
+  		    num_pixels = 0;
+--- 514,520 ----
+  		num_pixels++;
+  		if (num_pixels >= MAX_PPM_PIXELS_PER_LINE || i == (width - 1))
+  		  {
+! 		    stream->write ( (const char *) linebuf, pos);
+  		    stream->put ('\n');
+  
+  		    num_pixels = 0;
+***************
+*** 542,548 ****
+  	      for (i = 0; i < width; i++)
+  		for (component = 0; component < 3; component++)
+  		  rowbuf[3 * i + component] = pixmap[j][i].u.rgb[component];
+! 	      stream->write (rowbuf, 3 * width);
+  	    }
+  	  free (rowbuf);
+  	}
+--- 542,548 ----
+  	      for (i = 0; i < width; i++)
+  		for (component = 0; component < 3; component++)
+  		  rowbuf[3 * i + component] = pixmap[j][i].u.rgb[component];
+! 	      stream->write ( (const char *) rowbuf, 3 * width);
+  	    }
+  	  free (rowbuf);
+  	}
+diff --recursive --context plotutils-2.4.1-pristine/libplot/z_write.c plotutils-2.4.1-edited/libplot/z_write.c
+*** plotutils-2.4.1-pristine/libplot/z_write.c	2000-06-19 21:34:42.000000000 -0700
+--- plotutils-2.4.1-edited/libplot/z_write.c	2005-06-07 16:45:57.000000000 -0700
+***************
+*** 484,490 ****
+    ostream *stream;
+  
+    stream = (ostream *)png_get_io_ptr (png_ptr);
+!   stream->write (data, length);
+  }
+  
+  static void 
+--- 484,490 ----
+    ostream *stream;
+  
+    stream = (ostream *)png_get_io_ptr (png_ptr);
+!   stream->write ( (const char *) data, length);
+  }
+  
+  static void 

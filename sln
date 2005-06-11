@@ -1,4 +1,4 @@
-#!/sw/bin/python
+#!/usr/bin/env python
 # Could change this to use ssh style notation.  That'd probably be good...
 # 
 import sys, os, pickle

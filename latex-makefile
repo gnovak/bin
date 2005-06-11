@@ -1,60 +1,73 @@
-PLOTS =  predictive.eps dists.eps all-data-1.eps all-data-2.eps all-data-3.eps all-data-4.eps all-data-5.eps all-data-6.eps all-data-7.eps all-data-8.eps all-data-9.eps all-data-10.eps all-data-11.eps axis.eps
+# Source file names
+TEX = file.tex
+PLOTS = plot1.eps plot2.eps
+# Can set bib if not using ADS
+ADS = file.ads
+BIB = $(ADS:.ads=.bib)
 
-TEXFILES = msigma.tex
-
-PDFFILES = $(TEXFILES:.tex=.pdf)
-PSFILES = $(TEXFILES:.tex=.ps)
-DVIFILES = $(TEXFILES:.tex=.dvi)
-TFILES = $(PDFFILES:.pdf=.thumb.pdf)
-NTFILES = $(PDFFILES:.pdf=.nothumb.pdf)
-PDFPLOTS = $(PLOTS:.eps=.pdf)
-
+# Program file names
 BIBTEX = bibtex
 PDFLATEX = pdflatex
 LATEX = latex
+PP4 = pp4
+ADS_MAKE_KEYS = ads-make-keys
+# To get aux files... may be pdflatex if you only want pdf output
+AUXLATEX = pdflatex 
+LATEX_OPTS = -interaction=nonstopmode
+
+# Derived file names
+PDF = $(TEX:.tex=.pdf)
+PS = $(TEX:.tex=.ps)
+DVI = $(TEX:.tex=.dvi)
+AUX = $(TEX:.tex=.aux)
+PRESENTATION = $(PDF:.pdf=.presentation.pdf)
+PDFPLOTS = $(PLOTS:.eps=.pdf)
+NONADS = $(ADS:.ads=.nonads)
+BBL = $(ADS:.bib=.bbl)
 
 RERUN = "(There were undefined references|Rerun to get (cross-references|the bars) right)"
 RERUNBIB = "No file.*\.bbl|Citation.*undefined"
 COPY = if test -r $*.toc; then cp $*.toc $*.toc.bak; fi 
 
-all:	ps pdf
+# Main rule: what do you want?
 
-ps:	$(PSFILES)
+all: $(PS) $(PDF) $(PRESENTATION)
 
-pdf:	$(PDFFILES)
+# Basic rules
 
-$(PDFFILES): 	$(PDFPLOTS)
+clean:
+	rm -f $(DVI) $(PS) $(PDF) $(PRESENTATION) $(PDFPLOTS) 
+	rm -f *.aux *.log *.bbl *.blg *.brf *.cb *.ind *.idx *.ilg *.inx *.toc *.out
 
-$(PSFILES): $(DVIFILES)
+$(BIB) : $(NONADS) $(ADS)
+
+$(BBL) : $(BIB) $(AUX)
+
+$(DVI) : $(TEX) $(BBL)
+
+$(PS) : $(DVI) $(PLOTS) 
+
+$(PDF): $(TEX) $(PDFPLOTS) $(BBL)
+
+$(PRESENTATION) : $(PDF)
+
+# For pdflatex, aux files depend on plots, too.  
+# Comment/uncomment as necessary
+# $(AUX): $(PDFPLOTS)
+
+# Instructions about how to make what
 
 %.bib:	%.ads
-	ads-make-keys $<
+	$(ADS_MAKE_KEYS) $<
 
-%.pdf:         %.tex 
-	$(COPY) ; $(PDFLATEX) $<
-	egrep -c $(RERUNBIB) $*.log && ($(BIBTEX) $*;$(COPY); $(PDFLATEX) $<) ; true
-	egrep $(RERUN) $*.log && ($(COPY) ; $(PDFLATEX) $<) ; true
-	egrep $(RERUN) $*.log && ($(COPY) ; $(PDFLATEX) $<) ; true
-	if cmp -s $*.toc $*.toc.bak ; then true ; else $(PDFLATEX) $< ; fi
-	rm -f $*.toc.bak
-# Display relevant warnings
-	echo ERRORS AND WARNINGS
-	egrep -i "(Reference|Citation).*undefined" $*.log ; true
-#	pp4 $(PDFFILES) $(NTFILES)
-#	pdfthumb $(NTFILES) $(TFILES)	
+%.bib:	%.nonads
+	$(ADS_MAKE_KEYS) $<
 
-%.dvi:         %.tex 
-	$(COPY) ; $(LATEX) $<
-	egrep -c $(RERUNBIB) $*.log && ($(BIBTEX) $*;$(COPY); $(LATEX) $<) ; true
-	egrep $(RERUN) $*.log && ($(COPY) ; $(LATEX) $<) ; true
-	egrep $(RERUN) $*.log && ($(COPY) ; $(LATEX) $<) ; true
-	if cmp -s $*.toc $*.toc.bak ; then true ; else $(LATEX) $< ; fi
-	rm -f $*.toc.bak
-# Display relevant warnings
-	echo ERRORS AND WARNINGS
-	egrep -i "(Reference|Citation).*undefined" $*.log ; true
-#	pp4 $(PDFFILES) $(NTFILES)
-#	pdfthumb $(NTFILES) $(TFILES)	
+%.bbl: %.bib 
+	$(BIBTEX) $*
+
+%.aux: %.tex
+	$(AUXLATEX) $(LATEX_OPTS) $*
 
 %.ps:	%.dvi
 	dvips $< -o 
@@ -62,6 +75,30 @@ $(PSFILES): $(DVIFILES)
 %.pdf:          %.eps 
 	epstopdf $< 
 
-clean:
-	rm -f $(DVIFILES) $(PSFILES) $(PDFFILES) $(TFILES) $(NTFILES) $(PDFPLOTS)
-	rm -f *.aux *.log *.bbl *.blg *.brf *.cb *.ind *.idx *.ilg *.inx *.toc *.out
+%.presentation.pdf: %.pdf
+	pp4 $< $@
+
+%.pdf:         %.tex 
+	$(COPY) ; $(PDFLATEX) $(LATEX_OPTS) $<
+	egrep -c $(RERUNBIB) $*.log && ($(BIBTEX) $*;$(COPY); $(PDFLATEX) $(LATEX_OPTS) $<) ; true
+	egrep $(RERUN) $*.log && ($(COPY) ; $(PDFLATEX) $(LATEX_OPTS) $<) ; true
+	egrep $(RERUN) $*.log && ($(COPY) ; $(PDFLATEX) $(LATEX_OPTS) $<) ; true
+	if cmp -s $*.toc $*.toc.bak ; then true ; else $(PDFLATEX) $(LATEX_OPTS) $< ; fi
+	rm -f $*.toc.bak
+# Display relevant warnings
+	echo ERRORS AND WARNINGS
+	egrep -i "(Reference|Citation).*undefined" $*.log ; true
+
+%.dvi:         %.tex 
+	$(COPY) ; $(LATEX) $(LATEX_OPTS) $<
+	egrep -c $(RERUNBIB) $*.log && ($(BIBTEX) $*;$(COPY); $(LATEX) $(LATEX_OPTS) $<) ; true
+	egrep $(RERUN) $*.log && ($(COPY) ; $(LATEX) $(LATEX_OPTS) $<) ; true
+	egrep $(RERUN) $*.log && ($(COPY) ; $(LATEX) $(LATEX_OPTS) $<) ; true
+	if cmp -s $*.toc $*.toc.bak ; then true ; else $(LATEX) $(LATEX_OPTS) $< ; fi
+	rm -f $*.toc.bak
+# Display relevant warnings
+	echo ERRORS AND WARNINGS
+	egrep -i "(Reference|Citation).*undefined" $*.log ; true
+
+# Possibly not needed anymore....
+#	pdfthumb $(NTFILES) $(TFILES)	

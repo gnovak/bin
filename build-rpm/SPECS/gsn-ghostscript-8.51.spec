@@ -6,7 +6,7 @@
 Summary: A PostScript(TM) interpreter and renderer.
 Name: gsn-ghostscript
 Version: 8.51
-Release: 1
+Release: 2
 License: non-GPL
 Group: Applications/Publishing
 URL: http://www.ghostscript.com/doc/gnu/
@@ -39,21 +39,25 @@ cd %{actual_name}-%{version}
 
 %build
 cd %{actual_name}-%{version}
-./configure 
+./configure --with-ijs --with-jbig2dec --with-jasper --with-x --enable-compile-inits
 #%configure 
 #make so prefix=%{_prefix}
-make prefix=%{_prefix}
+#make prefix=%{_prefix}
+make
+make so 
 
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT
 cd %{actual_name}-%{version}
-make install prefix=$RPM_BUILD_ROOT%{_prefix} \
-    exec_prefix=$RPM_BUILD_ROOT%{_prefix} \
-    bindir=$RPM_BUILD_ROOT%{_bindir} \
-    libdir=$RPM_BUILD_ROOT%{_libdir} \
-    mandir=$RPM_BUILD_ROOT%{_mandir} \
-    datadir=$RPM_BUILD_ROOT%{_datadir}
+%makeinstall
+%makeinstall soinstall
+#make install prefix=$RPM_BUILD_ROOT%{_prefix} \
+#    exec_prefix=$RPM_BUILD_ROOT%{_prefix} \
+#    bindir=$RPM_BUILD_ROOT%{_bindir} \
+#    libdir=$RPM_BUILD_ROOT%{_libdir} \
+#    mandir=$RPM_BUILD_ROOT%{_mandir} \
+#    datadir=$RPM_BUILD_ROOT%{_datadir}
 
 
 #%makeinstall 

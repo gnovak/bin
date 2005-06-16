@@ -23,6 +23,7 @@ mkdir -p $RPM_BUILD_ROOT%{_datadir}/texmf/tex/latex/aastex
 cd %{name}%{version}
 make install INSTALLDIR=$RPM_BUILD_ROOT%{_datadir}/texmf/tex/latex/aastex
 cp *.dvi *.ps *.tex $RPM_BUILD_ROOT%{_datadir}/texmf/tex/latex/aastex
+# Postinstall script: texconfig rehash
 
 %clean
 rm -rf $RPM_BUILD_ROOT

@@ -5,6 +5,11 @@ import gsnext, scipy, scipy.gplt, pyx, pickle, os
 # Random stuff
 ############################
 
+def unzip(lst):
+    """Given ((a,b), (c,d), (e,f)) return ((a,c,e), (b,d,f))."""
+    return [[el[i] for el in lst]
+            for i in range(len(lst[0]))]
+        
 def snarf(cmd, force_list=False):
     """Run a shell command and grab the output as a list of strings
     The newlines are stripped from the end of each line.  If the output
@@ -57,10 +62,10 @@ def iterable(obj):
     return True
 
 def rms(y):
-    return sqrt(sum(y**2)/len(y))
+    return scipy.sqrt(sum(y**2)/len(y))
     
 def stddev(y):
-    return rms(y-mean(y))
+    return rms(y-scipy.mean(y))
 
 def permutations(z):
     """Given a list of lists, generate all permutations

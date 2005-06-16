@@ -74,6 +74,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/*
 %{_datadir}/%{actual_name}
 %{_mandir}/man1/*
+%{_libdir}/libgs.so.8.51
 
 %doc
 

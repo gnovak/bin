@@ -1,0 +1,187 @@
+#!/usr/bin/perl -w
+# envelope - © 2002 Ronald Florence
+# ron@18james.com, 24 Oct 2002
+
+use Getopt::Std;
+
+# -- configuration --
+
+my $separator =	"#";
+my $skip = 0;
+my $x = 230;
+my $y = 280;
+my $rotate = 90;
+my $font = "Palatino-Bold";
+my $ptsize = 12;
+my $init = "%!\r\nstatusdict begin com10envelopetray end\r\n";
+my $clear = '';
+my $spooler = "lpr";
+
+# -- end of configuration --
+
+my @addr;
+my %Opt;
+my $blanks;
+my $zip;
+
+getopts("s:t:x:y:r:f:p:i:c:l:bh", \%Opt) or &usage;
+$Opt{s} and $separator = $Opt{s};
+exists $Opt{t} and $skip = $Opt{t};
+exists $Opt{x} and $x = $Opt{x};
+exists $Opt{y} and $y = $Opt{y};
+exists $Opt{r} and $rotate = $Opt{r};
+$Opt{f} and $font = $Opt{f};
+$Opt{p} and $ptsize = $Opt{p};
+exists $Opt{i} and $init = $Opt{i};
+exists $Opt{c} and $clear = $Opt{c};
+$Opt{l} and $spooler = $Opt{l};
+$Opt{b} and $blanks++;
+$Opt{h} and &usage;
+defined $ARGV[0] and &usage;
+
+my $preface = <<EOP;
+%!
+/adline { 10 y moveto show /y y 13 sub def } def
+/barcode {
+  /y y 13 sub 0.72 div def
+  0.72 dup scale 2 setlinewidth
+  /x 100 def
+  /next { x y moveto /x x 5 add def } def
+  /S { next 0 5 rlineto stroke } def
+  /L { next 0 12 rlineto stroke } def 
+  } def
+/newenvelope {
+  /y 80 def
+  $x $y translate $rotate rotate
+  /$font findfont $ptsize scalefont setfont 
+  } def
+EOP
+
+open OUT, "|$spooler" || die "$!: cannot open $spooler for output\n";
+print OUT $init;
+print OUT $preface;
+while (<>) 
+  {
+    next while $skip-- > 0;
+    next if (/^$/ && !@addr && !$blanks);
+    if (/^$separator$/)
+      { 
+        @addr and &address;
+        next; 
+      }
+    last if (/^\s*$/ && @addr >= 3 && !$blanks);
+    last if (/^\.(DE|fi)$/);
+    next if (/^\.(DS|nf)$/);
+    $_ = $1 if (/\\begin{letter}{\s*(.*)\\\\$/);
+    $_ = $1 if (/^\s*(.*)\\\\$/);
+    $_ = $1 if (/^\s*(.*)}$/);
+    $zip = $1 . $2 if (/.*(\d{5})-(\d{4})$/);
+    chomp;
+    push (@addr, $_);
+  }
+@addr and &address;
+print OUT $clear;
+
+sub address
+{
+  print OUT "newenvelope\n";
+  print OUT map "($_) adline\n", @addr;
+  $zip and &barcode;
+  print OUT "showpage\n";
+  @addr = (); 
+}
+
+sub barcode
+{
+  my @bar = ("LLSSS", "SSSLL", "SSLSL", "SSLLS", "SLSSL", 
+	     "SLSLS", "SLLSS", "LSSSL", "LSSLS", "LSLSS");
+  my $cksum;
+  my $barcodes = "L";
+  for (my $i = 0; $i < length($zip); $i++)
+    {
+      my $s = substr($zip, $i, 1);
+      $cksum += $s;
+      $barcodes .= $bar[$s];
+    }
+  $barcodes .= $bar[(100 - $cksum) % 10];
+  $barcodes .= "L";
+  print OUT "barcode\n";
+  for (my $i = 0; $i < length($barcodes); $i++)
+    {
+      print OUT substr($barcodes, $i, 1) . "\n";
+    }
+  $zip = '';
+}
+
+sub usage
+{
+  print STDERR <<EOF;
+usage: $0 [options] < letter-file
+  -s separator  -  for multiple addresses (default #)
+  -t lines      -  skip lines at top before parsing for address
+  -x position   -  xorigin
+  -y position   -  yorigin
+  -r degrees    -  rotation
+  -f font       -  Postscript font
+  -p points     -  pointsize for font
+  -i string     -  string to initialize printer for envelopes
+  -c string     -  string to reset printer papersize/feed
+  -l spooler    -  output pipe (default lpr)
+  -b            -  allow blank lines in address
+EOF
+  exit;
+}					  
+
+__END__
+
+=head1 NAME
+
+  envelope -  prints envelopes with barcode on Postscript printer
+
+=head1 SYNOPSIS
+
+  envelope [options] < letter-file
+    
+     -s separator  -  for multiple addresses (default #)
+     -t lines      -  skip lines at top before parsing for address
+     -x position   -  xorigin
+     -y position   -  yorigin
+     -r degrees    -  rotation
+     -f font       -  Postscript font
+     -p points     -  pointsize for font
+     -i string     -  string to initialize printer for envelopes
+     -c string     -  string to reset printer papersize/feed
+     -l spooler    -  output pipe (default lpr)
+     -b            -  allow blank lines in address
+
+=head1 DESCRIPTION
+
+  Envelope can be used from the command line or from inside a text
+  editor.  In emacs, mark the region of the address and do M-|
+  envelope.  In vi, put the cursor on the first line of the address
+  and do :,+N w !envelope where N = at least the number of lines in
+  the address.  Envelope recognizes and can parse addressees from
+  troff or TeX letters.
+
+  In LyX, custom export the letter as ascii by doing File -> Export ->
+  Custom -> ASCII and giving envelope as the command.  If you use
+  return addresses on your letters you will need to supply the -t skip
+  parameter or configure it into the perl code.
+
+  All of the command-line options can be configured into envelope
+  at installation.
+
+=head1 LIMITATIONS
+
+  Only prints barcodes for full 5+4 zipcodes, as the USPS does not
+  utilize barcodes for 5-digit zipcodes.
+
+=head1 LICENSE
+
+  You may distribute this program under the same license as Perl itself.
+
+=head1 AUTHOR
+
+  Ronald Florence <ron@18james.com> 
+
+=cut

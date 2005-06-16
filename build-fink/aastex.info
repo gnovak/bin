@@ -1,0 +1,20 @@
+Package: aastex
+Version: 52
+Revision: 1
+Maintainer: Greg Novak <novak@ucolick.org>
+Source: http://www.journals.uchicago.edu/AAS/AASTeX/aastex%v.tar.gz
+Source-md5: f8906e0d46916b0314a26e51d8ab364c
+CompileScript: <<
+<<
+InstallScript: <<
+mkdir -p %i/share/texmf-local/tex/latex/aastex
+make install INSTALLDIR=%i/share/texmf-local/tex/latex/aastex
+cp *.dvi *.ps *.tex %i/share/texmf-local/tex/latex/aastex
+# Postinstall script: texconfig rehash
+<<
+Description: AASTeX macros
+DescDetail: <<
+AASTeX macros
+<<
+License: Restrictive
+Homepage: http://www.journals.uchicago.edu/AAS/AASTeX/

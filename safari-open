@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+# If there are command line arguments, pass them
+# otherwise, read from stdin and pass each line to osascript
+# This is to facilitate use w/ socket and pipe
+
+import sys,os
+
+if len(sys.argv) > 1:
+    os.system('osascript safari-open.scpt ' +
+              reduce(lambda x,y: x + ' ' + y, sys.argv[1:]))
+else: 
+    for url in iter(sys.stdin):
+        os.system('osascript safari-open.scpt ' + url)

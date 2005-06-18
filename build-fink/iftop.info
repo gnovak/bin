@@ -1,0 +1,12 @@
+Package: iftop
+Version: 0.16
+Revision: 1
+Maintainer: Greg Novak <novak@ucolick.org>
+Source: http://www.ex-parrot.com/~pdw/iftop/download/iftop-0.16.tar.gz
+Source-md5: e24a6b444858ab72afc414376d28b966
+Description: IFTop
+DescDetail: <<
+IFTop
+<<
+License: GPL
+Homepage: http://www.ex-parrot.com/~pdw/iftop/

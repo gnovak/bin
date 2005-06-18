@@ -1,0 +1,22 @@
+Package: planner-mode
+Version: 1
+Revision: 1
+Maintainer: Greg Novak <novak@ucolick.org>
+Source: http://sacha.free.net.ph/notebook/emacs/sacha-dev.tar.gz
+Source-md5: 565345b4cd03a23f4546d595723a9aa2
+SourceDirectory: sacha-dev
+CompileScript: <<
+cd emacs-wiki; makeinfo emacs-wiki.texi
+<<
+InstallScript: <<
+mkdir -p %i/share/emacs/site-lisp
+mkdir -p %i/share/info
+cp planner/*.el emacs-wiki/*.el remember/*.el %i/share/emacs/site-lisp
+cp planner/*.info remember/*.info emacs-wiki/*.info %i/share/info
+<<
+Description: Emacs Planner Mode
+DescDetail: <<
+Emacs Planner Mode
+<<
+License: GPL
+Homepage: http://sacha.free.net.ph/notebook/wiki/PlannerMode.php

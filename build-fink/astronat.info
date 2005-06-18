@@ -1,0 +1,22 @@
+Package: astronat
+Version: 1.6
+Revision: 1
+Maintainer: Greg Novak <novak@ucolick.org>
+Source: http://ads.harvard.edu/pubs/bibtex/astronat/astronat.tar.gz
+Source-md5: 8bf872f593727261311d502966bd1069
+SourceDirectory: astronat
+CompileScript: <<
+<<
+InstallScript: <<
+mkdir -p %i/bin
+mkdir -p %i/share/texmf-local/bibtex/bst/astronat
+cp -r * %i/share/texmf-local/bibtex/bst/astronat
+cp nat2jour.pl %i/bin/nat2jour
+# Postinstall script: texconfig rehash
+<<
+Description: astronomy latex bibliography stuff
+DescDetail: <<
+astronomy latex bibliography stuff
+<<
+License: ?
+Homepage: http://ads.harvard.edu/pubs/bibtex/astronat/doc/html/

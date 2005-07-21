@@ -310,7 +310,8 @@ def histo(data, bins=50, weights=None,
         return g
     elif Pylab:
         width = 0.9*(bins[1]-bins[0])
-        pylab.gca().bar(bins, hist, width=width, **kw)        
+        pylab.bar(bins,hist,width=width,**kw)
+        #pylab.gca().bar(bins, hist, width=width, **kw)
         #pylab.show()
         return None
     else:

@@ -39,6 +39,21 @@ clean:
 	rm -f $(DVI) $(PS) $(PDF) $(PRESENTATION) $(PDFPLOTS) 
 	rm -f *.aux *.log *.bbl *.blg *.brf *.cb *.ind *.idx *.ilg *.inx *.toc *.out
 
+ps: $(PS)
+
+pdf: $(PDF)
+
+presentation: $(PRESENTATION)
+
+viewpdf: $(PDF)
+	acroread $(PDF)
+
+viewpresentation: $(PRESENTATION)
+	acroread $(PRESENTATION)
+
+viewps: $(PS)
+	gs $(PS)
+
 $(BIB) : $(NONADS) $(ADS)
 
 $(BBL) : $(BIB) $(AUX)

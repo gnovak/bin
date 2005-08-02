@@ -1,0 +1,80 @@
+\documentclass{article}
+
+\begin{document}
+Emacs is a program that functions like a command prompt: You type
+commands and it does stuff.  However, you can instruct key
+combinations or menu bar selections to run emacs commands as though
+you had typed them.  This makes it seem like a conventional ``GUI''
+program.
+
+Notation for key combinations: M-c = Meta c = hold down command key
+and hit c.  C-x = Control x.  C-x a = Hold down control and x and the
+same time, then release, and hit a.  These key combinations are case
+sensitive, so C-A is different from C-a.
+
+The way to give emacs a command is M-x <command name>.  It will then
+ask for any other information it needs, and do what you asked.  This
+is the 100\% general way to tell emacs to do something.  A subset of
+commands have key combinations to run them, and a smaller subset have
+menu options available.
+
+Therefore there's usually more than one way to do things: You can pick
+from a menu, run the command with M-x, or use a key combination.  The
+way I use emacs, menu options or M-x is for things that I use
+occasionally.  Key combinations are for things I use all the time.
+
+BBDB is the ``rolodex'' program.  It doesn't have a pulldown menu.  We
+can look into creating one for you if you want.
+
+Planner is the ``To Do list'' manager.  It has pretty good pull down
+menus so it should be easy to explore.  Then you can select key
+combinations for the things you do a lot.
+
+\clearpage
+
+{\bf \Large Reference}
+
+\begin{tabular}{lp{3in}}
+{\bf \large General Emacs } \\
+Exit & C-x C-c or File::Exit \\
+Cancel & C-g \\
+Manuals & M-x info \\
+Search docs & M-x apropos \\
+Enter command & M-x \\
+Word wrap & 'M-x auto-fill-mode' or Options::Word Wrap in Text Modes \\
+{\bf Movement} \\
+Move by words & C-left and C-right\\
+Move by paragraphs & C-up and C-down\\
+Beginning of line & C-a \\
+End of line & C-e \\
+Split window & C-x 2 or C-x 3 \\
+Unsplit window & C-x 1 \\
+Other window & C-x o \\
+Switch buffers & C-x b or C-x C-b \\
+{\bf Files} \\
+Find & C-x C-f or File::Open File \\
+Save & C-x C-s or File::Save \\
+{\bf Search \footnote{Emacs can also do regexp search and replace,
+    which is a step on the road to enlightenment.}} \\
+Search forward & C-s or Edit::Search::String Forward \\
+Search backward & C-r or Edit::Search::String Backward \\
+{\bf \large BBDB } \\
+Search & M-x bbdb \\
+Create & M-x bbdb-create \\
+{\bf In BBDB buffer} \\
+Help & h \\
+Manual & i \\
+Edit & e ( works on fields or records) \\ 
+Delete & d (works on fields or records) \\
+Abbreviate & t or *t \\
+{\bf \large Planner } \\
+Plan today & M-x plan \\
+Create tasks & C-c t or C-c T or M-x planner-create-task, M-x
+  planner-create-task-from-buffer, M-x planner-create-undated-task, M-x
+  planner-create-undated-task-from-buffer \\
+Calendar & M-x calendar \\
+{\bf \large Contacts} \\
+Add Interaction & I, then C-c C-c to save interaction to BBDB record.\\
+\end{tabular}
+
+\end{document}

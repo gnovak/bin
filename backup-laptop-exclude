@@ -6,6 +6,30 @@
 /novak/.python22_compiled/
 /novak/.python23_compiled/
 /novak/.python24_compiled/
+
+
+; Temporary
+/novak/Desktop/
+
+; For sparse backup--added after crash
+; Would like backed up
+/novak/Pictures/Camera
+/novak/Projects/Thesis/data
+/novak/Projects/Thesis/Plots
+/novak/Sites/Catalog
+/novak/Music/
+
+; Would like backed up
+/novak/demeter-original
+/novak/desktop-backup
+/novak/desktop-backup-complete
+
+; Regeneratable
+/Shared/
+/novak/Desktop/Iso/
+/novak/Library/
+/novak/bin/build/
+
 ; /novak/Pictures/Album/Photos
 ; /novak/Pictures/CameraGamma
 ; /novak/Pictures/CamWeb

@@ -10,6 +10,11 @@ def unzip(lst):
     return [[el[i] for el in lst]
             for i in range(len(lst[0]))]
         
+def file_exists(fn):
+    try: open(fn).close()
+    except IOError: return False
+    return True
+
 def snarf(cmd, force_list=False):
     """Run a shell command and grab the output as a list of strings
     The newlines are stripped from the end of each line.  If the output

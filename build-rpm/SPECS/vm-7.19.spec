@@ -19,7 +19,8 @@ Views mail in emacs
 
 %build
 # make all INFODIR=%{_infodir} LISPDIR=%{_datadir}/emacs/site-lisp PIXMAPDIR=%{_datadir}/emacs/etc/vm BINARYDIR=%{_bindir}
-make all EMACS=emacs22
+# make all EMACS=emacs22
+make all
 
 %install
 rm -rf $RPM_BUILD_ROOT

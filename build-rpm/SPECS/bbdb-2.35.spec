@@ -1,5 +1,4 @@
 %define _prefix /usr/local
-%define emacs22 /home/novak/bin/build/emacs-build/src/emacs
 Summary: Emacs address book
 Name: bbdb
 Version: 2.35
@@ -18,8 +17,8 @@ Emacs Address Book
 %setup -q
 
 %build
-%configure --with-emacs=%{emacs22}
-make Makefile bbdb info vm 
+%configure 
+make VMDIR=/usr/local/share/emacs/site-lisp Makefile bbdb info vm 
 
 %install
 rm -rf $RPM_BUILD_ROOT

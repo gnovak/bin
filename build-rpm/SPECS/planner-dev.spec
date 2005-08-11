@@ -19,8 +19,8 @@ tar xzf ../SOURCES/sacha-%{version}.tar.gz
 cd sacha-dev
 
 %build
-cd sacha-%{version}/emacs-wiki
-makeinfo emacs-wiki.texi
+#cd sacha-%{version}/emacs-wiki
+#makeinfo emacs-wiki.texi
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -28,10 +28,16 @@ cd sacha-%{version}
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp
 mkdir -p $RPM_BUILD_ROOT%{_infodir}
 
-cp planner/*.el emacs-wiki/*.el remember/*.el \
+#cp planner/*.el emacs-wiki/*.el remember/*.el \
+#	$RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp
+
+#cp planner/*.info remember/*.info emacs-wiki/*.info \
+#	$RPM_BUILD_ROOT%{_infodir}
+
+cp planner/*.el remember/*.el \
 	$RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp
 
-cp planner/*.info remember/*.info emacs-wiki/*.info \
+cp planner/*.info remember/*.info  \
 	$RPM_BUILD_ROOT%{_infodir}
 
 %clean

@@ -12,6 +12,6 @@
   University of California, Santa Cruz \\
   1156 High Street \\
   Santa Cruz, CA, 95064 \\
-  831-459-4485 \\
+  831-459-3809 \\
   novak@ucolick.org 
   }

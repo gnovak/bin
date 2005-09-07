@@ -137,20 +137,34 @@
 ;; "primitives" used to build up regexps
 (setq eform-beg "(")
 (setq eform-end ")")
+(setq eform-re-beg "/")
+(setq eform-re-end "/")
 (setq eform-tag "#")
 (setq eform-char "[A-z0-9+/\*-]")
 (setq eform-ws "[ \t]")
 
 ;; regexps
+;; Nontrivial points:
+;; 1) + after tag _requires_ whitespace. It's necessary to prevent a
+;; search for tag "abc" from matching "abcde" 
+;; 2) (.*?) where result goes is "non-greedy" version of .*.  This
+;; keeps a line like:
+;; #foo () #bar () 
+;; from obliterating bar by matching the open paren of foo but the
+;; close paren of bar when you search for foo.
+;; 3) eform-re-beg must be different from re-beg so that you can put
+;; 3) multiple results on one line: #foo () #bar ().  Otherwise #bar
+;; 3) will think it has a regexp which is the result of foo.
+
 (setq eform-result-regexp-format (concat 
-			     "\\(?:" eform-beg "\\(.*\\)" eform-end "\\)?" eform-ws "*"
+			     "\\(?:" eform-re-beg "\\(.*?\\)" eform-re-end "\\)?" eform-ws "*"
 			     ; eform-tag "\\(" eform-char "+\\)" eform-ws "*" 
-			     eform-tag "\\(%s\\)" eform-ws "*"
+			     eform-tag "\\(%s\\)" eform-ws "+"
 			     "\\(" eform-char "*\\)" eform-ws "*"
 			     "\\(" eform-char "*\\)" eform-ws "*"
 			     "\\(" eform-char "*\\)" eform-ws "*"
 			     "\\(" eform-char "*\\)" eform-ws "*"
-			     eform-beg "\\(.*\\)" eform-end))
+			     eform-beg "\\(.*?\\)" eform-end))
 
 ;; Should the whitespace be allowed?  Causes problems for whitespace splits
 (setq eform-beg-rectangle-format (concat eform-beg 
@@ -178,6 +192,11 @@
   (let ((hour (/ total 60))
 	(min (mod total 60)))
     (format "%d:%02d" hour min)))
+
+; Allow fhm and thm to be used in 
+; spreadsheet formulas
+(put 'fhm 'safe-function t)
+(put 'thm 'safe-function t)
 
 (defun eform-mode (&optional arg)
   "Mode for doing light numerical calculations in buffers."

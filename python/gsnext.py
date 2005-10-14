@@ -1,6 +1,9 @@
 dionysus_flag = False
 
 import scipy, pyx, pylab
+#import scipy, pyx, matplotlib.matlab
+#import scipy, pyx
+#pylab = matplotlib.matlab
 
 # TODO: 
 # Add a bit to pyx to allow things like this:
@@ -65,18 +68,18 @@ rhot_cmap = pylab.cm.colors.LinearSegmentedColormap('rhot',
 						    pylab.rcParams['image.lut'])
 
 def rhot ():
-    """set the default colormap to rhot and apply to current
-    image if any.  See help(colormaps) for more information"""
-    rc('image', cmap='rhot')
-    im = gci()
-    if im is not None:
+   """set the default colormap to rhot and apply to current
+   image if any.  See help(colormaps) for more information"""
+   rc('image', cmap='rhot')
+   im = gci()
+   if im is not None:
 	im.set_cmap(rhot)
-    draw_if_interactive()
+   draw_if_interactive()
 	    
 pylab.cm.datad['rhot']= rhot_data
 pylab.cm.rhot = rhot_cmap
 pylab.rhot = rhot
-    
+   
 redblue_data = {'red':   ((0., 1., 1.),
 			  (.5, 0., 0.),
 			  (1., 0., 0.)),
@@ -91,13 +94,13 @@ redblue_cmap = pylab.cm.colors.LinearSegmentedColormap('redblue',
 						       pylab.rcParams['image.lut'])
 
 def redblue():
-    """set the default colormap to redblue and apply to current image
-    if any.  See help(colormaps) for more information"""
-    rc('image', cmap='redblue')
-    im = gci()
-    if im is not None:
+   """set the default colormap to redblue and apply to current image
+   if any.  See help(colormaps) for more information"""
+   rc('image', cmap='redblue')
+   im = gci()
+   if im is not None:
 	im.set_cmap(redblue)
-    draw_if_interactive()
+   draw_if_interactive()
 	
 pylab.cm.datad['redblue']= redblue_data
 pylab.cm.redblue = redblue_cmap
@@ -131,13 +134,13 @@ rainbow_cmap = pylab.cm.colors.LinearSegmentedColormap('rainbow',
 						       pylab.rcParams['image.lut'])
 
 def rainbow():
-    """set the default colormap to rainbow and apply to current image
-    if any.  See help(colormaps) for more information"""
-    rc('image', cmap='rainbow')
-    im = gci()
-    if im is not None:
+   """set the default colormap to rainbow and apply to current image
+   if any.  See help(colormaps) for more information"""
+   rc('image', cmap='rainbow')
+   im = gci()
+   if im is not None:
 	im.set_cmap(rainbow)
-    draw_if_interactive()
+   draw_if_interactive()
 
 pylab.cm.datad['rainbow']= rainbow_data
 pylab.cm.rainbow = rainbow_cmap

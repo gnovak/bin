@@ -43,7 +43,7 @@ while True:
         # File has stabiliized?
         print "Firing off file!"
         os.system("echo socket %s %d < %s" % (host, port, file))
-        os.system("socket %s %d < %s" % (host, port, file))
+        os.system("/home/novak/bin/socket %s %d < %s" % (host, port, file))
         old_mtime=new_mtime
         loaded=False
     time.sleep(interval)

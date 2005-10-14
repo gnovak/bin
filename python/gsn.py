@@ -1,9 +1,18 @@
-import gsnext, scipy, scipy.gplt, pylab, pyx, pickle, os
+#import gsnext, scipy, scipy.gplt, pylab, pyx, pickle, os
+#import gsnext, scipy, scipy.gplt, matplotlib.mlab, pyx, pickle, os
 import gsnext, scipy, scipy.gplt, pyx, pickle, os
+
+#pylab = matplotlib.mlab
 
 ############################
 # Random stuff
 ############################
+
+def dsort(lst, *args, **kw):
+    """Destructive sort: Sort argument and return reference to
+    argument.  This is to facilitate things like dsort(dict.keys())."""
+    lst.sort(*args, **kw)
+    return lst
 
 def unzip(lst):
     """Given ((a,b), (c,d), (e,f)) return ((a,c,e), (b,d,f))."""
@@ -84,7 +93,7 @@ def permutations(z):
             t=list(l)
             t.append(e)
             out.append(t)
-            return out
+    return out
         
 def zipl(*args):
     """Zip a bunch of lists together as lists, not as tuples"""
@@ -150,6 +159,9 @@ def euler_act_inv( v,  phi,  the,  psi):
     return matrix_multiply(m,v)
 
 def matrix_multiply(m, v):    
+    # If len v==0, return v itself.  I suppose this is like the empty set
+    if len(v)==0: return v
+
     result=scipy.transpose(m*scipy.transpose(v))
 
     # for one input vector, make output 1d

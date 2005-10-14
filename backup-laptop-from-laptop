@@ -7,8 +7,8 @@ OPTS="--archive --delete --delete-excluded --verbose --progress --stats"
 EXCLUDE=/Users/novak/bin/backup-laptop-exclude
 DIRS=/Users/
 #DEST=$REMOTE_USER@dionysus:/data/novak/Backup
-DEST=$REMOTE_USER@publichost:\~/Crash-2005/sparse-laptop/
-
+#DEST=$REMOTE_USER@publichost:\~/Crash-2005/sparse-laptop/
+DEST=/Volumes/WD-PASSPORT/euterpe
 /usr/bin/rsync $OPTS --exclude-from=$EXCLUDE $DIRS $DEST
 
   

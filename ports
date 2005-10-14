@@ -89,7 +89,13 @@ commands = dict(
     dionysus_url_socket=cmd('socket -l -p safari-open %s 2081' % ip_address()),
     dionysus_url=cmd('ssh -n -N -R2081:%s:2081 dionysus' % ip_address(),
                       priority=20, sleep_before=2),
-    desktop=cmd('ssh -n -N -L2022:dionysus.ucolick.org:22 dionysus.ucolick.org'),
+    dionysus_emacs=cmd('ssh -f dionysus emacs',priority=20, sleep_before=2),
+    dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665',
+                       priority=20, sleep_before=2),
+    dionysus_xclock=cmd('ssh -f dionysus xclock -update 1 -geometry 70x80+804+665',
+                        priority=20, sleep_before=2),
+    #desktop=cmd('ssh -n -N -L2022:dionysus.ucolick.org:22 dionysus.ucolick.org'),
+    desktop=cmd('ssh -n -N -L2022:128.114.22.106:22 128.114.22.106'),
     sunhost     =cmd(command='ssh -n -N -L3022:publichost:22 ssh'),
     linuxhost   =cmd(command='ssh -n -N -L4022:rumba:22 ssh'),
     upsand      =cmd(command='ssh -n -N -L5022:upsand:22 andromeda'),
@@ -220,15 +226,18 @@ def run_processes(names):
         names = list(names)
         names.sort(prioritize) # sort a copy
         for name in names:
-            time.sleep(commands[name]['sleep_before'])
-            pid = os.fork()
-            if pid != 0: # parent
-                pids[name] = pid
-                print "Running %s, pid=%d: %s" % (name, pid,
-                                                  commands[name]['command'])
-            else: # child
-                os.execl('/bin/sh','junk', '-c', commands[name]['command'])
-            time.sleep(commands[name]['sleep_after'])
+            if pids.has_key(name):
+                print "%s already running as pid %d" % (name,pids[name])
+            else:
+                time.sleep(commands[name]['sleep_before'])
+                pid = os.fork()
+                if pid != 0: # parent
+                    pids[name] = pid
+                    print "Running %s, pid=%d: %s" % (name, pid,
+                                                      commands[name]['command'])
+                else: # child
+                    os.execl('/bin/sh','junk', '-c', commands[name]['command'])
+                    time.sleep(commands[name]['sleep_after'])
                 
 def kill_processes(names):
     """Kill the processes associated with a list of names"""

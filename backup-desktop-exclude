@@ -1,4 +1,29 @@
-; /.Trash
+/.Trash
+/.emacs.backup
+/Projects/Thesis/little-endian-data
+/Projects/Thesis/big-endian-data
+/Projects/Thesis/data
+/Projects/Thesis/Avishai
+/Projects/Thesis/Plots
+/Projects/Thesis/Plots-07-29-05
+/Projects/Thesis/Plots-old
+/Projects/Thesis/big-endian-holding-data
+/Projects/Thesis/little-endian-holding-data
+/Projects/Thesis/holding-data
+/Projects/Thesis/data
+/Projects/Thesis/be
+/Projects/Thesis/le
+/bin/build
+/bin/build-rpm
+/bin/build-fink
+/waiting-to-delete
+/.python23_compiled
+/.python24_compiled
+
+; Temporary...
+/Public/Catalog
+/Thesis/Oct-delete
+
 ; /.mozilla/firefox/default.kk9/Cache
 ; /.phoenix/default/iy8n731i.slt/Cache
 ; /.java/deployment/cache
@@ -10,13 +35,10 @@
 ; /bin/build
 ; /Desktop/VTK
 ; /Desktop/vtkcvs
-; /Projects/Thesis/little-endian-data
-; /Projects/Thesis/big-endian-data
 ; /Projects/Thesis/little-endian-holding-data
 ; /Projects/Thesis/big-endian-holding-data
 ; /Projects/Thesis/be
 ; /Projects/Thesis/le
-; /Projects/Thesis/data
 ; /Projects/Thesis/alldata
 ; /Projects/Thesis/Plots
 ; /Projects/Thesis/AllPlots

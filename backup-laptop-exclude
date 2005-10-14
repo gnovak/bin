@@ -13,12 +13,12 @@
 
 ; For sparse backup--added after crash
 ; Would like backed up
-/novak/Pictures/Camera
-/novak/Projects/Thesis/data
-/novak/Projects/Thesis/Plots
-/novak/Sites/Catalog
-/novak/Music/
-/novak/mail/
+; /novak/Pictures/Camera
+; /novak/Projects/Thesis/data
+; /novak/Projects/Thesis/Plots
+; /novak/Sites/Catalog
+; /novak/Music/
+; /novak/mail/
 
 ; Would like backed up
 /novak/demeter-original

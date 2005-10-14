@@ -2,7 +2,8 @@
 OPTS="--archive --delete --delete-excluded --verbose --progress --stats"
 EXCLUDE=/Users/novak/bin/backup-desktop-exclude
 SRC=dionysus:/home/novak/
-DEST=/Users/novak/.backup/novak
+#DEST=/Users/novak/.backup/novak
+DEST=/Volumes/WD-PASSPORT/dionysus
 
 /usr/bin/rsync $OPTS --exclude-from=$EXCLUDE $SRC $DEST
   

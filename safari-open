@@ -6,8 +6,8 @@
 import sys,os
 
 if len(sys.argv) > 1:
-    os.system('osascript safari-open.scpt ' +
+    os.system('osascript ~/bin/safari-open.scpt ' +
               reduce(lambda x,y: x + ' ' + y, sys.argv[1:]))
 else: 
     for url in iter(sys.stdin):
-        os.system('osascript safari-open.scpt ' + url)
+        os.system('osascript ~/bin/safari-open.scpt ' + url)

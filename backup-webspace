@@ -1,9 +1,7 @@
-unset SSH_AUTH_SOCK
+OPTS=--archive --delete --exclude-from=/home/novak/bin/backup-webspace-exclude
+SRC=jenandgreg@jenandgreg.org:
+DEST=/Volumes/WD-PASSPORT/web
 
-rsync --archive --delete --rsh="ssh -i /home/novak/.ssh/cron" --exclude-from=/home/novak/bin/backup-webspace-exclude jenandgreg@jenandgreg.org:/home/jenandgreg/ /data/novak/WebBackup/home
-
-rsync --archive --delete --copy-links --rsh="ssh -i /home/novak/.ssh/cron" --exclude-from=/home/novak/bin/backup-webspace-www-exclude jenandgreg@jenandgreg.org:/home/jenandgreg/www/ /data/novak/WebBackup/www
-
-rsync --archive --delete --rsh="ssh -i /home/novak/.ssh/cron" jenandgreg@jenandgreg.org:/var/lib/mysql/weddingwikidb /data/novak/WebBackup/sql
-
-
+rsync $OPTS $SRC/home/jenandgreg/ $DEST/home
+rsync $OPTS --copy-links $SRC/home/jenandgreg/www/ $DEST/www
+rsync $OPTS $SRC/var/lib/mysql/weddingwikidb  $DEST/sql

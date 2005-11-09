@@ -10,4 +10,4 @@ if len(sys.argv) > 1:
               reduce(lambda x,y: x + ' ' + y, sys.argv[1:]))
 else: 
     for url in iter(sys.stdin):
-        os.system('osascript ~/bin/safari-open.scpt ' + url)
+        os.system('osascript ~/bin/safari-open.scpt \'' + url +'\'')

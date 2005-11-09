@@ -14,31 +14,31 @@ import scipy, pyx, pylab
 ############################
 # Add some stuff to the scipy namespace
 #
-def lrange(l, h, dex):
+def lrange(l, h, dex,*args,**kw):
     """Log-spaced array"""
-    return 10**scipy.arange(scipy.log10(l), scipy.log10(h), dex)
+    return 10**scipy.arange(scipy.log10(l), scipy.log10(h), dex,*args,**kw)
 scipy.lrange = lrange
 
-def nrange(l, h, n):
+def nrange(l, h, n,*args,**kw):
     """Array where you specify low, high, and n instead of dx"""
     dx = (h-l)/(1.0*(n-1))
-    return scipy.arange(l, h+0.5*dx, dx)
+    return scipy.arange(l, h+0.5*dx, dx,*args,**kw)
 scipy.nrange = nrange
 
-def irange(l, h, n):
+def irange(l, h, n,*args,**kw):
     """Incomplete nrange -- doesn't include the endpoint"""
     dx = (h-l)/(1.0*n)
-    return scipy.arange(l, h, dx)
+    return scipy.arange(l, h, dx,*args,**kw)
 scipy.irange = irange
 
-def lnrange(l, h, n):
+def lnrange(l, h, n,*args,**kw):
     """Array where you specify low, high, and n instead of dx"""
-    return 10**nrange(scipy.log10(l), scipy.log10(h),n)
+    return 10**nrange(scipy.log10(l), scipy.log10(h),n,*args,**kw)
 scipy.lnrange = lnrange
 
-def lirange(l, h, n):
+def lirange(l, h, n,*args,**kw):
     """Array where you specify low, high, and n instead of dx"""
-    return 10**irange(scipy.log10(l),scipy.log10(h),n)
+    return 10**irange(scipy.log10(l),scipy.log10(h),n,*args,**kw)
 scipy.lirange = lirange
 
 def at(a):

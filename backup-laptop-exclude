@@ -1,88 +1,46 @@
 ; The /Users is implicit
 /novak/.Trash
-/novak/.backup
 /novak/Library/Caches
 /novak/Library/Application Support/Firefox/Profiles/vjie1qxn.default/Cache
 /novak/.python22_compiled/
 /novak/.python23_compiled/
 /novak/.python24_compiled/
-
+/novak/bin/build
 
 ; Temporary
-; /novak/Desktop/
+/novak/Projects/Thesis/data
+/novak/Projects/Thesis/big-endian-data
+/novak/Projects/Thesis/little-endian-data
+/novak/Projects/Thesis/Plots
 
-; For sparse backup--added after crash
-; Would like backed up
-; /novak/Pictures/Camera
-; /novak/Projects/Thesis/data
-; /novak/Projects/Thesis/Plots
-; /novak/Sites/Catalog
-; /novak/Music/
-; /novak/mail/
+; Regeneratable 
+;/novak/Pictures/Album/Photos
+;/novak/Pictures/CameraGamma
+;/novak/Pictures/CamWeb
+;/novak/Pictures/CamWebGamma
+;/novak/Pictures/CamWebSmall
+;/novak/Pictures/CamWebSmallGamma
 
-; Would like backed up
-/novak/demeter-original
-/novak/desktop-backup
-/novak/desktop-backup-complete
+;/novak/Pictures/CD/AdminPages
+;/novak/Pictures/CD/AllPagesGamma
+;/novak/Pictures/CD/Pages
+;/novak/Pictures/CD/PagesGamma
+;/novak/Pictures/CD/PagesSmall
+;/novak/Pictures/CD/PagesSmallGamma
+;/novak/Pictures/CD/Photos
+;/novak/Pictures/CD/PhotosGamma
+;/novak/Pictures/CD/PhotosLarge
+;/novak/Pictures/CD/PhotosLargeGamma
+;/novak/Pictures/CD/PhotosSmall
+;/novak/Pictures/CD/PhotosSmallGamma
 
-; Regeneratable
-/Shared/
-/novak/Desktop/Iso/
-/novak/Library/
-/novak/bin/build/
-
-/novak/Pictures/Camera
-/novak/Pictures/CamWeb
-/novak/Pictures/CamWebGamma
-/novak/Pictures/CamWebSmall
-/novak/Pictures/CamWebSmallGamma
-/novak/Pictures/CameraGamma
-
-/novak/Pictures/CD/AdminPages
-/novak/Pictures/CD/AllPagesGamma
-/novak/Pictures/CD/Pages
-/novak/Pictures/CD/PagesGamma
-/novak/Pictures/CD/PagesSmall
-/novak/Pictures/CD/PagesSmallGamma
-/novak/Pictures/CD/Photos
-/novak/Pictures/CD/PhotosGamma
-/novak/Pictures/CD/PhotosLarge
-/novak/Pictures/CD/PhotosLargeGamma
-/novak/Pictures/CD/PhotosSmall
-/novak/Pictures/CD/PhotosSmallGamma
-
-/novak/Pictures/Web/AdminPages
-/novak/Pictures/Web/AllPagesGamma
-/novak/Pictures/Web/Pages
-/novak/Pictures/Web/PagesGamma
-/novak/Pictures/Web/PagesSmall
-/novak/Pictures/Web/PagesSmallGamma
-/novak/Pictures/Web/Photos
-/novak/Pictures/Web/PhotosGamma
-/novak/Pictures/Web/PhotosSmall
-/novak/Pictures/Web/PhotosSmallGamma
-
-; /novak/Pictures/Album/Photos
-; /novak/Pictures/CameraGamma
-; /novak/Pictures/CamWeb
-; /novak/Pictures/CamWebGamma
-; /novak/Pictures/CamWebSmall
-; /novak/Pictures/CamWebSmallGamma
-; /novak/Projects/Thesis/data
-; /novak/Projects/Thesis/big-endian-data
-; /novak/Projects/Thesis/little-endian-data
-; /novak/Projects/Thesis/be
-; /novak/Projects/Thesis/le
-; /novak/Projects/Thesis/big-endian-holding-data
-; /novak/Projects/Thesis/little-endian-holding-data
-; /novak/Projects/Thesis/Plots
-
-; /orlith/.Trash
-; /orlith/Library/Caches
-; /orlith/Library/Mozilla/Profiles/default/zg96fw1e.slt/orlith
-; /Cache/Library/Application Support/Firefox/Profiles/default.1m7/Cache
-
-; more temporary stuff
-; /novak/Desktop/vtk
-
-;/novak/Music/
+;/novak/Pictures/Web/AdminPages
+;/novak/Pictures/Web/AllPagesGamma
+;/novak/Pictures/Web/Pages
+;/novak/Pictures/Web/PagesGamma
+;/novak/Pictures/Web/PagesSmall
+;/novak/Pictures/Web/PagesSmallGamma
+;/novak/Pictures/Web/Photos
+;/novak/Pictures/Web/PhotosGamma
+;/novak/Pictures/Web/PhotosSmall
+;/novak/Pictures/Web/PhotosSmallGamma

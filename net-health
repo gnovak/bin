@@ -1,0 +1,247 @@
+#!/sw/bin/python2.3
+# Get rid of import * for Tkinter
+# Click on the window to get some more information
+#
+# When I generate an event and Tk window doens't have focus, hangs
+# until Tk gets focus and there's some sort of event (like mouse
+# movement)
+#
+# When I generate an event and Tk window _has_ focus, hangs until some
+# sort of window event (like mouse move)
+
+from Tkinter import *
+import signal
+import os
+import threading
+import time
+
+##############################
+# Graphical class
+class PingApp(Frame):
+    
+    def createWidgets(self):
+        self.canvas = Canvas(self)
+        self.canvas['width'] = 30
+        self.canvas['height'] = 30
+        self.canvas['background'] = 'white'
+        self.light = self.canvas.create_oval(5,5,30,30)
+        self.canvas.itemconfigure(self.light, {'fill': 'green'})
+        self.canvas.pack()
+
+        self.oval_color = 'green'
+
+        # Events
+        self.bind('<<PingGood>>', self.UpdateGood)
+        self.bind('<<PingBad>>', self.UpdateBad)
+        self.bind('<<PingWarning>>', self.UpdateWarning)
+
+    def UpdateGood(self, event):
+        self.canvas.itemconfigure(self.light, {'fill': 'green'})
+    def UpdateBad(self, event):
+        self.canvas.itemconfigure(self.light, {'fill': 'red'})
+    def UpdateWarning(self, event):
+        self.canvas.itemconfigure(self.light, {'fill': 'yellow'})
+        
+    def StatusGood(self):
+        self.event_generate('<<PingGood>>', when='tail')
+    def StatusBad(self):
+        self.event_generate('<<PingBad>>', when='tail')
+    def StatusWarning(self):
+        self.event_generate('<<PingWarning>>', when='tail')
+                
+    def __init__(self, master=None):
+        Frame.__init__(self, master)
+        self.pack()
+        self.createWidgets()
+
+def test():
+    r = ResultCollector()
+    r.add_success()
+    r.add_failure()
+    r.last(2)
+    r.last_sum(2)
+    r.last_ave(2)
+
+    p = Ping('google.com')
+    p.run()
+    
+    p = Ping('192.168.0.200')
+    p.run()
+
+    ps = PingStream()    
+    ps.state = ps.good
+    ps.results.results = [0 for i in range(200)]
+    ps.update_stats()
+
+    ps.state = ps.warning
+    ps.results.results = [1 for i in range(200)]
+    ps.update_stats()
+
+    ps.state = ps.warning
+    ps.results.results = [0 for i in range(200)]
+    ps.update_stats()
+    
+    ps.state = ps.bad
+    ps.results.results = [1 for i in range(200)]
+    ps.update_stats()
+
+    ps.state = ps.hope
+    ps.results.results = [1 for i in range(200)]
+    ps.update_stats()
+
+    ps.state = ps.hope
+    ps.results.results = [0 for i in range(200)]
+    ps.update_stats()
+
+class ResultCollector(object):
+    def __init__(self):
+        self.max_results = 150
+
+        self.results = [1 for i in range(self.max_results)] 
+        self.lock = threading.Lock()
+
+    def add_success(self):
+        self.lock.acquire()
+        # trim results to required length
+        self.results = self.results[1:] + [1]
+        self.lock.release()
+        
+    def add_failure(self):
+        self.lock.acquire()
+        # trim results to required length
+        self.results = self.results[1:] + [0]
+        self.lock.release()
+
+    def last(self, n):
+        return self.results[-n:]
+
+    def last_sum(self, n):
+        return sum(self.results[-n:])
+
+    def last_ave(self, n):
+        return (1.0*sum(self.results[-n:])) / n
+        
+class Ping(threading.Thread):
+    def __init__(self,host, successf=None, failf=None):
+        threading.Thread.__init__(self)
+
+        self.timeout = 5
+        self.host = host
+
+        if successf is None: self.successf = self.print_success
+        else: self.successf = successf
+
+        if failf is None: self.failf = self.print_failure
+        else: self.failf = failf
+        
+        self.commandline = 'ping -c 1 -t %d %s' % (5, host)
+        self.setDaemon(True)
+        
+    def print_success(self): print 'Pinging ' + self.host + ' succeeded!'
+    def print_failure(self): print 'Pinging ' + self.host + ' failed!'
+
+    def run(self):
+        self.output = os.popen(self.commandline)
+
+        found_result = False
+        for line in iter(self.output):
+            if line.find("0 packets received") != -1:
+                self.failf()
+                found_result = True
+            elif line.find("1 packets received") != -1:
+                self.successf()
+                found_result = True
+
+        if not found_result:
+            # Didn't find definitive result...  call that a failure
+            self.failf()
+        
+class PingStream(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        
+        # States
+        self.good = 3
+        self.warning = 2
+        self.hope = 1
+        self.bad = 0
+
+        # Constants
+        self.host = 'google.com'        
+        self.interval = 1
+        
+        # Actual initialization
+        self.state = self.good
+        self.results = ResultCollector()
+        self.setDaemon(True)
+        
+        self.set_goodf(self.noop)
+        self.set_warningf(self.noop)
+        self.set_hopef(self.noop)
+        self.set_badf(self.noop)
+        
+    def set_goodf(self, f): self.goodf = f
+    def set_warningf(self, f): self.warningf = f
+    def set_hopef(self, f): self.hopef = f
+    def set_badf(self, f): self.badf = f
+    def noop(self): return
+
+    def run(self):
+        
+        while True:
+            self.update_stats()
+            time.sleep(self.interval)
+
+    def update_stats(self):
+        # Do one ping
+        p = Ping(self.host, self.results.add_success, self.results.add_failure)
+        p.start()
+        
+        # Decide on state changes
+        # Don't update the state variable right away to avoid
+        newstate = self.state 
+        # triggering 'if' clauses further down...
+        if self.state == self.good:
+            if self.results.last_ave (20) < 0.9:
+                newstate = self.warning
+                self.warningf()
+                
+        if self.state == self.warning:
+            if self.results.last_ave (20) > 0.9:
+                newstate = self.good
+                self.goodf()                
+            if self.results.last_ave (60) < 0.5:
+                newstate = self.bad
+                self.badf()
+
+        if self.state == self.hope:
+            if self.results.last_ave (20) < 0.5:
+                newstate = self.bad
+                self.badf()                
+            if self.results.last_ave (60) > 0.9:
+                newstate = self.good
+                self.goodf()                
+
+        if self.state == self.bad:
+            if self.results.last_ave (20) > 0.5:
+                newstate = self.hope
+                self.hopef()                
+
+        self.state = newstate
+
+        # Print text output
+        #print "***** ", self.state, ' ', self.results.last_ave(20), \
+        #      self.results.last_ave (60) 
+
+
+stream = PingStream()
+app = PingApp()
+
+stream.set_goodf(app.StatusGood)
+stream.set_warningf(app.StatusWarning)
+stream.set_hopef(app.StatusWarning)
+stream.set_badf(app.StatusBad)
+
+stream.start()
+app.mainloop()
+

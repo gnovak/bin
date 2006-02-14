@@ -1,0 +1,160 @@
+#!/usr/bin/python
+
+base=3
+
+destination = '/Volumes/WD-PASSPORT/'
+
+# REMOTE_USER="novak"
+# RSYNC_RSH="/usr/bin/ssh -F /Users/novak/.ssh/config"
+rsync_command = "rsync"
+# --delete --delete-excluded --numeric-ids 
+rsync_options="--archive --link-dest --verbose --progress --stats --exclude-from=-"
+
+config = dict(demeter = dict(source='/Users/',
+                             exclude=""),
+
+              dionysus= dict(source='dionysus:/home/'
+                             exclude=""),
+              
+              euterpe = dict(source='/Users/',
+                             exclude=
+"""; The /Users is implicit
+; /novak/.Trash
+"""),
+
+              usb_key = dict(source='/Volumes/USB-Disk/',
+                             exclude=""),
+
+              web = dict(source='jenandgreg@jenandgreg.org:/home/jenandgreg/',
+                             exclude=""),
+
+              web_www = dict(source='jenandgreg@jenandgreg.org:/home/jenandgreg/www/',
+                             rsync_options = '--copy-links'
+                             exclude=""),
+
+              web_sql = dict(source='jenandgreg@jenandgreg.org:/var/lib/mysql/weddingwikidb/',
+                             exclude=""),
+
+
+              jen = dict(source='/Users/',
+                         exclude=""),)
+
+import sys
+import threading
+import os
+             
+def main():
+    system = sys.argv[1]
+    
+    backup(system)
+    prune_backup_series(system)
+    
+def backup(system):
+    starting_dir = os.getcwd()    
+    os.chdir(destination)
+    
+    last_fn = get_last_filename(system)
+    next_fn = get_next_filename(system)
+    source = config[system]['source']
+    # 'echo ' + ' ' + \
+
+    options = rsync_options
+
+    if config[system].has_key('rsync_options'):
+        options = options  + ' ' + config[system]['rsync_options']
+    
+    command = rsync_command + ' ' + \
+              options + ' ' + \
+              '--link-dest=../' + last_fn + ' ' + \
+              source + ' ' + \
+              next_fn
+
+    inf, outf = os.popen2(command)
+
+    inf.write(config[system]['exclude'])
+    inf.close()
+    
+    for line in outf:
+        print line, 
+    outf.close()
+    
+    os.chdir(starting_dir)
+
+def largest_exponent(n):
+    """Return largest i such that base**i is less than n"""
+    assert n >= 0
+    
+    # handle zero as special case
+    if n==0: return 0
+
+    i=0
+    while base**i <= n:
+        i += 1
+    return i-1
+
+def keep_numbers(n):
+    "Return a list of backup numbers to keep, given current number n"
+
+    # handle 0 as a special case
+    result = [ [i for i in range(n-base+1, n+1) if i >= 0] ]
+
+    for i in range(1, largest_exponent(n)+1):
+        last_multiple = n - (n % base**i)
+
+        result.append([i for i in range(last_multiple-base**(i+1),
+                                        last_multiple, base**i)
+                       if i >= 0])
+
+    return flatten(result)
+
+def keep_filenames(base, n):
+    """return a list of filenames that should not be deleted"""
+    ns = keep_numbers(n)
+    return [base + "." + str(n) for n in ns]
+
+def prune_backup_series(base):
+    """Prune the current backup series"""
+    n = get_last_number(base)
+    keep_fns = keep_filenames(base, n)
+
+    fns = backup_filenames(base)
+    for fn in fns:
+        if not fn in keep_fns:            
+            print "Deleting ", fn
+            os.system('rm -rf ' + fn)
+            # os.removedirs(fn)
+            
+def backup_filenames(base):
+    """Return a list of all filenames in this backup series"""
+    return [f for f in os.listdir('.') if f.startswith(base)]
+
+def get_next_filename(base):
+    """get the next filename this backup series."""
+    num = get_next_number(base)
+    return base + '.' + str(num)
+
+def get_last_filename(base):
+    """get the next filename this backup series."""
+    num = get_last_number(base)
+    return base + '.' + str(num)
+
+def get_last_number(base):
+    """get the number of the last backup in this series."""
+    fns = backup_filenames(base)
+    nums = [int(fn.replace(base+'.', '')) for fn in fns]
+
+    if len(nums) is 0: return 0
+    else: return max(nums)
+
+def get_next_number(base):
+    """get the number of the next backup in this series."""
+    return get_last_number(base) + 1
+
+def flatten(L):
+    """Make nested lists into a single list of atoms"""
+    if type(L) != type([]): return [L]
+    if L == []: return L
+    return reduce(lambda x,y: x+y, map(flatten, L))
+
+    
+main()

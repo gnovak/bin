@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-base=3
+base=4
 
 destination = '/Volumes/WD-PASSPORT/'
 

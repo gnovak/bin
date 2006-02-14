@@ -13,7 +13,7 @@ rsync_options="--archive --link-dest --verbose --progress --stats --exclude-from
 config = dict(demeter = dict(source='/Users/',
                              exclude=""),
 
-              dionysus= dict(source='dionysus:/home/'
+              dionysus= dict(source='dionysus:/home/',
                              exclude=""),
               
               euterpe = dict(source='/Users/',
@@ -29,7 +29,7 @@ config = dict(demeter = dict(source='/Users/',
                              exclude=""),
 
               web_www = dict(source='jenandgreg@jenandgreg.org:/home/jenandgreg/www/',
-                             rsync_options = '--copy-links'
+                             rsync_options = '--copy-links',
                              exclude=""),
 
               web_sql = dict(source='jenandgreg@jenandgreg.org:/var/lib/mysql/weddingwikidb/',

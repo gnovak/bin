@@ -8,36 +8,80 @@ destination = '/Volumes/WD-PASSPORT/'
 # RSYNC_RSH="/usr/bin/ssh -F /Users/novak/.ssh/config"
 rsync_command = "rsync"
 # --delete --delete-excluded --numeric-ids 
-rsync_options="--archive --link-dest --verbose --progress --stats --exclude-from=-"
+rsync_options="--archive --verbose --progress --stats --exclude-from=-"
 
 config = dict(demeter = dict(source='/Users/',
-                             exclude=""),
+                             exclude=
+"""/novak/.Trash 
+/novak/Library/Caches
+/novak/.backup
+/novak/Pictures
+/novak/Music
+/novak/Sites/Catalog
+/novak/Sites/Plots
+/novak/Projects/Thesis
+/novak/Desktop/Audio
+/novak/Desktop/vtk
+/novak/Desktop/lush
+/orlith/.Trash
+/orlith/Library/Caches
+/test/.Trash
+/test/Library/Caches
+"""),
 
-              dionysus= dict(source='dionysus:/home/',
-                             exclude=""),
+              dionysus= dict(source='root@dionysus:/home/',
+                             exclude=
+"""/novak/.Trash
+/novak/bin/build
+/novak/bin/build-rpm
+/novak/bin/build-fink
+/novak/waiting-to-delete
+/novak/.python23_compiled
+/novak/.python24_compiled"""),
+
+              dionysus_etc= dict(source='root@dionysus:/etc/',
+                                 exclude=""),
               
               euterpe = dict(source='/Users/',
                              exclude=
 """; The /Users is implicit
-; /novak/.Trash
+/novak/.Trash
+/novak/bin/build
+/novak/Library/Caches
+/novak/.python23_compiled
+/novak/.python24_compiled
+"""),
+
+              jen = dict(source='/Users/',
+                         exclude=
+"""/Shared/GarageBand Demo Songs
+/jen/Documents/installers
+/jen/.Trash
+/jen/Library/Caches
+/novak/.Trash
+/novak/bin/build
+/novak/Library/Caches
 """),
 
               usb_key = dict(source='/Volumes/USB-Disk/',
-                             exclude=""),
+                             exclude=
+"""
+/.Trashes
+"""),
 
               web = dict(source='jenandgreg@jenandgreg.org:/home/jenandgreg/',
-                             exclude=""),
+                             exclude=
+"""
+/.cpan
+/.wusage
+"""),
 
               web_www = dict(source='jenandgreg@jenandgreg.org:/home/jenandgreg/www/',
                              rsync_options = '--copy-links',
                              exclude=""),
 
               web_sql = dict(source='jenandgreg@jenandgreg.org:/var/lib/mysql/weddingwikidb/',
-                             exclude=""),
-
-
-              jen = dict(source='/Users/',
-                         exclude=""),)
+                             exclude=""),)
 
 import sys
 import threading

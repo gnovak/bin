@@ -82,7 +82,8 @@ def cmd(command,priority=0,sleep_after=0, sleep_before=0):
     
 commands = dict(
     ucsc_mail =cmd('ssh -n -N -L7025:smtp.ucolick.org:25 ssh.ucolick.org'),
-    ucsc_news =cmd('ssh -n -N -L7119:news.ucsc.edu:119 ssh.ucolick.org'),
+    berkeley_news =cmd('autossh -M 10000 -n -N -L7119:news.ucsc.edu:119 ssh.ucolick.org'),
+    ucsc_news =cmd('ssh -n -N -L7119:news.ucsc.edu:119 localhost'),
     dionysus_ssh =cmd('ssh -n -N -L2022:dionysus:22 ssh'),
     dionysus_web =cmd('ssh -n -N -L2080:dionysus:80 ssh'),
     dionysus_mail=cmd('ssh -n -N -R2025:%s:2025 dionysus' % ip_address(),

@@ -2,6 +2,9 @@
 #import gsnext, scipy, scipy.gplt, matplotlib.mlab, pyx, pickle, os
 import gsnext, scipy, scipy.gplt, pyx, pickle, os
 
+# GSN FIXME
+from gsnext import *
+
 #pylab = matplotlib.mlab
 
 ############################
@@ -60,8 +63,11 @@ def uncan(file, *args, **kw):
     return obj
     
 def meshgrid(x,y):    
-    X=repeat(x[NewAxis,:],len(y))
-    Y=repeat(y[:,NewAxis],len(x),axis=1)
+    if not type(x) is type(scipy.array([])): x = scipy.array(x)
+    if not type(y) is type(scipy.array([])): y = scipy.array(y)
+    
+    X=scipy.repeat(x[:,scipy.NewAxis],len(y),axis=1)
+    Y=scipy.repeat(y[scipy.NewAxis,:],len(x))
     return X,Y
 
 def flatten(L):
@@ -94,7 +100,7 @@ def permutations(z):
             t.append(e)
             out.append(t)
     return out
-        
+
 def zipl(*args):
     """Zip a bunch of lists together as lists, not as tuples"""
     return map(list,zip(*args))
@@ -131,6 +137,11 @@ def euler_matrix(phi, the, psi):
 
     return scipy.mat(m)
 
+def pass_euler_matrix(*a): return euler_matrix(*a)
+def inv_pass_euler_matrix(*a): return scipy.mat(scipy.transpose(euler_matrix(*a)))
+def act_euler_matrix(*a): return scipy.mat(scipy.transpose(euler_matrix(*a)))
+def inv_act_euler_matrix(*a): return euler_matrix(*a)
+    
 def euler_pass(v,  phi,  the,  psi):
     """Passive Euler transform"""
     m=euler_matrix(phi, the, psi)
@@ -161,7 +172,7 @@ def euler_act_inv( v,  phi,  the,  psi):
 def matrix_multiply(m, v):    
     # If len v==0, return v itself.  I suppose this is like the empty set
     if len(v)==0: return v
-
+    
     result=scipy.transpose(m*scipy.transpose(v))
 
     # for one input vector, make output 1d
@@ -258,7 +269,7 @@ def make_histo(y,bins,weights,overflow,normed):
     else:
         bins=bins[:-1]
         
-    hist = scipy.zeros(len(n)-1)      
+    hist = scipy.zeros(len(n)-1)
 
     for i in range(len(hist)):  # sum up the weights that fall into
         l=n[i]                  # the range b/t each bin

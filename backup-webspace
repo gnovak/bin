@@ -1,7 +1,8 @@
-OPTS=--archive --delete --exclude-from=/home/novak/bin/backup-webspace-exclude
-SRC=jenandgreg@jenandgreg.org:
-DEST=/Volumes/WD-PASSPORT/web
+OPTS="--archive --delete --delete-excluded --verbose --progress --stats"
+EXCLUDE="$HOME/bin/backup-webspace-exclude"
+SRC='jenandgreg@jenandgreg.org:'
+DEST='/Volumes/WD-PASSPORT/web'
 
-rsync $OPTS $SRC/home/jenandgreg/ $DEST/home
-rsync $OPTS --copy-links $SRC/home/jenandgreg/www/ $DEST/www
-rsync $OPTS $SRC/var/lib/mysql/weddingwikidb  $DEST/sql
+rsync $OPTS --exclude-from=$EXCLUDE $SRC/home/jenandgreg/ $DEST/home
+rsync $OPTS --copy-links --exclude-from=$EXCLUDE $SRC/home/jenandgreg/www/ $DEST/www
+rsync $OPTS --exclude-from=$EXCLUDE $SRC/var/lib/mysql/weddingwikidb  $DEST/sql

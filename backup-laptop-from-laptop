@@ -1,14 +1,21 @@
 #!/bin/bash 
-RSYNC_RSH="/usr/bin/ssh -F /Users/novak/.ssh/config"
-REMOTE_USER="novak"
-#OPTS="--bwlimit=10 --archive --delete --delete-excluded --compress --verbose --progress --stats"
-#OPTS="--archive --delete --delete-excluded --compress --verbose --progress --stats"
-OPTS="--archive --delete --delete-excluded --verbose --progress --stats"
-EXCLUDE=/Users/novak/bin/backup-laptop-exclude
-DIRS=/Users/
-#DEST=$REMOTE_USER@dionysus:/data/novak/Backup
-#DEST=$REMOTE_USER@publichost:\~/Crash-2005/sparse-laptop/
-DEST=/Volumes/WD-PASSPORT/euterpe
-/usr/bin/rsync $OPTS --exclude-from=$EXCLUDE $DIRS $DEST
+# RSYNC_RSH="/usr/bin/ssh -F /Users/novak/.ssh/config"
+#REMOTE_USER="novak"
+#OPTS="--archive --delete --link-dest --delete-excluded --verbose --progress --stats"
 
-  
+#EXCLUDE=/Users/novak/bin/backup-laptop-exclude
+#DIRS=/Users/
+#DEST=/Volumes/WD-PASSPORT/euterpe
+#/usr/bin/rsync $OPTS --exclude-from=$EXCLUDE $DIRS $DEST
+
+#mv backup.0 backup.1
+#rsync -a --delete --link-dest=../backup.1 source_directory/  backup.0/
+ 
+# --delete --delete-excluded --exclude=
+
+#NL=1
+#NH=2
+
+#rsync --link-dest=/Users/novak/dest.$NL --archive --verbose --progress --stats /Users/novak/src/ /Users/novak/dest.$NH
+
+# handle 

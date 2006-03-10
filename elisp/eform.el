@@ -127,7 +127,8 @@
 ;; 3) Figure out how to exclude open/close characters from .* regexp in result field
 ;; 4) Clear all results function
 ;; 5) Bug when total-d-dec starts with a d..
-
+;; 6) Bug when rectangle has "destination" but no "source"
+;; 
 ;;(require 'gsn)
 
 (defvar eform-mode nil "Electric Form Mode")

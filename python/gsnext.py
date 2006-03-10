@@ -50,6 +50,28 @@ scipy.at = at
 # Pylab
 ######################################
 
+def pimshow(X, *args, **kw):
+    """Proper Image Show--makes display of images more intuitive.  Ie,
+    the first index is the horizontal axis (increasing to the right),
+    the second is the vertical axis (increasing up)."""
+    X = scipy.asarray(X)
+    
+    if len(scipy.shape(X)) == 3: axes = (1,0,2)
+    else: axes = (1,0)
+    
+    return pylab.imshow(scipy.transpose(X, axes)[::-1], *args, **kw)
+
+def ppcolor(X, *args, **kw):
+    """Proper Image Show--makes display of images more intuitive.  Ie,
+    the first index is the horizontal axis (increasing to the right),
+    the second is the vertical axis (increasing up)."""
+    X = scipy.asarray(X)
+    
+    if len(scipy.shape(X)) == 3: axes = (1,0,2)
+    else: axes = (1,0)
+    
+    return pylab.pcolor(scipy.transpose(X, axes)[::-1], *args, **kw)
+
 pylab.cmap = pylab.cm
 
 rhot_data = {'red':   ((1-1.0, 1.0, 1.0),

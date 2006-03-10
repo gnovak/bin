@@ -8,8 +8,8 @@
 \address
 {
   Greg Novak \\ 
-  256 Dufour Street \\
-  Santa Cruz, CA, 95060 \\
+  3205 California St Apt E \\
+  Berkeley, CA, 94703 \\
   831-459-0424 \\
   novak@ucolick.org 
   }

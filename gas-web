@@ -3,9 +3,9 @@
 use Date::Simple;
 use HTML::Template;
 
-$dayofweeks = "Tuesdays";
-$room = "ISB 165";
-$time = "4-5pm";
+$dayofweeks = "Thursdays";
+$room = "ISB 356";
+$time = "12:30pm";
 
 $separator = "#";
 $infofile = "gas.talks";
@@ -17,6 +17,7 @@ $outputFile = "gas-web.html";
 #$publishcommand = "scp $outputFile publichost:public_html/Gas/index.html";
 
 @alltalks = Gettalks($infofile);
+
 @futuretalks = Futuretalks(@alltalks);
 @pasttalks = Pasttalks(@alltalks);
 

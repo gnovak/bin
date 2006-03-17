@@ -14,6 +14,17 @@ import signal
 import os
 import threading
 import time
+import datetime
+
+class hook:
+    def __init__(self):
+        self._hooks = []
+    def add(self, f):
+        self._hooks.append(f)
+    def remove(self, f):
+        self._hooks.remove(f)
+    def run(self,*a, **kw):
+        return [f(*a, **kw) for f in self._hooks]
 
 ##############################
 # Graphical class
@@ -174,17 +185,11 @@ class PingStream(threading.Thread):
         self.state = self.good
         self.results = ResultCollector()
         self.setDaemon(True)
-        
-        self.set_goodf(self.noop)
-        self.set_warningf(self.noop)
-        self.set_hopef(self.noop)
-        self.set_badf(self.noop)
-        
-    def set_goodf(self, f): self.goodf = f
-    def set_warningf(self, f): self.warningf = f
-    def set_hopef(self, f): self.hopef = f
-    def set_badf(self, f): self.badf = f
-    def noop(self): return
+
+        self.good_hook = hook()
+        self.warning_hook = hook()
+        self.hope_hook = hook()
+        self.bad_hook = hook()
 
     def run(self):
         
@@ -199,33 +204,33 @@ class PingStream(threading.Thread):
         
         # Decide on state changes
         # Don't update the state variable right away to avoid
-        newstate = self.state 
         # triggering 'if' clauses further down...
+        newstate = self.state 
         if self.state == self.good:
             if self.results.last_ave (20) < 0.9:
                 newstate = self.warning
-                self.warningf()
+                self.warning_hook.run()
                 
         if self.state == self.warning:
             if self.results.last_ave (20) > 0.9:
                 newstate = self.good
-                self.goodf()                
+                self.good_hook.run()                
             if self.results.last_ave (60) < 0.5:
                 newstate = self.bad
-                self.badf()
+                self.bad_hook.run()
 
         if self.state == self.hope:
             if self.results.last_ave (20) < 0.5:
                 newstate = self.bad
-                self.badf()                
+                self.bad_hook.run()                
             if self.results.last_ave (60) > 0.9:
                 newstate = self.good
-                self.goodf()                
+                self.good_hook.run()                
 
         if self.state == self.bad:
             if self.results.last_ave (20) > 0.5:
                 newstate = self.hope
-                self.hopef()                
+                self.hope_hook.run()                
 
         self.state = newstate
 
@@ -233,14 +238,31 @@ class PingStream(threading.Thread):
         #print "***** ", self.state, ' ', self.results.last_ave(20), \
         #      self.results.last_ave (60) 
 
-
+class PingLog:
+    def __init__(self):
+        self._time = time.time()
+        
+    def internet_down(self):
+        self._time = time.time()
+        
+    def internet_up(self):
+        now = time.time()
+        secs = (now - self._time) % 60
+        mins = ((now - self._time)/60) % 60
+        hrs = (now - self._time)/3600         
+        print datetime.datetime.today().ctime(), ":Internet was down for %d hours, %d minutes, and %d seconds" % (hrs, mins, secs)
+        
 stream = PingStream()
-app = PingApp()
 
-stream.set_goodf(app.StatusGood)
-stream.set_warningf(app.StatusWarning)
-stream.set_hopef(app.StatusWarning)
-stream.set_badf(app.StatusBad)
+app = PingApp()
+stream.good_hook.add(app.StatusGood)
+stream.warning_hook.add(app.StatusWarning)
+stream.hope_hook.add(app.StatusWarning)
+stream.bad_hook.add(app.StatusBad)
+
+log = PingLog()
+stream.good_hook.add(log.internet_up)
+stream.bad_hook.add(log.internet_down)
 
 stream.start()
 app.mainloop()

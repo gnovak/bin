@@ -10,12 +10,14 @@
 	 (filter pred (cdr lst) (cons (car lst) result)))
 	(t (filter pred (cdr lst) result))))
 
-(defun filter (pred lst)   
+(defun filter (pred lst &optional success-list)   
   "Filter <lst> with function <pred>"
-  (let (result) 
-    (dolist (elt lst (reverse result)) 
-      (if (funcall pred elt) 
-	  (setq result (cons elt result))))))
+  (if (null success-list) 
+      (filter pred lst lst)
+      (let (result)
+	(dotimes (i (length lst) (reverse result))
+	  (when (funcall pred (nth i lst))
+	      (push (nth i success-list) result))))))
 
 (defun reduce (f lst &optional r)
   "Reduce <lst> with binary function <f> in a left-associative manner"

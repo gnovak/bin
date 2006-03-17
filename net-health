@@ -9,9 +9,13 @@
 # When I generate an event and Tk window _has_ focus, hangs until some
 # sort of window event (like mouse move)
 
-from Tkinter import *
+with_tk = True
+try: from Tkinter import *
+except ImportError: with_tk = False
+    
 import signal
 import os
+import popen2
 import threading
 import time
 import datetime
@@ -28,42 +32,43 @@ class hook:
 
 ##############################
 # Graphical class
-class PingApp(Frame):
-    
-    def createWidgets(self):
-        self.canvas = Canvas(self)
-        self.canvas['width'] = 30
-        self.canvas['height'] = 30
-        self.canvas['background'] = 'white'
-        self.light = self.canvas.create_oval(5,5,30,30)
-        self.canvas.itemconfigure(self.light, {'fill': 'green'})
-        self.canvas.pack()
+if with_tk:
+    class PingApp(Frame):
 
-        self.oval_color = 'green'
+        def createWidgets(self):
+            self.canvas = Canvas(self)
+            self.canvas['width'] = 30
+            self.canvas['height'] = 30
+            self.canvas['background'] = 'white'
+            self.light = self.canvas.create_oval(5,5,30,30)
+            self.canvas.itemconfigure(self.light, {'fill': 'green'})
+            self.canvas.pack()
 
-        # Events
-        self.bind('<<PingGood>>', self.UpdateGood)
-        self.bind('<<PingBad>>', self.UpdateBad)
-        self.bind('<<PingWarning>>', self.UpdateWarning)
+            self.oval_color = 'green'
 
-    def UpdateGood(self, event):
-        self.canvas.itemconfigure(self.light, {'fill': 'green'})
-    def UpdateBad(self, event):
-        self.canvas.itemconfigure(self.light, {'fill': 'red'})
-    def UpdateWarning(self, event):
-        self.canvas.itemconfigure(self.light, {'fill': 'yellow'})
-        
-    def StatusGood(self):
-        self.event_generate('<<PingGood>>', when='tail')
-    def StatusBad(self):
-        self.event_generate('<<PingBad>>', when='tail')
-    def StatusWarning(self):
-        self.event_generate('<<PingWarning>>', when='tail')
-                
-    def __init__(self, master=None):
-        Frame.__init__(self, master)
-        self.pack()
-        self.createWidgets()
+            # Events
+            self.bind('<<PingGood>>', self.UpdateGood)
+            self.bind('<<PingBad>>', self.UpdateBad)
+            self.bind('<<PingWarning>>', self.UpdateWarning)
+
+        def UpdateGood(self, event):
+            self.canvas.itemconfigure(self.light, {'fill': 'green'})
+        def UpdateBad(self, event):
+            self.canvas.itemconfigure(self.light, {'fill': 'red'})
+        def UpdateWarning(self, event):
+            self.canvas.itemconfigure(self.light, {'fill': 'yellow'})
+
+        def StatusGood(self):
+            self.event_generate('<<PingGood>>', when='tail')
+        def StatusBad(self):
+            self.event_generate('<<PingBad>>', when='tail')
+        def StatusWarning(self):
+            self.event_generate('<<PingWarning>>', when='tail')
+
+        def __init__(self, master=None):
+            Frame.__init__(self, master)
+            self.pack()
+            self.createWidgets()
 
 def test():
     r = ResultCollector()
@@ -104,7 +109,7 @@ def test():
     ps.results.results = [0 for i in range(200)]
     ps.update_stats()
 
-class ResultCollector(object):
+class ResultCollector:
     def __init__(self):
         self.max_results = 150
 
@@ -136,8 +141,9 @@ class Ping(threading.Thread):
     def __init__(self,host, successf=None, failf=None):
         threading.Thread.__init__(self)
 
-        self.timeout = 5
         self.host = host
+        self.interval = 1
+        self.timeout = 10
 
         if successf is None: self.successf = self.print_success
         else: self.successf = successf
@@ -145,27 +151,36 @@ class Ping(threading.Thread):
         if failf is None: self.failf = self.print_failure
         else: self.failf = failf
         
-        self.commandline = 'ping -c 1 -t %d %s' % (5, host)
-        self.setDaemon(True)
+        self.commandline = 'ping -c 1 %s' % host
+        # self.setDaemon(True)
         
     def print_success(self): print 'Pinging ' + self.host + ' succeeded!'
     def print_failure(self): print 'Pinging ' + self.host + ' failed!'
 
-    def run(self):
-        self.output = os.popen(self.commandline)
-
+    def examine_output(self, f):
         found_result = False
-        for line in iter(self.output):
+        for line in iter(f):
             if line.find("0 packets received") != -1:
                 self.failf()
                 found_result = True
             elif line.find("1 packets received") != -1:
                 self.successf()
                 found_result = True
-
         if not found_result:
-            # Didn't find definitive result...  call that a failure
-            self.failf()
+            self.failf()                    
+        
+    def run(self):
+        process = popen2.Popen3(self.commandline, capturestderr=True)
+        
+        iterations = 0
+        while process.poll() == -1:
+            if iterations >= self.timeout:
+                os.kill(process.pid, signal.SIGKILL)
+            iterations += 1
+            time.sleep(self.interval)
+
+        self.examine_output(process.fromchild)
+
         
 class PingStream(threading.Thread):
     def __init__(self):
@@ -234,10 +249,6 @@ class PingStream(threading.Thread):
 
         self.state = newstate
 
-        # Print text output
-        #print "***** ", self.state, ' ', self.results.last_ave(20), \
-        #      self.results.last_ave (60) 
-
 class PingLog:
     def __init__(self):
         self._time = time.time()
@@ -254,16 +265,19 @@ class PingLog:
         
 stream = PingStream()
 
-app = PingApp()
-stream.good_hook.add(app.StatusGood)
-stream.warning_hook.add(app.StatusWarning)
-stream.hope_hook.add(app.StatusWarning)
-stream.bad_hook.add(app.StatusBad)
+if with_tk:
+    app = PingApp()
+    stream.good_hook.add(app.StatusGood)
+    stream.warning_hook.add(app.StatusWarning)
+    stream.hope_hook.add(app.StatusWarning)
+    stream.bad_hook.add(app.StatusBad)
 
 log = PingLog()
 stream.good_hook.add(log.internet_up)
 stream.bad_hook.add(log.internet_down)
 
 stream.start()
-app.mainloop()
+
+if with_tk:
+    app.mainloop()
 

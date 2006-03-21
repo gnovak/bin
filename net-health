@@ -1,4 +1,4 @@
-#!/sw/bin/python2.3
+#!/usr/bin/python
 # Get rid of import * for Tkinter
 # Click on the window to get some more information
 #
@@ -14,6 +14,7 @@ try: from Tkinter import *
 except ImportError: with_tk = False
     
 import signal
+import sys 
 import os
 import popen2
 import threading
@@ -152,7 +153,7 @@ class Ping(threading.Thread):
         else: self.failf = failf
         
         self.commandline = 'ping -c 1 %s' % host
-        # self.setDaemon(True)
+        self.setDaemon(True)
         
     def print_success(self): print 'Pinging ' + self.host + ' succeeded!'
     def print_failure(self): print 'Pinging ' + self.host + ' failed!'
@@ -199,16 +200,35 @@ class PingStream(threading.Thread):
         # Actual initialization
         self.state = self.good
         self.results = ResultCollector()
-        self.setDaemon(True)
+	if with_tk:
+	        self.setDaemon(True)
 
-        self.good_hook = hook()
-        self.warning_hook = hook()
-        self.hope_hook = hook()
-        self.bad_hook = hook()
+	#nodes
+        self.to_good_hook = hook()
+        self.to_warning_hook = hook()
+        self.to_hope_hook = hook()
+        self.to_bad_hook = hook()
+
+        self.from_good_hook = hook()
+        self.from_warning_hook = hook()
+        self.from_hope_hook = hook()
+        self.from_bad_hook = hook()
+
+	#edges 
+	self.good_warning_hook = hook()
+	self.warning_good_hook = hook()
+	self.warning_bad_hook = hook()
+	self.hope_good_hook = hook()
+	self.hope_bad_hook = hook()
+	self.bad_hope_hook = hook()
 
     def run(self):
-        
+    	iterations = 0        
         while True:
+	    if iterations % 3600 == 0:
+	         print "Still pinging at", datetime.datetime.today().ctime()
+		 sys.stdout.flush()
+            iterations += 1
             self.update_stats()
             time.sleep(self.interval)
 
@@ -224,28 +244,41 @@ class PingStream(threading.Thread):
         if self.state == self.good:
             if self.results.last_ave (20) < 0.9:
                 newstate = self.warning
-                self.warning_hook.run()
+		self.from_warning_hook.run()
+                self.good_warning_hook.run()
+                self.to_warning_hook.run()
                 
         if self.state == self.warning:
             if self.results.last_ave (20) > 0.9:
                 newstate = self.good
-                self.good_hook.run()                
+		self.from_warning_hook.run()
+                self.warning_good_hook.run()                
+                self.to_good_hook.run()                
             if self.results.last_ave (60) < 0.5:
-                newstate = self.bad
-                self.bad_hook.run()
+                newstate = self.bad		
+		self.from_warning_hook.run()
+		self.warning_bad_hook.run()
+                self.to_bad_hook.run()
+
 
         if self.state == self.hope:
             if self.results.last_ave (20) < 0.5:
                 newstate = self.bad
-                self.bad_hook.run()                
+		self.from_hope_hook.run()
+		self.hope_bad_hook.run()
+                self.to_bad_hook.run()                
             if self.results.last_ave (60) > 0.9:
                 newstate = self.good
-                self.good_hook.run()                
+		self.from_hope_hook.run()
+		self.hope_good_hook.run()
+                self.to_good_hook.run()                
 
         if self.state == self.bad:
             if self.results.last_ave (20) > 0.5:
                 newstate = self.hope
-                self.hope_hook.run()                
+		self.from_bad_hook.run()
+		self.bad_hope_hook.run()
+                self.to_hope_hook.run()                
 
         self.state = newstate
 
@@ -254,30 +287,35 @@ class PingLog:
         self._time = time.time()
         
     def internet_down(self):
+    	print "Internet is down!"
         self._time = time.time()
+	sys.stdout.flush()
         
     def internet_up(self):
+    	print "Internet is up!"
         now = time.time()
         secs = (now - self._time) % 60
         mins = ((now - self._time)/60) % 60
         hrs = (now - self._time)/3600         
         print datetime.datetime.today().ctime(), ":Internet was down for %d hours, %d minutes, and %d seconds" % (hrs, mins, secs)
-        
+        sys.stdout.flush()
+
 stream = PingStream()
 
 if with_tk:
     app = PingApp()
-    stream.good_hook.add(app.StatusGood)
-    stream.warning_hook.add(app.StatusWarning)
-    stream.hope_hook.add(app.StatusWarning)
-    stream.bad_hook.add(app.StatusBad)
+    stream.to_good_hook.add(app.StatusGood)
+    stream.to_warning_hook.add(app.StatusWarning)
+    stream.to_hope_hook.add(app.StatusWarning)
+    stream.to_bad_hook.add(app.StatusBad)
 
 log = PingLog()
-stream.good_hook.add(log.internet_up)
-stream.bad_hook.add(log.internet_down)
+stream.hope_good_hook.add(log.internet_up)
+stream.warning_bad_hook.add(log.internet_down)
 
-stream.start()
 
 if with_tk:
     app.mainloop()
-
+    stream.start()
+else:
+    stream.run()

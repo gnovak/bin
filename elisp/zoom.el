@@ -24,19 +24,19 @@
 				  "\\)")
   "Regexp matching any month name given in zoom-months")
 
-(defvar zoom-regexps (list '("^\\([0-9]\\{4\\}\\).Year$" 
+(defvar zoom-regexps (list '("^\\([0-9]\\{4\\}\\).Year.muse$" 
 			     . year) ; (year)
-			   '("^\\([0-9]\\{4\\}\\).Quarter\\([0-5]\\)$" 
+			   '("^\\([0-9]\\{4\\}\\).Quarter\\([0-5]\\).muse$" 
 			     . quarter) ; (year, quarter)
 			   (cons (concat "^\\([0-9]\\{4\\}\\)."
 					 zoom-month-regexp
-					 "$") 
+					 ".muse$") 
 				 'month) ; (year, month)
 			   (cons (concat "^\\([0-9]\\{4\\}\\)."
 				       zoom-month-regexp
-				       ".Week\\([0-6]\\)$")
+				       ".Week\\([0-6]\\).muse$")
 				 'week); year, month, week
-			   '("^\\([0-9]\\{4\\}\\).\\([0-9]\\{1,2\\}\\).\\([0-9]\\{1,2\\}\\)$" 
+			   '("^\\([0-9]\\{4\\}\\).\\([0-9]\\{1,2\\}\\).\\([0-9]\\{1,2\\}\\).muse$" 
 			     . day)) ; year, month, day
   "Alist of regexps that match names of years, quarters, months,
   weeks, and days")

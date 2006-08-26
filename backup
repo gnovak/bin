@@ -1,4 +1,13 @@
 #!/usr/bin/python
+# Upgrades:
+# 1) Would be nice to be able to restart a backup.  Is this possible?
+# 2) Why on earth does it take so long, even for stuff that's already there?
+#    read up on rsync
+# 3) Better handling of stderr.  Spawn two threads to read it
+#    separately?  Or maybe I don't really need popen2 at all, if I
+#    want output to just inherit stdout and stderr
+
+import re
 
 base=4
 
@@ -50,6 +59,12 @@ config = dict(demeter = dict(source='/Users/',
 /novak/Library/Caches
 /novak/.python23_compiled
 /novak/.python24_compiled
+/novak/Music
+/novak/Projects/Thesis/Plots
+/novak/Projects/Thesis/data
+/novak/Projects/Thesis/big-endian-data
+/novak/Projects/Thesis/little-endian-data
+/novak/Pictures/Wedding
 """),
 
               jen = dict(source='/Users/',
@@ -170,7 +185,8 @@ def prune_backup_series(base):
             
 def backup_filenames(base):
     """Return a list of all filenames in this backup series"""
-    return [f for f in os.listdir('.') if f.startswith(base)]
+    return [f for f in os.listdir('.')
+            if re.match('^%s\.[0-9]+$' % base, f)] 
 
 def get_next_filename(base):
     """get the next filename this backup series."""

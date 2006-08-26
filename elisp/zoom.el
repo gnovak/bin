@@ -1,3 +1,27 @@
+;; Bug - 2006.08.07 zoom-iup goes to august.week2, not august.week1
+;; 
+;; How to make this handle the presence of .muse extensions without
+;; breaking things that are unrelated to planner, like my cycling
+;; spreadsheet?
+
+;; One way is to add (?.muse) to the ends of the regexps.  But then
+;; you have to figure out how to decide whether or not a generated
+;; name should have an extension.  zoom-string creates names from
+;; templates.  zoom-*-(up||down||next) are the only place where
+;; zoom-string is called.  So I'd make a function
+;; (zoom-find-templates) that takes a name, and returns the _set_ of
+;; templates that should be used to generate new names.  Then
+;; zoom-string would take a type, a sample name, and a list of
+;; changes, call zoom-find-templates to get the templates it should
+;; use to generate a new name, and then generate the new name with the
+;; given changes.
+
+;; However, the easiest thing to do is to _define_ names for this
+;; package to not have the .muse extension.  Then the four functions
+;; iup, idown, inext, and iprev will strip .muse extensions if they
+;; exist, and call planner-find-file (which puts the .muse extensions
+;; back on).
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Config
 (defvar zoom-first-day-of-week 1 "What day should be considered the first of the week.  Zero for Sunday, one for Monday, etc")
@@ -24,36 +48,28 @@
                                   "\\)")
   "Regexp matching any month name given in zoom-months")
 
-(defvar zoom-regexps (list '("^\\([0-9]\\{4\\}\\).Year\\(?:.muse\\)*$"
+(defvar zoom-regexps (list '("^\\([0-9]\\{4\\}\\).Year$"
                              . year) ; (year)
-                           '("^\\([0-9]\\{4\\}\\).Quarter\\([0-5]\\)\\(?:.muse\\)*$" 
+                           '("^\\([0-9]\\{4\\}\\).Quarter\\([0-5]\\)$" 
                              . quarter) ; (year, quarter)
                            (cons (concat "^\\([0-9]\\{4\\}\\)."
                                          zoom-month-regexp
-                                         "\\(?:.muse\\)*$") 
+                                         "$") 
                                  'month) ; (year, month)
                            (cons (concat "^\\([0-9]\\{4\\}\\)."
                                        zoom-month-regexp
-                                       ".Week\\([0-6]\\)\\(?:.muse\\)*$")
+                                       ".Week\\([0-6]\\)$")
                                  'week); year, month, week
-                           '("^\\([0-9]\\{4\\}\\).\\([0-9]\\{1,2\\}\\).\\([0-9]\\{1,2\\}\\)\\(?:.muse\\)*$" 
+                           '("^\\([0-9]\\{4\\}\\).\\([0-9]\\{1,2\\}\\).\\([0-9]\\{1,2\\}\\)$" 
                              . day)) ; year, month, day
   "Alist of regexps that match names of years, quarters, months,
   weeks, and days")
 
-(setq zoom-templates-with-extension '((year . "1000.Year.muse")
-                                      (quarter . "1000.Quarter5.muse")
-                                      (month . "1000.Month.muse")
-                                      (week . "1000.Month.Week6.muse")
-                                      (day . "1000.99.99.muse")))
-
-(setq zoom-templates-without-extension '((year . "1000.Year")
-                                         (quarter . "1000.Quarter5")
-                                         (month . "1000.Month")
-                                         (week . "1000.Month.Week6")
-                                         (day . "1000.99.99")))
-
-(setq zoom-templates zoom-templates-with-extension)
+(setq zoom-templates '((year . "1000.Year")
+                       (quarter . "1000.Quarter5")
+                       (month . "1000.Month")
+                       (week . "1000.Month.Week6")
+                       (day . "1000.99.99")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Heavy lifting functions
@@ -73,8 +89,10 @@
   returns (week \"2006\" \"January\" \"1\")"
   (setq type (or type (assoc-default name zoom-regexps 'string-match)))  
   ;; Make sure the match data is for the right search
+  (when (null type)
+    (error "Blah"))
   (unless (string-match (car (rassoc type zoom-regexps)) name)
-    (error "Zoom: Couldn't Parse Name"))
+    (error (format "zoom.el: Couldn't Parse ~A as a ~A")))
   (cons type (list (match-string 1 name) 
                    (match-string 2 name) 
                    (match-string 3 name))))
@@ -104,18 +122,6 @@
                               (string-to-number (nth i strings))))
                           numbers)))
     (cons type (reverse numbers))))
-
-(defun zoom-string-no-extension (&rest args)
-  "Call zoom-string ensuring that there are *no* .muse extensions
-  on the template names"
-  (let ((zoom-templates zoom-templates-without-extension))
-    (apply 'zoom-string args)))    
-
-(defun zoom-string-with-extension (&rest args)
-  "Call zoom-string ensuring that there are .muse extensions on
-  the template names"
-  (let ((zoom-templates zoom-templates-with-extension))
-    (apply 'zoom-string args)))
 
 (defun zoom-string (type &rest changes)
   "Convert time-range info into a string name.  You can specify
@@ -160,12 +166,19 @@
                                (local-set-key (kbd "<S-left>") 'zoom-iprev)
                                (local-set-key (kbd "<S-right>") 'zoom-inext)))
 
+(defun zoom-canonized-buffer-name () 
+  "Return buffer name stripped of .muse extension if it exists"
+  (let ((name (buffer-name)))
+    (string-match "^\\(.*?\\)\\(.muse\\)*$" name)
+    (match-string 1 name)))
+
 (defun zoom-iup (name other-window) 
   "Move to the next higher level in the hierarchy."
-  (interactive (list (buffer-name)
+  (interactive (list (zoom-canonized-buffer-name)
                     current-prefix-arg))
   (when other-window (other-window 1))
-  (planner-find-file (zoom-up name))
+  (planner-find-file (or (zoom-up name)
+                         (error "No level above years!")))
   (when other-window (other-window 1)))
 
 (defun zoom-idown (name other-window) 
@@ -173,10 +186,11 @@
   date is within the higher-level time range, zoom to the lower
   level time range that also contains today.  Otherwise, just go
   to the first lower-level time range."
-  (interactive (list (buffer-name)
+  (interactive (list (zoom-canonized-buffer-name)
                      current-prefix-arg))
   (when other-window (other-window 1))
-  (emacs-wiki-find-file (zoom-down name))
+  (planner-find-file (or (zoom-down name)
+                         (error "No level below days!")))
   (when other-window (other-window 1)))
 
 (defun zoom-inext (name num other-window)
@@ -184,13 +198,13 @@
   hierarchy.  With a numeric prefix arg, move by that number of
   time ranges.  With a non-numeric prefix arg, show the desired
   page in the other window."
-  (interactive (list (buffer-name)
+  (interactive (list (zoom-canonized-buffer-name)
                      (if (numberp current-prefix-arg) 
                          current-prefix-arg
                        1)
                      (consp current-prefix-arg)))
   (when other-window (other-window 1))
-  (emacs-wiki-find-file (zoom-next name num))
+  (planner-find-file (zoom-next name num))
   (when other-window (other-window 1)))
 
 (defun zoom-iprev (name num other-window)
@@ -198,13 +212,13 @@
   hierarchy.  With a numeric prefix arg, move by that number of
   time ranges.  With a non-numeric prefix arg, show the desired
   page in the other window."
-  (interactive (list (buffer-name)
+  (interactive (list (zoom-canonized-buffer-name)
                      (if (numberp current-prefix-arg) 
                          current-prefix-arg
                        1)
                      (consp current-prefix-arg)))
   (when other-window (other-window 1))
-  (emacs-wiki-find-file (zoom-next name (- num)))
+  (planner-find-file (zoom-next name (- num)))
   (when other-window (other-window 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -477,7 +491,7 @@
     (let* ((first-date (calendar-nth-named-day 
                         -1 zoom-first-day-of-week month year day))
            (first-day (extract-calendar-day first-date))
-           (week (1+ (/ first-day 7)))
+           (week (1+ (/ (1- first-day) 7)))
            (zoom-month (extract-calendar-month first-date))
            (zoom-year (extract-calendar-year first-date)))
       (zoom-string 'week zoom-year zoom-month week))))
@@ -495,136 +509,28 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defvar zoom-tests
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; With Extension
-  '((zoom-parse-to-strings ("2006.Year.muse")  (year "2006" nil nil))
-    (zoom-parse-to-strings ("2006.January.muse") (month "2006" "January" nil))
-    (zoom-parse-to-strings ("2006.Quarter1.muse") (quarter "2006" "1" nil))
-    (zoom-parse-to-strings ("2006.January.Week1.muse") (week "2006" "January" "1"))
-    (zoom-parse-to-strings ("2006.01.03.muse") (day "2006" "01" "03"))
-        
-    (zoom-parse ("2006.Year.muse") (year 2006 nil nil))
-    (zoom-parse ("2006.January.muse") (month 2006 1 nil))
-    (zoom-parse ("2006.Quarter1.muse") (quarter 2006 1 nil))
-    (zoom-parse ("2006.January.Week1.muse") (week 2006 1 1))
-    (zoom-parse ("2006.01.03.muse") (day 2006 1 3))
-        
-    (zoom-string (year 2007) "2007.Year.muse")
-    (zoom-string (year "2007") "2007.Year.muse")
-    (zoom-string (quarter 2007 2) "2007.Quarter2.muse")
-    (zoom-string (quarter "2007" "2") "2007.Quarter2.muse")
-    (zoom-string (month 2007 2) "2007.February.muse")
-    (zoom-string (month "2007" "February") "2007.February.muse")
-    (zoom-string (week 2007 2 2) "2007.February.Week2.muse")
-    (zoom-string (week "2007" "February" "2") "2007.February.Week2.muse")
-    (zoom-string (day 2007 2 2) "2007.02.02.muse")
-    (zoom-string (day "2007" "2" "2") "2007.02.02.muse")
-        
-    (zoom-contains ("2006.Year.muse" 732311) nil)
-    (zoom-contains ("2006.Year.muse" 732312) t)
-    (zoom-contains ("2006.Year.muse" 732463) t)
-    (zoom-contains ("2006.Year.muse" 732676) t)
-    (zoom-contains ("2006.Year.muse" 732677) nil)
-        
-    (zoom-year-beg ("2006.Year.muse") 732312)
-    (zoom-quarter-beg ("2006.Quarter1.muse") 732312)
-    (zoom-quarter-beg ("2006.Quarter2.muse") 732402)
-    (zoom-quarter-beg ("2006.Quarter3.muse") 732493)
-    (zoom-quarter-beg ("2006.Quarter4.muse") 732585)
-    (zoom-month-beg ("2006.January.muse") 732312)
-    (zoom-week-beg ("2006.January.Week1.muse") 732313)
-    (zoom-week-beg ("2006.January.Week2.muse") 732320)
-    (zoom-week-beg ("2006.January.Week3.muse") 732327)
-    (zoom-week-beg ("2006.January.Week4.muse") 732334)
-    (zoom-week-beg ("2006.January.Week5.muse") 732341)
-    (zoom-week-beg ("2006.January.Week6.muse") 732348)
-    (zoom-day-beg ("2006.02.03.muse") 732345)
-        
-    (zoom-year-end ("2006.Year.muse") 732676)
-    (zoom-quarter-end ("2006.Quarter1.muse") 732401)
-    (zoom-quarter-end ("2006.Quarter2.muse") 732492)
-    (zoom-quarter-end ("2006.Quarter3.muse") 732584)
-    (zoom-quarter-end ("2006.Quarter4.muse") 732676)
-    (zoom-month-end ("2006.January.muse") 732342)
-    (zoom-week-end ("2006.January.Week1.muse") 732319)
-    (zoom-week-end ("2006.January.Week2.muse") 732326)
-    (zoom-week-end ("2006.January.Week3.muse") 732333)
-    (zoom-week-end ("2006.January.Week4.muse") 732340)
-    (zoom-week-end ("2006.January.Week5.muse") 732347)
-    (zoom-week-end ("2006.January.Week6.muse") 732354)
-    (zoom-day-end ("2006.01.01.muse")  732312)
-        
-    (zoom-next-year ("2006.Year.muse" 2) "2008.Year.muse")
-    (zoom-next-year ("2006.Year.muse" -2) "2004.Year.muse")
-    (zoom-next-year ("2006.Year.muse" 0) "2006.Year.muse")
-    (zoom-next-quarter ("2006.Quarter2.muse" 5) "2007.Quarter3.muse")
-    (zoom-next-quarter ("2006.Quarter2.muse" -5) "2005.Quarter1.muse")
-    (zoom-next-quarter ("2006.Quarter2.muse" 0) "2006.Quarter2.muse")
-    (zoom-next-month ("2006.June.muse" 13) "2007.July.muse")
-    (zoom-next-month ("2006.June.muse" -13) "2005.May.muse")
-    (zoom-next-month ("2006.June.muse" 0) "2006.June.muse")
-    (zoom-next-week ("2006.April.Week2.muse" 3) "2006.May.Week1.muse")
-    (zoom-next-week ("2006.April.Week2.muse" -2) "2006.March.Week4.muse")
-    (zoom-next-week ("2006.April.Week2.muse" 0) "2006.April.Week2.muse")
-    (zoom-next-day ("2006.04.03.muse" -7) "2006.03.27.muse")
-    (zoom-next-day ("2006.04.03.muse" -1) "2006.04.02.muse")
-    (zoom-next-day ("2006.04.03.muse" 0) "2006.04.03.muse")
-    (zoom-next-day ("2006.04.03.muse" 1) "2006.04.04.muse")
-    (zoom-next-day ("2006.04.03.muse" 28) "2006.05.01.muse")
-        
-    (zoom-up-quarter ("2006.Quarter1.muse") "2006.Year.muse")
-    (zoom-up-month ("2006.April.muse") "2006.Quarter2.muse")
-    (zoom-up-week ("2006.April.Week1.muse") "2006.April.muse")
-    (zoom-up-day ("2006.04.01.muse") "2006.March.Week4.muse")
-    (zoom-up-day ("2006.04.10.muse") "2006.April.Week2.muse")
-    (zoom-up-day ("2005.01.01.muse") "2004.December.Week4.muse")
-
-    ;; (calendar-absolute-from-gregorian (4 30 2006) 732431)
-    ;; (calendar-absolute-from-gregorian (4 30 2005) 732066)
-                
-        ;; April 30th, 2006: Should zoom down to Q2, Month 4, Week 4, day 4.30.2006
-    (zoom-down-year ("2006.Year.muse" 732431) "2006.Quarter2.muse")
-    (zoom-down-quarter ("2006.Quarter2.muse" 732431) "2006.April.muse")
-    (zoom-down-month ("2006.April.muse" 732431) "2006.April.Week4.muse")
-    (zoom-down-week ("2006.April.Week4.muse" 732431) "2006.04.30.muse")
-        
-    ;; April 30th, 2005: Should zoom down to Q1, January, Week 1, 1.1.2006
-    (zoom-down-year ("2006.Year.muse" 732066) "2006.Quarter1.muse")
-    (zoom-down-quarter ("2006.Quarter1.muse" 732066) "2006.January.muse")
-    (zoom-down-month ("2006.January.muse" 732066) "2006.January.Week1.muse")
-    (zoom-down-week ("2006.January.Week1.muse" 732066) "2006.01.02.muse")
-        
-    ;; Make sure that regexps match names with .muse extensions
-    (zoom-parse ("2006.Year.muse") (year 2006 nil nil))
-    (zoom-parse ("2006.January.muse") (month 2006 1 nil))
-    (zoom-parse ("2006.Quarter1.muse") (quarter 2006 1 nil))
-    (zoom-parse ("2006.January.Week1.muse") (week 2006 1 1))
-    (zoom-parse ("2006.01.03.muse") (day 2006 1 3))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; No Extension
-    (zoom-parse-to-strings ("2006.Year")  (year "2006" nil nil))
+  '((zoom-parse-to-strings ("2006.Year")  (year "2006" nil nil))
     (zoom-parse-to-strings ("2006.January") (month "2006" "January" nil))
     (zoom-parse-to-strings ("2006.Quarter1") (quarter "2006" "1" nil))
     (zoom-parse-to-strings ("2006.January.Week1") (week "2006" "January" "1"))
     (zoom-parse-to-strings ("2006.01.03") (day "2006" "01" "03"))
-        
+    
     (zoom-parse ("2006.Year") (year 2006 nil nil))
     (zoom-parse ("2006.January") (month 2006 1 nil))
     (zoom-parse ("2006.Quarter1") (quarter 2006 1 nil))
     (zoom-parse ("2006.January.Week1") (week 2006 1 1))
     (zoom-parse ("2006.01.03") (day 2006 1 3))
         
-;    (zoom-string (year 2007) "2007.Year")
-;    (zoom-string (year "2007") "2007.Year")
-;    (zoom-string (quarter 2007 2) "2007.Quarter2")
-;    (zoom-string (quarter "2007" "2") "2007.Quarter2")
-;    (zoom-string (month 2007 2) "2007.February")
-;    (zoom-string (month "2007" "February") "2007.February")
-;    (zoom-string (week 2007 2 2) "2007.February.Week2")
-;    (zoom-string (week "2007" "February" "2") "2007.February.Week2")
-;    (zoom-string (day 2007 2 2) "2007.02.02")
-;    (zoom-string (day "2007" "2" "2") "2007.02.02")
+    (zoom-string (year 2007) "2007.Year")
+    (zoom-string (year "2007") "2007.Year")
+    (zoom-string (quarter 2007 2) "2007.Quarter2")
+    (zoom-string (quarter "2007" "2") "2007.Quarter2")
+    (zoom-string (month 2007 2) "2007.February")
+    (zoom-string (month "2007" "February") "2007.February")
+    (zoom-string (week 2007 2 2) "2007.February.Week2")
+    (zoom-string (week "2007" "February" "2") "2007.February.Week2")
+    (zoom-string (day 2007 2 2) "2007.02.02")
+    (zoom-string (day "2007" "2" "2") "2007.02.02")
         
     (zoom-contains ("2006.Year" 732311) nil)
     (zoom-contains ("2006.Year" 732312) t)
@@ -660,58 +566,84 @@
     (zoom-week-end ("2006.January.Week6") 732354)
     (zoom-day-end ("2006.01.01")  732312)
         
-;    (zoom-next-year ("2006.Year" 2) "2008.Year")
-;    (zoom-next-year ("2006.Year" -2) "2004.Year")
-;    (zoom-next-year ("2006.Year" 0) "2006.Year")
-;    (zoom-next-quarter ("2006.Quarter2" 5) "2007.Quarter3")
-;    (zoom-next-quarter ("2006.Quarter2" -5) "2005.Quarter1")
-;    (zoom-next-quarter ("2006.Quarter2" 0) "2006.Quarter2")
-;    (zoom-next-month ("2006.June" 13) "2007.July")
-;    (zoom-next-month ("2006.June" -13) "2005.May")
-;    (zoom-next-month ("2006.June" 0) "2006.June")
-;    (zoom-next-week ("2006.April.Week2" 3) "2006.May.Week1")
-;    (zoom-next-week ("2006.April.Week2" -2) "2006.March.Week4")
-;    (zoom-next-week ("2006.April.Week2" 0) "2006.April.Week2")
-;    (zoom-next-day ("2006.04.03" -7) "2006.03.27")
-;    (zoom-next-day ("2006.04.03" -1) "2006.04.02")
-;    (zoom-next-day ("2006.04.03" 0) "2006.04.03")
-;    (zoom-next-day ("2006.04.03" 1) "2006.04.04")
-;    (zoom-next-day ("2006.04.03" 28) "2006.05.01")
+    (zoom-next-year ("2006.Year" 2) "2008.Year")
+    (zoom-next-year ("2006.Year" -2) "2004.Year")
+    (zoom-next-year ("2006.Year" 0) "2006.Year")
+    (zoom-next-quarter ("2006.Quarter2" 5) "2007.Quarter3")
+    (zoom-next-quarter ("2006.Quarter2" -5) "2005.Quarter1")
+    (zoom-next-quarter ("2006.Quarter2" 0) "2006.Quarter2")
+    (zoom-next-month ("2006.June" 13) "2007.July")
+    (zoom-next-month ("2006.June" -13) "2005.May")
+    (zoom-next-month ("2006.June" 0) "2006.June")
+    (zoom-next-week ("2006.April.Week2" 3) "2006.May.Week1")
+    (zoom-next-week ("2006.April.Week2" -2) "2006.March.Week4")
+    (zoom-next-week ("2006.April.Week2" 0) "2006.April.Week2")
+    (zoom-next-day ("2006.04.03" -7) "2006.03.27")
+    (zoom-next-day ("2006.04.03" -1) "2006.04.02")
+    (zoom-next-day ("2006.04.03" 0) "2006.04.03")
+    (zoom-next-day ("2006.04.03" 1) "2006.04.04")
+    (zoom-next-day ("2006.04.03" 28) "2006.05.01")
         
-;    (zoom-up-quarter ("2006.Quarter1") "2006.Year")
-;    (zoom-up-month ("2006.April") "2006.Quarter2")
-;    (zoom-up-week ("2006.April.Week1") "2006.April")
-;    (zoom-up-day ("2006.04.01") "2006.March.Week4")
-;    (zoom-up-day ("2006.04.10") "2006.April.Week2")
-;    (zoom-up-day ("2005.01.01") "2004.December.Week4")
+    (zoom-up-quarter ("2006.Quarter1") "2006.Year")
+    (zoom-up-month ("2006.April") "2006.Quarter2")
+    (zoom-up-week ("2006.April.Week1") "2006.April")
+    ;; Bug-- noticed by Dryice Liu
+    (zoom-up-day ("2006.04.01") "2006.March.Week4")
+    (zoom-up-day ("2006.04.10") "2006.April.Week2")
+    (zoom-up-day ("2005.01.01") "2004.December.Week4")
+    ;; Bug-- months starting on Tuesdays give the wrong week
+    (zoom-up-day ("2006.07.31") "2006.July.Week5")        
+    (zoom-up-day ("2006.08.07") "2006.August.Week1")        
+    (zoom-up-day ("2006.08.14") "2006.August.Week2")        
+
+    ;; Complete set of tests for zoom-up-day for months starting on
+    ;; each day of week.  These cover the space of possibilities as
+    ;; long as zoom-first-day-of-week is 1 (monday)
+    ;; Sun
+    (zoom-up-day ("2006.01.01") "2005.December.Week4")
+    (zoom-up-day ("2006.01.03") "2006.January.Week1")
+    ;; Mon
+    (zoom-up-day ("2006.05.01") "2006.May.Week1")
+    (zoom-up-day ("2006.05.02") "2006.May.Week1")
+    ;; Tues
+    (zoom-up-day ("2006.08.01") "2006.July.Week5")
+    (zoom-up-day ("2006.08.08") "2006.August.Week1")
+    ;; Wed
+    (zoom-up-day ("2006.02.01") "2006.January.Week5")
+    (zoom-up-day ("2006.02.07") "2006.February.Week1")
+    ;; Thurs
+    (zoom-up-day ("2006.06.01") "2006.May.Week5")
+    (zoom-up-day ("2006.06.06") "2006.June.Week1")
+    ;; Fri
+    (zoom-up-day ("2006.09.01") "2006.August.Week4")
+    (zoom-up-day ("2006.09.05") "2006.September.Week1")
+    ;; Sat
+    (zoom-up-day ("2006.04.01") "2006.March.Week4")
+    (zoom-up-day ("2006.04.04") "2006.February.Week1")
 
     ;; (calendar-absolute-from-gregorian (4 30 2006) 732431)
     ;; (calendar-absolute-from-gregorian (4 30 2005) 732066)
                 
-        ;; April 30th, 2006: Should zoom down to Q2, Month 4, Week 4, day 4.30.2006
-;    (zoom-down-year ("2006.Year" 732431) "2006.Quarter2")
-;    (zoom-down-quarter ("2006.Quarter2" 732431) "2006.April")
-;    (zoom-down-month ("2006.April" 732431) "2006.April.Week4")
-;    (zoom-down-week ("2006.April.Week4" 732431) "2006.04.30")
+    ;; April 30th, 2006: Should zoom down to Q2, Month 4, Week 4, day 4.30.2006
+    (zoom-down-year ("2006.Year" 732431) "2006.Quarter2")
+    (zoom-down-quarter ("2006.Quarter2" 732431) "2006.April")
+    (zoom-down-month ("2006.April" 732431) "2006.April.Week4")
+    (zoom-down-week ("2006.April.Week4" 732431) "2006.04.30")
         
     ;; April 30th, 2005: Should zoom down to Q1, January, Week 1, 1.1.2006
-;    (zoom-down-year ("2006.Year" 732066) "2006.Quarter1")
-;    (zoom-down-quarter ("2006.Quarter1" 732066) "2006.January")
-;    (zoom-down-month ("2006.January" 732066) "2006.January.Week1")
-;    (zoom-down-week ("2006.January.Week1" 732066) "2006.01.02")
-        
-    ;; Make sure that regexps match names with  extensions
-    (zoom-parse ("2006.Year") (year 2006 nil nil))
-    (zoom-parse ("2006.January") (month 2006 1 nil))
-    (zoom-parse ("2006.Quarter1") (quarter 2006 1 nil))
-    (zoom-parse ("2006.January.Week1") (week 2006 1 1))
-    (zoom-parse ("2006.01.03") (day 2006 1 3)))
+    (zoom-down-year ("2006.Year" 732066) "2006.Quarter1")
+    (zoom-down-quarter ("2006.Quarter1" 732066) "2006.January")
+    (zoom-down-month ("2006.January" 732066) "2006.January.Week1")
+    (zoom-down-week ("2006.January.Week1" 732066) "2006.01.02"))
   "A list of lists of the form (function-name function-arguments
   desired-result) which is used to test the functions in the zoom
   package")
 
 (defun zoom-test ()
-  "Run all the tests in zoom-tests."
+  "Run all the tests in zoom-tests.  My favorite way to do this
+is to turn on Options::Enter Debugger on Error and then do
+M-: (zoom-test) <ret>.  This way you'll get a backtrace and can
+start poking around to see which test failed and why."
   (dolist (test zoom-tests)
     (let* ((fn (first test))
            (fn-args (second test))
@@ -721,8 +653,6 @@
         (error "Failed test!"))))
   t)
   
-
-
 (defun gsn/calendar-today-gregorian ()
   (multiple-value-bind (junk junk junk day month year) (decode-time)
     (list month day year)))

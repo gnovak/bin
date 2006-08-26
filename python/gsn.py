@@ -17,6 +17,16 @@ def dsort(lst, *args, **kw):
     lst.sort(*args, **kw)
     return lst
 
+def group(lst, n, start=0, end=None):
+    """Group list LST into lists of length n.  If len(lst) is not
+    evenly divisible by n, then the last element of the returned list
+    will not be of length n
+
+    group([1,2,3,4,5], 2) => [[1,2],[3,4],[5]]"""
+
+    if end is None: end = len(lst)    
+    return [ lst[i:i+n] for i in range(start,end,n)]
+
 def unzip(lst):
     """Given ((a,b), (c,d), (e,f)) return ((a,c,e), (b,d,f))."""
     return [[el[i] for el in lst]
@@ -81,11 +91,11 @@ def iterable(obj):
     except: return False
     return True
 
-def rms(y):
-    return scipy.sqrt(sum(y**2)/len(y))
+def rms(y,**kw):
+    return scipy.sqrt(scipy.sum(y**2,**kw)/len(y))
     
-def stddev(y):
-    return rms(y-scipy.mean(y))
+def stddev(y, **kw):
+    return rms(y-scipy.mean(y,**kw),**kw)
 
 def permutations(z):
     """Given a list of lists, generate all permutations
@@ -179,7 +189,7 @@ def matrix_multiply(m, v):
     if len(scipy.shape(v)) is 1:
         return result[:,0]
 
-    return result
+    return scipy.array(result)
 
 def SolveNewton(f, fprime, x0, tol, maxiter = 50):
     """Solve an equation w/ newton's method"""

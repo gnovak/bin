@@ -81,31 +81,26 @@ def cmd(command,priority=0,sleep_after=0, sleep_before=0):
                 sleep_after=sleep_after, sleep_before=sleep_before)
     
 commands = dict(
-    ucsc_mail =cmd('ssh -n -N -L7025:smtp.ucolick.org:25 ssh.ucolick.org'),
+    governator =cmd('ssh -n -N -L8022:governator.ucsc.edu:22 ssh'),
     berkeley_news =cmd('autossh -M 10000 -n -N -L7119:news.ucsc.edu:119 ssh.ucolick.org'),
-    ucsc_news =cmd('ssh -n -N -L7119:news.ucsc.edu:119 localhost'),
+    ucsc_news     =cmd('autossh -M 10000 -n -N -L7119:news.ucsc.edu:119 localhost'),
     dionysus_ssh =cmd('ssh -n -N -L2022:dionysus:22 ssh'),
     dionysus_web =cmd('ssh -n -N -L2080:dionysus:80 ssh'),
-    dionysus_mail=cmd('ssh -n -N -R2025:%s:2025 dionysus' % ip_address(),
-                      priority=20, sleep_before=2),
-    dionysus_mail_socket=cmd(mail_socket_command()),
-    dionysus_url_socket=cmd('socket -l -p safari-open %s 2081' % ip_address()),
-    dionysus_url=cmd('ssh -n -N -R2081:%s:2081 dionysus' % ip_address(),
-                      priority=20, sleep_before=2),
+
     # Tunnel everything over the same port.
     dionysus_emacs=cmd('ssh -f dionysus emacs',priority=20, sleep_before=2),
-    dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665',
-                       priority=20, sleep_before=2),
-    dionysus_xclock=cmd('ssh -f dionysus xclock -update 1 -geometry 70x80+804+665',
-                        priority=20, sleep_before=2),
+    dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665', priority=20, sleep_before=2),
+    dionysus_xclock=cmd('ssh -f dionysus xclock -update 1 -geometry 70x80+804+665', priority=20, sleep_before=2),
 
     # Everything gets its own port
     robust_dionysus_xload_1=cmd('ssh -n -N -L2101:dionysus:22 ssh'),
-    robust_dionysus_xload_2=cmd('ssh -Y -f -p2101 localhost xload -geometry 70x80+877+665', priority=20, sleep_before=5),
+    robust_dionysus_xload_2=cmd('ssh -Y -f -p2101 localhost xload -geometry 70x80+877+665',
+                                priority=20, sleep_before=5),
     robust_xload=['robust_dionysus_xload_1', 'robust_dionysus_xload_2'],
 
     robust_dionysus_xclock_1=cmd('ssh -n -N -L2102:dionysus:22 ssh'),
-    robust_dionysus_xclock_2=cmd('ssh -Y -f -p2102 localhost xclock -update 1 -geometry 70x80+804+665', priority=20, sleep_before=5),
+    robust_dionysus_xclock_2=cmd('ssh -Y -f -p2102 localhost xclock -update 1 -geometry 70x80+804+665',
+                                 priority=20, sleep_before=5),
     robust_xclock=['robust_dionysus_xclock_1', 'robust_dionysus_xclock_2'],
 
     robust_dionysus_emacs_1=cmd('ssh -n -N -L2103:dionysus:22 ssh'),
@@ -113,16 +108,11 @@ commands = dict(
     robust_emacs=['robust_dionysus_emacs_1', 'robust_dionysus_emacs_2'],
 
     desktop=cmd('ssh -n -N -L2022:dionysus.ucolick.org:22 dionysus.ucolick.org'),
-    #desktop=cmd('ssh -n -N -L2022:128.114.22.106:22 128.114.22.106'),
     sunhost     =cmd(command='ssh -n -N -L3022:publichost:22 ssh'),
     linuxhost   =cmd(command='ssh -n -N -L4022:rumba:22 ssh'),
     upsand      =cmd(command='ssh -n -N -L5022:upsand:22 andromeda'),
     twopiter    =cmd(command='ssh -n -N -L6022:twopiter:22 andromeda'),
-    # Aliases   
-    dionysus=['dionysus_ssh','dionysus_web',
-              'dionysus_mail','dionysus_mail_socket',
-              'dionysus_url', 'dionysus_url_socket',
-              'robust_emacs','robust_xload','robust_xclock'])
+    )
 
 commands['all'] = commands.keys()
 ##################################################

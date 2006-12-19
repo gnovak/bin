@@ -1,6 +1,6 @@
 Package: astronat
 Version: 1.6
-Revision: 1
+Revision: 2
 Maintainer: Greg Novak <novak@ucolick.org>
 Source: http://ads.harvard.edu/pubs/bibtex/astronat/astronat.tar.gz
 Source-md5: 8bf872f593727261311d502966bd1069
@@ -18,5 +18,5 @@ Description: astronomy latex bibliography stuff
 DescDetail: <<
 astronomy latex bibliography stuff
 <<
-License: ?
+License: Restrictive
 Homepage: http://ads.harvard.edu/pubs/bibtex/astronat/doc/html/

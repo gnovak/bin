@@ -3,9 +3,9 @@
 @@ -2,11 +2,11 @@
  # In this section you can specify which c extension modules should be built
  
- # C extension module for partial font downloading
--build_t1strip=0
-+build_t1strip=1
+ # C extension module for fast t1font decoding and encoding
+-build_t1code=0
++build_t1code=1
  
  # Python bindings for the kpathsea library. You need the kpathsea header
  # and library and you may need to specify their location below.
@@ -56,17 +56,6 @@
              elif self.root:
                  dir = change_root(self.root, dir)
  
---- PyX-0.8.1/manual/Makefile.orig	2005-09-06 16:43:38.000000000 +0200
-+++ PyX-0.8.1/manual/Makefile	2005-09-06 16:46:43.000000000 +0200
-@@ -22,7 +22,7 @@
- pdf:manual.pdf
- html:manual/manual.html
- 
--manual.pdf: $(src)
-+manual.pdf: $(src) eps
- 	#for index-with-own-hyperrefs debugging, anybody interested?
- 	#./mkhowto --a4 --pdf --keep manual.tex
- 	./mkhowto --a4 --pdf manual.tex
 --- PyX-0.8.1/pyx/config.py.orig	2005-11-11 11:36:51.000000000 +0100
 +++ PyX-0.8.1/pyx/config.py	2005-11-11 11:37:36.000000000 +0100
 @@ -24,7 +24,7 @@

@@ -11,7 +11,7 @@ Patch: sm.patch
 CompileScript: <<
 chmod 755 edit_options_h
 chmod 755 get_response
-./set_opts -i /sw
+./set_opts -i %p
 ./edit_options_h src/options.h
 ./get_response
 make 

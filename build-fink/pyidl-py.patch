@@ -1,0 +1,55 @@
+diff --recursive --context pyIDL-0.4.orig/__init__.py pyIDL-0.4/__init__.py
+*** pyIDL-0.4.orig/__init__.py	Fri Oct  6 14:11:15 2006
+--- pyIDL-0.4/__init__.py	Sat Dec 23 01:23:50 2006
+***************
+*** 2,13 ****
+--- 2,16 ----
+  # 
+  # Michael McKerns
+  # mmckerns@caltech.edu 
++ import os
+  from rsiidl import __doc__ as idldoc
+  __doc__ = idldoc
+  
+  def idl(stdout=True):
+      """idl([stdout]): get help with 'help(pyIDL)'"""
+      from rsiidl import idl as idlFactory
++     os.environ['IDL_DIR']='/Applications/rsi/idl_6.1'
++     os.environ['IDL_DIR']='/Applications/rsi/idl_6.1'
+      return idlFactory(stdout)
+  
+  def copyright():
+diff --recursive --context pyIDL-0.4.orig/setup.py pyIDL-0.4/setup.py
+*** pyIDL-0.4.orig/setup.py	Fri Dec  1 12:34:49 2006
+--- pyIDL-0.4/setup.py	Fri Dec 22 23:56:46 2006
+***************
+*** 45,58 ****
+          IDLLIBS = ['idl','Xm','Xp','Xpm','Xmu','Xext','Xt','SM','ICE',
+                     'Xinerama','X11','dl','termcap','rt','m','pthread','gcc_s'] 
+      else: #6.0 to 6.2
+!         IDLLIBS = ['idl','Xm','Xp','Xpm','Xext','Xt','SM','ICE','X11',
+                     'dl','termcap','rt','m','pthread'] 
+  
+      if platform[:6] == 'darwin':
+          IDLLIBS.remove('rt')
+!         IDLLIBS.append('MesaGL6_2')
+!         IDLLIBS.append('MesaGLU6_2')
+!         IDLLIBS.append('OSMesa6_2')
+          IDLLIBS.append('freetype2_1_3')
+  
+      module1 = Extension('_pyIDLmodule',
+--- 45,58 ----
+          IDLLIBS = ['idl','Xm','Xp','Xpm','Xmu','Xext','Xt','SM','ICE',
+                     'Xinerama','X11','dl','termcap','rt','m','pthread','gcc_s'] 
+      else: #6.0 to 6.2
+!         IDLLIBS = ['idl','Xm','Xmu','Xp','Xpm','Xext','Xt','SM','ICE','X11',
+                     'dl','termcap','rt','m','pthread'] 
+  
+      if platform[:6] == 'darwin':
+          IDLLIBS.remove('rt')
+!         IDLLIBS.append('MesaGL4_0')
+!         IDLLIBS.append('MesaGLU4_0')
+!         IDLLIBS.append('OSMesa4_0')
+          IDLLIBS.append('freetype2_1_3')
+  
+      module1 = Extension('_pyIDLmodule',

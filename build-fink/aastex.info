@@ -12,9 +12,9 @@ make install INSTALLDIR=%i/share/texmf-local/tex/latex/aastex
 cp *.dvi *.ps *.tex %i/share/texmf-local/tex/latex/aastex
 # Postinstall script: texconfig rehash
 <<
-Description: AASTeX macros
+Description: American Astronomical Society LaTeX macros
 DescDetail: <<
-AASTeX macros
+American Astronomical Society TeX/LaTeX macros
 <<
 License: Restrictive
 Homepage: http://www.journals.uchicago.edu/AAS/AASTeX/

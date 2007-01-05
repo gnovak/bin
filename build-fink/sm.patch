@@ -226,7 +226,7 @@ diff --context --recursive -P pristine/get_response dist/get_response
 --- dist/get_response	Mon Mar  3 02:06:27 2003
 ***************
 *** 0 ****
---- 1,22 ----
+--- 1,23 ----
 + #!/usr/bin/perl
 + $fname = "options_h_message.txt";
 + 
@@ -237,6 +237,7 @@ diff --context --recursive -P pristine/get_response dist/get_response
 + }
 + close MESSAGE;
 + print "**********************************\n";
++ print "A MESSAGE FROM THE SM PACKAGE MAINTAINER"
 + print "Please see the above message from the SM authors.\n";
 + print "In order to make the fink install seamless, I have modified\n";
 + print "the options.h. file, but in order to preserve their rights\n";

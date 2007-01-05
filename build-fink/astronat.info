@@ -14,7 +14,7 @@ cp -r * %i/share/texmf-local/bibtex/bst/astronat
 cp nat2jour.pl %i/bin/nat2jour
 # Postinstall script: texconfig rehash
 <<
-Description: astronomy latex bibliography stuff
+Description: Astronomy natbib bibliography styles
 DescDetail: <<
 astronomy latex bibliography stuff
 <<

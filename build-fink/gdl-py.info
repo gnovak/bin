@@ -2,7 +2,7 @@ Info2: <<
 Package: gdl-py%type_pkg[python]
 Version: 0.9pre3
 Type: python(2.4)
-Revision: 1
+Revision: 2
 Description: GNU Data Language
 License: Restrictive
 Maintainer: Sebastien Maret <bmaret@users.sourceforge.net>
@@ -34,7 +34,7 @@ mkdir src/.libs/libgdl.lax/libantlr.a
   mkdir -p %d/lib/python%type_raw[python]/site-packages
   cp src/.libs/libgdl.0.0.0.dylib %d/lib/python%type_raw[python]/site-packages/GDL.so
 <<
-DocFiles: README COPYING
+DocFiles: AUTHORS ChangeLog COPYING HACKING INSTALL NEWS PYTHON.txt README TODO 
 DescDetail: <<
 GDL is a free IDL (Interactive Data Language) compatible incremental
 compiler. It features a full syntax compatibility with IDL

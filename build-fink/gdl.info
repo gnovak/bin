@@ -1,6 +1,6 @@
 Package: gdl
 Version: 0.9pre3
-Revision: 1
+Revision: 2
 Description: GNU Data Language
 License: Restrictive
 Maintainer: Greg Novak <novak@ucolick.org>
@@ -30,7 +30,7 @@ InstallScript: <<
   cp -R src/py  %i/share/doc/%n
   /bin/mv -f %i/lib/libantlr.a %i/lib/libantlr-gdl.a
 <<
-DocFiles: README COPYING
+DocFiles: AUTHORS ChangeLog COPYING HACKING INSTALL NEWS PYTHON.txt README TODO 
 DescDetail: <<
 GDL is a free IDL (Interactive Data Language) compatible incremental
 compiler. It features a full syntax compatibility with IDL

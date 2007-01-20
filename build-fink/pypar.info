@@ -1,0 +1,25 @@
+Info2: <<
+Package: pypar-py%type_pkg[python]
+Type: python(2.3 2.4 2.5)
+Version: 1_9_2
+Revision: 1
+Maintainer: Greg Novak <novak@ucolick.org>
+Source: http://datamining.anu.edu.au/~ole/pypar/pypar_%v.tgz
+Source: mirror:sourceforge:pyx/PyX-%v.tar.gz
+Source-MD5: c90c59e257e713cae1dc99677100ffeb
+CompileScript:  <<
+ python%type_raw[python] setup.py build 
+<<
+InstallScript: <<
+ python%type_raw[python] setup.py install --root=%d
+<<
+DocFiles: DOC FAQ README
+Description: <<
+  MPI interface for Python
+<<
+DescDetail: <<
+  MPI interface for Python
+<<
+License: Restrictive 
+Homepage: http://datamining.anu.edu.au/~ole/pypar/
+<<

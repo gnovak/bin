@@ -1,12 +1,11 @@
 Info2: <<
 Package: pypar-py%type_pkg[python]
 Type: python(2.3 2.4 2.5)
-Version: 1_9_2
+Version: 1.9.2
 Revision: 1
 Maintainer: Greg Novak <novak@ucolick.org>
-Source: http://datamining.anu.edu.au/~ole/pypar/pypar_%v.tgz
-Source: mirror:sourceforge:pyx/PyX-%v.tar.gz
-Source-MD5: c90c59e257e713cae1dc99677100ffeb
+Source: http://datamining.anu.edu.au/~ole/pypar/pypar_1_9_2.tgz
+Source-MD5: a21bf293f64ae4531ebcdb7be74b5415
 CompileScript:  <<
  python%type_raw[python] setup.py build 
 <<

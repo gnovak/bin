@@ -1,0 +1,16 @@
+Package: bindfs
+Version: 1.2.1
+Revision: 1
+Maintainer: Greg Novak <novak@ucolick.org>
+Source: http://www.cs.helsinki.fi/u/partel/bindfs/releases/bindfs-1.2.1.tar.gz
+Patch: bindfs.patch
+Source-md5: 8266cd9c5e6f16f88170d30e0e28bfdd
+Description: Bind Filesystem via Fuse
+Depends: fuse
+BuildDepends: fuse-dev
+DescDetail: <<
+Bind Filesystem via Fuse
+<<
+License: Restrictive
+# License: GPL
+Homepage: http://www.cs.helsinki.fi/u/partel/bindfs/

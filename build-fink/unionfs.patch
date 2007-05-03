@@ -1,0 +1,20 @@
+diff --recursive --context unionfs-fuse-0.17.original/unionfs.c unionfs-fuse-0.17/unionfs.c
+*** unionfs-fuse-0.17.original/unionfs.c	Fri Feb  9 08:17:37 2007
+--- unionfs-fuse-0.17/unionfs.c	Wed May  2 20:36:56 2007
+***************
+*** 193,199 ****
+  	int res;
+  	if (isdatasync) {
+  #ifdef _POSIX_SYNCHRONIZED_IO
+! 		res = fdatasync(fi->fh);
+  #else
+  		res = fsync(fi->fh);
+  #endif
+--- 193,199 ----
+  	int res;
+  	if (isdatasync) {
+  #ifdef _POSIX_SYNCHRONIZED_IO
+! 		res = fsync(fi->fh);
+  #else
+  		res = fsync(fi->fh);
+  #endif

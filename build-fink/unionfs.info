@@ -1,0 +1,23 @@
+Package: unionfs
+Version: 0.17
+Revision: 1
+Maintainer: Greg Novak <novak@ucolick.org>
+Source: http://podgorny.cz/unionfs-fuse/releases/unionfs-fuse-0.17.tar.bz2
+Patch: unionfs.patch
+Source-md5: fba9ebebcc5e8b7d3613f608f1ce1647
+Description: Union Filesystem via Fuse
+Depends: fuse
+BuildDepends: fuse-dev
+CompileScript: <<
+make
+<<
+InstallScript: <<
+mkdir -p %i/bin
+cp unionfs %i/bin/
+<<
+DescDetail: <<
+Union Filesystem via Fuse
+<<
+License: Restrictive
+# License: BSD
+Homepage: http://www.cs.helsinki.fi/u/partel/bindfs/

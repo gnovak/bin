@@ -1,0 +1,71 @@
+diff --recursive --context bindfs-1.2.1.original/src/bindfs.c bindfs-1.2.1/src/bindfs.c
+*** bindfs-1.2.1.original/src/bindfs.c	Sat Mar  3 07:26:44 2007
+--- bindfs-1.2.1/src/bindfs.c	Wed May  2 21:12:48 2007
+***************
+*** 612,618 ****
+  
+      /* fuse checks permissions for us */
+      path = process_path(path);
+!     if (lsetxattr(path, name, value, size, flags) == -1)
+          return -errno;
+      return 0;
+  }
+--- 612,618 ----
+  
+      /* fuse checks permissions for us */
+      path = process_path(path);
+!     if (setxattr(path, name, value, size, 0, flags | XATTR_NOFOLLOW) == -1)
+          return -errno;
+      return 0;
+  }
+***************
+*** 624,630 ****
+  
+      path = process_path(path);
+      /* fuse checks permissions for us */
+!     res = lgetxattr(path, name, value, size);
+      if (res == -1)
+          return -errno;
+      return res;
+--- 624,630 ----
+  
+      path = process_path(path);
+      /* fuse checks permissions for us */
+!     res = getxattr(path, name, value, size, 0, XATTR_NOFOLLOW);
+      if (res == -1)
+          return -errno;
+      return res;
+***************
+*** 636,642 ****
+  
+      path = process_path(path);
+      /* fuse checks permissions for us */
+!     res = llistxattr(path, list, size);
+      if (res == -1)
+          return -errno;
+      return res;
+--- 636,642 ----
+  
+      path = process_path(path);
+      /* fuse checks permissions for us */
+!     res = listxattr(path, list, size, XATTR_NOFOLLOW);
+      if (res == -1)
+          return -errno;
+      return res;
+***************
+*** 649,655 ****
+  
+      path = process_path(path);
+      /* fuse checks permissions for us */
+!     if (lremovexattr(path, name) == -1)
+          return -errno;
+      return 0;
+  }
+--- 649,655 ----
+  
+      path = process_path(path);
+      /* fuse checks permissions for us */
+!     if (removexattr(path, name, XATTR_NOFOLLOW) == -1)
+          return -errno;
+      return 0;
+  }

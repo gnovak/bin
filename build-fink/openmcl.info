@@ -1,22 +1,23 @@
 Package: openmcl
 Architecture: powerpc
-Version: 1.0
+Version: 1.1
 Revision: 1
 Description: ANSI Common Lisp implementation
-License: LGPL
+# License: LGPL
+License: Restrictive
 Maintainer: Lars Rosengreen <lrosengreen@gmail.com>
 
 Conflicts: openmcl-64bit
 Replaces: openmcl-64bit
 
-Source: ftp://clozure.com/pub/openmcl-darwinppc-all-%v.tar.gz
+Source: ftp://clozure.com/pub/testing/openmcl-darwinppc-snapshot-061231.tar.gz
 
-Source-MD5: 7e8b584100d0a2b8cb438b29bd891505
+Source-MD5: ccfa865affbdd7772a0e044254f2c908
 
 SourceDirectory: ccl
 
 CompileScript: <<
-  cd lisp-kernel/darwin ; make
+  cd lisp-kernel/darwinppc ; make
   echo '(ccl::xload-level-0 :force)' | ./dppccl --batch
   echo '(ccl::compile-ccl)' | ./dppccl --batch
   echo '(ccl::save-application "dppccl.image")' | ./dppccl --batch --image-name ppc-boot.image

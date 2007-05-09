@@ -1,0 +1,17 @@
+Package: mpich2
+Version: 1.0.5p4
+Revision: 1
+Maintainer: Greg Novak <novak@ucolick.org>
+Source: http://www-unix.mcs.anl.gov/mpi/mpich/downloads/mpich2-%v.tar.gz
+# SourceDirectory: mpich2-1.0.5p4
+Source-MD5: 44d4769e45f5bbd692bca80df732c593
+DocFiles: CHANGES RELEASE_NOTES COPYRIGHT COPYRIGHT.rtf README README.developer README.romio README.testing unusederr.txt README.winbin.rtf README.windeveloper README.windows
+ConfigureParams: --enable-sharedlib --with-docdir=%i/share/doc/%n --with-htmldir=%i/share/doc/%n --mandir=%i/share/man
+Description: MPI Implementation!
+DescDetail: <<
+MPI Implementation!
+<<
+License: Restrictive
+Homepage: http://www-unix.mcs.anl.gov/mpi/mpich/
+
+

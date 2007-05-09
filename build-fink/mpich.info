@@ -1,0 +1,28 @@
+Package: mpich
+Version: 1.2.7p1
+Revision: 1
+Maintainer: Greg Novak <novak@ucolick.org>
+Source: http://www-unix.mcs.anl.gov/mpi/mpich1/downloads/mpich.tar.gz
+SourceDirectory: mpich-%v
+Source-MD5: 7a4ac672b4b358ce519a93b70f771bee
+DocFiles: COPYRIGHT README KnownBugs 
+CompileScript: <<
+env MPILIBNAME=mpich1 ./configure --prefix=%i --enable-sharedlib --with-docdir=%i/share/doc/%n --with-htmldir=%i/share/doc/%n --mandir=%i/share/man 
+make
+<<
+InstallScript: <<
+make -j1 install prefix=%i
+mkdir -p %i/share/doc/%n
+mv %i/doc/* %i/share/doc/%n
+rmdir %i/doc
+mv %i/examples %i/share/doc/%n/
+mkdir -p %i/share/lib/%n
+mv %i/logfiles %i/share/lib/%n
+mv %i/www %i/share/doc/%n/
+<<
+Description: MPI Implementation
+DescDetail: <<
+MPI Implementation
+<<
+License: Restrictive
+Homepage: http://www-unix.mcs.anl.gov/mpi/mpich/

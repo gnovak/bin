@@ -1,6 +1,6 @@
-diff --recursive --context pyIDL-0.4.orig/__init__.py pyIDL-0.4/__init__.py
-*** pyIDL-0.4.orig/__init__.py	Fri Oct  6 14:11:15 2006
---- pyIDL-0.4/__init__.py	Sat Dec 23 01:23:50 2006
+diff --recursive --context pyIDL-0.5.orig/__init__.py pyIDL-0.5/__init__.py
+*** pyIDL-0.5.orig/__init__.py	Wed Apr 18 11:07:22 2007
+--- pyIDL-0.5/__init__.py	Tue May  8 12:17:34 2007
 ***************
 *** 2,13 ****
 --- 2,16 ----
@@ -19,9 +19,27 @@ diff --recursive --context pyIDL-0.4.orig/__init__.py pyIDL-0.4/__init__.py
       return idlFactory(stdout)
   
   def copyright():
-diff --recursive --context pyIDL-0.4.orig/setup.py pyIDL-0.4/setup.py
-*** pyIDL-0.4.orig/setup.py	Fri Dec  1 12:34:49 2006
---- pyIDL-0.4/setup.py	Fri Dec 22 23:56:46 2006
+diff --recursive --context pyIDL-0.5.orig/module/pyIDL.cc pyIDL-0.5/module/pyIDL.cc
+*** pyIDL-0.5.orig/module/pyIDL.cc	Wed Apr 18 11:07:37 2007
+--- pyIDL-0.5/module/pyIDL.cc	Tue May  8 12:15:37 2007
+***************
+*** 391,397 ****
+--- 391,402 ----
+    idl_ArrayObject *arr;
+    IDL_VPTR var;
+    char *data, *name;
++ #if (PY_VERSION_HEX < 0x02050000)
+    int len, type, nd, i;
++ #else
++   int type, nd, i;
++   Py_ssize_t len; 
++ #endif
+    IDL_MEMINT *dim;
+    if (!PyArg_ParseTuple(args, "sOiO", &name, &buf, &type, &shape)) return NULL;
+    if (PyObject_AsWriteBuffer(buf, (void **)(&data), &len) == -1) return NULL;
+diff --recursive --context pyIDL-0.5.orig/setup.py pyIDL-0.5/setup.py
+*** pyIDL-0.5.orig/setup.py	Wed Apr 18 11:07:22 2007
+--- pyIDL-0.5/setup.py	Tue May  8 12:17:34 2007
 ***************
 *** 45,58 ****
           IDLLIBS = ['idl','Xm','Xp','Xpm','Xmu','Xext','Xt','SM','ICE',

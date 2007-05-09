@@ -1,0 +1,38 @@
+Info2: <<
+Package: ipython1-py%type_pkg[python]
+Version: 20070508
+Revision: 1
+Type: python(2.3 2.4 2.5)
+Description: Interactive Parallel Computing
+# License: OSI-Approved
+License: Restrictive
+Maintainer: Greg Novak <novak@ucolick.org>
+BuildDepends: setuptools-py%type_pkg[python]
+Depends: python%type_pkg[python], twisted2-py%type_pkg[python] (>= 2.5)
+Source: http://www.ucolick.org/~novak/fink/ipython1-%v.tar.gz
+SourceDirectory: ipython1
+Source-MD5: 4bad3d4feb09887b8e78dce14a29c1c2
+CompileScript: <<
+  python%type_raw[python] setup.py build
+<<
+InstallScript: <<
+python%type_raw[python] setup.py install --root=%d
+mv %i/bin/ipcluster %i/bin/ipcluster%type_raw[python]
+mv %i/bin/ipcontroller %i/bin/ipcontroller%type_raw[python]
+mv %i/bin/ipengine %i/bin/ipengine%type_raw[python]
+<<
+PostInstScript: <<
+ update-alternatives --install %p/bin/ipcluster \
+  ipython1 %p/bin/ipcluster%type_raw[python] %type_pkg[python] \
+  --slave %p/bin/ipcontroller ipcontroller %p/bin/ipcontroller%type_raw[python] \
+  --slave %p/bin/ipengine ipengine %p/bin/ipengine%type_raw[python] \
+<<
+PreRmScript: <<
+ update-alternatives --remove ipython1 %p/bin/ipcluster%type_raw[python]
+<<
+DocFiles: 
+Homepage: http://ipython.scipy.org/
+DescDetail: <<
+Interactive Parallel Computing
+<<
+<<

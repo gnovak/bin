@@ -1,13 +1,13 @@
 Info2: <<
 Package: pyidl-py%type_pkg[python]
-Type: python(2.4)
-Version: 0.4
+Type: python(2.4 2.5)
+Version: 0.5
 Revision: 1
 Maintainer: Greg Novak <novak@ucolick.org>
 Depends: numarray-py%type_pkg[python]
-Source: http://www.its.caltech.edu/~mmckerns/pyidl-%v.tgz
+Source: http://www.its.caltech.edu/~mmckerns/pyIDL-%v.tgz
 Patch: pyidl-py.patch
-Source-MD5: 8410945b2aa1c21dc4dc0907a8d4b88c
+Source-MD5: f5df705b8be2cc6c1ec5302e7acb4deb
 CompileScript: <<
 env IDL_VERSION='6.1' IDL_INCDIR='/Applications/rsi/idl_6.1/external/include' IDL_BINDIR='/Applications/rsi/idl_6.1/bin/bin.darwin.ppc' X11_LIBDIR='/usr/X11R6/lib' python%type_raw[python] setup.py build
 <<

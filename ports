@@ -91,7 +91,10 @@ commands = dict(
     governator =cmd('ssh -n -N -L8022:governator.ucsc.edu:22 ssh'),
 
     # Making IDL license server available
-    idl =cmd('ssh -n -N -L1700:mambo:1700 -L32789:mambo:32790 ssh'),
+    idl =cmd('ssh -n -N -L1700:mambo:1700 -L32790:mambo:32790 ssh'),
+
+    # IPython
+    ipy_upsand = cmd('ssh -n -N -L10105:upsand:10105 -L10113:upsand:10113 andromeda'),
 
     # Slime 
     slime_greymonster =cmd('ssh -n -N -L4005:192.168.1.1:4005 greymonster'),

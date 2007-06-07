@@ -81,37 +81,25 @@ def cmd(command,priority=0,sleep_after=0, sleep_before=0):
                 sleep_after=sleep_after, sleep_before=sleep_before)
     
 commands = dict(
+    # Getting to machines behind firewalls
+    dionysus   =cmd('ssh -n -N -L2022:dionysus:22 ssh'),
+    desktop    =cmd('ssh -n -N -L2022:dionysus.ucolick.org:22 dionysus.ucolick.org'),
+    sunhost    =cmd('ssh -n -N -L3022:publichost:22 ssh'),
+    linuxhost  =cmd('ssh -n -N -L4022:rumba:22 ssh'),
+    upsand     =cmd('ssh -n -N -L5022:upsand:22 andromeda'),
+    twopiter   =cmd('ssh -n -N -L6022:twopiter:22 andromeda'),
     governator =cmd('ssh -n -N -L8022:governator.ucsc.edu:22 ssh'),
-    berkeley_news =cmd('autossh -M 10000 -n -N -L7119:news.ucsc.edu:119 ssh.ucolick.org'),
-    ucsc_news     =cmd('autossh -M 10000 -n -N -L7119:news.ucsc.edu:119 localhost'),
-    dionysus_ssh =cmd('ssh -n -N -L2022:dionysus:22 ssh'),
-    dionysus_web =cmd('ssh -n -N -L2080:dionysus:80 ssh'),
 
-    # Tunnel everything over the same port.
-    dionysus_emacs=cmd('ssh -f dionysus emacs',priority=20, sleep_before=2),
-    dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665', priority=20, sleep_before=2),
-    dionysus_xclock=cmd('ssh -f dionysus xclock -update 1 -geometry 70x80+804+665', priority=20, sleep_before=2),
+    # Making IDL license server available
+    idl =cmd('ssh -n -N -L1700:mambo:1700 -L32789:mambo:32790 ssh'),
 
-    # Everything gets its own port
-    robust_dionysus_xload_1=cmd('ssh -n -N -L2101:dionysus:22 ssh'),
-    robust_dionysus_xload_2=cmd('ssh -Y -f -p2101 localhost xload -geometry 70x80+877+665',
-                                priority=20, sleep_before=5),
-    robust_xload=['robust_dionysus_xload_1', 'robust_dionysus_xload_2'],
+    # Slime 
+    slime_greymonster =cmd('ssh -n -N -L4005:192.168.1.1:4005 greymonster'),
+    slime_jen         =cmd('ssh -n -N -L4005:127.0.0.1:4005 jen'),
 
-    robust_dionysus_xclock_1=cmd('ssh -n -N -L2102:dionysus:22 ssh'),
-    robust_dionysus_xclock_2=cmd('ssh -Y -f -p2102 localhost xclock -update 1 -geometry 70x80+804+665',
-                                 priority=20, sleep_before=5),
-    robust_xclock=['robust_dionysus_xclock_1', 'robust_dionysus_xclock_2'],
-
-    robust_dionysus_emacs_1=cmd('ssh -n -N -L2103:dionysus:22 ssh'),
-    robust_dionysus_emacs_2=cmd('ssh -Y -f -p2103 localhost emacs', priority=20, sleep_before=5),
-    robust_emacs=['robust_dionysus_emacs_1', 'robust_dionysus_emacs_2'],
-
-    desktop=cmd('ssh -n -N -L2022:dionysus.ucolick.org:22 dionysus.ucolick.org'),
-    sunhost     =cmd(command='ssh -n -N -L3022:publichost:22 ssh'),
-    linuxhost   =cmd(command='ssh -n -N -L4022:rumba:22 ssh'),
-    upsand      =cmd(command='ssh -n -N -L5022:upsand:22 andromeda'),
-    twopiter    =cmd(command='ssh -n -N -L6022:twopiter:22 andromeda'),
+    # Xload -- 
+    dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665',
+                       priority=20, sleep_before=2),
     )
 
 commands['all'] = commands.keys()
@@ -267,6 +255,15 @@ def kill_processes(names):
         print "Running Processes:"
         print pids
 
+def test_processes(names):
+    """Kill the processes associated with a list of names"""
+    if len(names) != 1:
+        print "Error!"
+        return
+    if pids.has_key(names[0]):
+        sys.exit(0)
+    sys.exit(1)
+    
 def can(obj, file, *args, **kw):
     """Store an object in a file.  This is a slightly more compact
     form of the build-in 'pickle.'  It allows you to just give a
@@ -313,9 +310,14 @@ def main():
         
     # Figure out what to do
     run_flag = True
+    test_flag = False
     
     for o,a in opts:
-        if o == '-k': run_flag = False
+        if o == '-k':
+            run_flag = False
+        if o == '-t':
+            run_flag = False
+            test_flag = True
         if o == '-v':
             print "Ports version ", VERSION
             sys.exit(0)
@@ -330,11 +332,13 @@ def main():
 
     # When running processes, expand regexps based on available commands
     # When killing them, expand based on running commands.
-    if run_flag: names = expand_regexps(args, commands.keys())
-    else: names = expand_regexps(args, pids.keys())        
+    if run_flag or test_flag:
+        names = expand_regexps(args, commands.keys())
+    else: names = expand_regexps(args, pids.keys())
     names = expand_aliases(names)
     
     if run_flag: run_processes(names)
+    elif test_flag: test_processes(names)
     else: kill_processes(names)
 
     # write pid table

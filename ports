@@ -79,7 +79,9 @@ def cmd(command,priority=0,sleep_after=0, sleep_before=0):
     """Produce "Command info dictionary" with some defaults"""
     return dict(command=command, priority=priority,
                 sleep_after=sleep_after, sleep_before=sleep_before)
-    
+
+sshfsOptions = 'reconnect,sshfs_sync,jail_symlinks'
+
 commands = dict(
     # Getting to machines behind firewalls
     dionysus   =cmd('ssh -n -N -L2022:dionysus:22 ssh'),
@@ -90,8 +92,20 @@ commands = dict(
     twopiter   =cmd('ssh -n -N -L6022:twopiter:22 andromeda'),
     governator =cmd('ssh -n -N -L8022:governator.ucsc.edu:22 ssh'),
 
+    # Sshfs filesystems
+    upsandfs_only = cmd('mkdir /Volumes/upsand; ' + 
+                        'sshfs upsand:/home1/novak /Volumes/upsand ' +
+                        '-o volname=Upsand,%s' % sshfsOptions,
+                        priority=20, sleep_before=2),
+    upsandfs = ['upsand', 'upsandfs_only'],
+    dionysusfs_only = cmd('mkdir /Volumes/dionysus;' + 
+                          'sshfs dionysus:/home/novak /Volumes/dionysus ' + 
+                          '-o volname=Dionysus,%s' % sshfsOptions,
+                          priority=20, sleep_before=2),
+    dionysusfs = ['dionysus', 'dionysusfs_only'],
+
     # Making IDL license server available
-    idl =cmd('ssh -n -N -L1700:mambo:1700 -L32790:mambo:32790 ssh'),
+    idl =cmd('ssh -n -N -L:1700:mambo:1700 -L:32790:mambo:32790 ssh'),
 
     # IPython
     ipy_upsand = cmd('ssh -n -N -L10105:upsand:10105 -L10113:upsand:10113 andromeda'),

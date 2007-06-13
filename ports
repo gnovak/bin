@@ -104,6 +104,13 @@ commands = dict(
                           priority=20, sleep_before=2),
     dionysusfs = ['dionysus', 'dionysusfs_only'],
 
+    rumbafs_only = cmd('mkdir /Volumes/rumba;' + 
+                       'sshfs linuxhost:/home/public/novak /Volumes/rumba ' + 
+                       '-o volname=Rumba,%s' % sshfsOptions,
+                       priority=20, sleep_before=2),
+    rumbafs = ['linuxhost', 'rumbafs_only'],
+
+
     # Making IDL license server available
     idl =cmd('ssh -n -N -L:1700:mambo:1700 -L:32790:mambo:32790 ssh'),
 
@@ -116,6 +123,8 @@ commands = dict(
 
     # Xload -- 
     dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665',
+                       priority=20, sleep_before=2),
+    upsand_xload=cmd('ssh -f upsand  /usr/X11R6/bin/xload -geometry 70x80+797+665',
                        priority=20, sleep_before=2),
     )
 

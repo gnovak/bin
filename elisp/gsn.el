@@ -247,6 +247,8 @@ region is entirety of another buffer"
 	(addr (gsn/bbdb-find-address location)))
     (with-temp-buffer
       (gsn/bbdb-address-to-buffer rec addr)
+      ;; Used this for high envelopes.  Note axis inversion.
+      ; (shell-command-on-region (point-min) (point-max) "envelope -y 315"))))
       (shell-command-on-region (point-min) (point-max) "envelope"))))
 
 (defun gsn/bbdb-latex-letter (location)
@@ -282,5 +284,27 @@ region is entirety of another buffer"
   (insert "  ")
   (insert (bbdb-address-zip addr))
   (insert (bbdb-address-country addr)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; IDL
+
+(defun gsn/idlwave-help-shell () 
+  "Start IDL with decent online help.  
+
+IDL 6.1 has shitty (and I mean really shitty) online help, so we
+want to use a newer version of IDL.  However, I have an unlimited
+license with 6.1, and pyIDL currently depends on 6.1, so there
+are some environment variables that have to be set to 6.1 for it
+to work.  Here we change the vars that will cause 6.3 to be
+started, and then change them back."
+  (interactive)
+  (let ((orig-v (getenv "IDL_VERSION"))
+        (orig-d (getenv "IDL_DIR")))
+    (setenv "IDL_VERSION" "6.3") 
+    (setenv "IDL_DIR" "/Applications/rsi/idl_6.3") 
+    (idlwave-shell) 
+    (setenv "IDL_VERSION" orig-v)
+    (setenv "IDL_DIR" orig-d)))
 
 (provide 'gsn)

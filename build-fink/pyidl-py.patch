@@ -1,9 +1,9 @@
-diff --recursive --context pyIDL-0.5.orig/__init__.py pyIDL-0.5/__init__.py
+diff --context --recursive pyIDL-0.5.orig/__init__.py pyIDL-0.5/__init__.py
 *** pyIDL-0.5.orig/__init__.py	Wed Apr 18 11:07:22 2007
---- pyIDL-0.5/__init__.py	Tue May  8 12:17:34 2007
+--- pyIDL-0.5/__init__.py	Tue Jun 12 17:56:19 2007
 ***************
 *** 2,13 ****
---- 2,16 ----
+--- 2,15 ----
   # 
   # Michael McKerns
   # mmckerns@caltech.edu 
@@ -15,13 +15,12 @@ diff --recursive --context pyIDL-0.5.orig/__init__.py pyIDL-0.5/__init__.py
       """idl([stdout]): get help with 'help(pyIDL)'"""
       from rsiidl import idl as idlFactory
 +     os.environ['IDL_DIR']='/Applications/rsi/idl_6.1'
-+     os.environ['IDL_DIR']='/Applications/rsi/idl_6.1'
       return idlFactory(stdout)
   
   def copyright():
-diff --recursive --context pyIDL-0.5.orig/module/pyIDL.cc pyIDL-0.5/module/pyIDL.cc
+diff --context --recursive pyIDL-0.5.orig/module/pyIDL.cc pyIDL-0.5/module/pyIDL.cc
 *** pyIDL-0.5.orig/module/pyIDL.cc	Wed Apr 18 11:07:37 2007
---- pyIDL-0.5/module/pyIDL.cc	Tue May  8 12:15:37 2007
+--- pyIDL-0.5/module/pyIDL.cc	Tue Jun 12 18:05:47 2007
 ***************
 *** 391,397 ****
 --- 391,402 ----
@@ -37,7 +36,43 @@ diff --recursive --context pyIDL-0.5.orig/module/pyIDL.cc pyIDL-0.5/module/pyIDL
     IDL_MEMINT *dim;
     if (!PyArg_ParseTuple(args, "sOiO", &name, &buf, &type, &shape)) return NULL;
     if (PyObject_AsWriteBuffer(buf, (void **)(&data), &len) == -1) return NULL;
-diff --recursive --context pyIDL-0.5.orig/setup.py pyIDL-0.5/setup.py
+diff --context --recursive pyIDL-0.5.orig/rsiidl.py pyIDL-0.5/rsiidl.py
+*** pyIDL-0.5.orig/rsiidl.py	Wed Apr 18 11:07:22 2007
+--- pyIDL-0.5/rsiidl.py	Tue Jun 12 18:23:46 2007
+***************
+*** 57,62 ****
+--- 57,65 ----
+          self.tmp = "pyfn1m2n3b4v"
+          self.tmp2 = 'm1n2b3v4_'
+          self.num_args = 0
++         # Added this so you can construct call strings with arrays to
++         # see what they look like.        
++         self.reserve = []
+  
+      def arg_to_string(self, arg):
+          if hasnumeric:
+***************
+*** 80,86 ****
+          for arg in args:
+              argv.append(self.arg_to_string(arg))
+          for (key,arg) in kwds.iteritems():
+!             argv.append(key+"="+self.arg_to_string(arg))
+          if self.func:
+              cmd = self.tmp+" = "+self.name+"("+", ".join(argv[1:])+")"
+          else:
+--- 83,93 ----
+          for arg in args:
+              argv.append(self.arg_to_string(arg))
+          for (key,arg) in kwds.iteritems():
+!             # This patch makes it so:
+!             # idl.foo(y=True) => foo,/y
+!             # in line with the IDL idiom of using slashes for boolean keywords.
+!             if arg is True: argv.append("/"+key)
+!             else: argv.append(key+"="+self.arg_to_string(arg))
+          if self.func:
+              cmd = self.tmp+" = "+self.name+"("+", ".join(argv[1:])+")"
+          else:
+diff --context --recursive pyIDL-0.5.orig/setup.py pyIDL-0.5/setup.py
 *** pyIDL-0.5.orig/setup.py	Wed Apr 18 11:07:22 2007
 --- pyIDL-0.5/setup.py	Tue May  8 12:17:34 2007
 ***************

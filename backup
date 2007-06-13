@@ -38,7 +38,7 @@ config = dict(demeter = dict(source='/Users/',
 /test/Library/Caches
 """),
 
-              dionysus= dict(source='root@dionysus:/home/',
+              dionysus= dict(source='dionysus:/home/',
                              exclude=
 """/novak/.Trash
 /novak/bin/build
@@ -66,8 +66,11 @@ config = dict(demeter = dict(source='/Users/',
 /novak/Music
 /novak/Projects/Thesis/Plots
 /novak/Projects/Thesis/data
-/novak/Projects/Thesis/big-endian-data
-/novak/Projects/Thesis/little-endian-data
+/novak/Projects/Thesis/tag-jail
+/novak/Projects/Thesis/jail
+/novak/Projects/Thesis/old-plots
+/novak/Projects/Thesis/Sbc201a10x-n4
+/novak/Projects/Thesis/old-junk
 /novak/Projects/Lisp/netflix
 """),
 

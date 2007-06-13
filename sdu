@@ -1,0 +1,25 @@
+#!/sw/bin/python
+
+import os, stat, sys
+
+def main(argv=None):
+    if argv is None: argv = sys.argv
+    args = argv[1:]
+    if args == []:
+        args = ['.']
+
+    total = 0
+    for arg in args:
+        for root, dirs, files in os.walk(arg):
+            dirTotal = 0
+            for file in files:
+                info = os.lstat(root + os.sep + file)
+                if info[stat.ST_NLINK] == 1:
+                    dirTotal += info[stat.ST_SIZE]/1024 # count kilobytes
+                    total += info[stat.ST_SIZE]/1024 # count kilobytes
+            print dirTotal, "   ", root
+        print total, "    Total"
+
+if __name__ == "__main__":
+    sys.exit(main())
+    

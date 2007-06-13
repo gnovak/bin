@@ -13,6 +13,9 @@ open(FILE, "| latex") || die "can't do it!\n";
 
 print FILE $beg;
 foreach (@ARGV) {
+#     if /gz/ {
+#         system "gunzip" + $_
+#     }
 	$out = $plot;
 	$out =~ s/<file>/$_/;
 	$out =~ s/<size>/$size/;

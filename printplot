@@ -1,31 +1,159 @@
-#!/usr/bin/env perl 
+#!/usr/bin/env python
 
-#$beg = "\\documentclass{article}\\usepackage{graphicx}\\setlength{\\textwidth}{6.5in}\\setlength{\\oddsidemargin}{0in}\\setlength{\\topmargin}{0in}\\setlength{\\headheight}{0in}\\setlength{\\headsep}{0in}\\setlength{\\topskip}{0in}\\setlength{\\textheight}{9.1in}\\begin{document}\n\n";
-$beg = "\\documentclass{article}\\usepackage{graphicx}\\setlength{\\textwidth}{7.5in}\\setlength{\\oddsidemargin}{-0.5in}\\setlength{\\topmargin}{0in}\\setlength{\\headheight}{0in}\\setlength{\\headsep}{0in}\\setlength{\\topskip}{0in}\\setlength{\\textheight}{9.1in}\\begin{document}\n\n";
-$plot = "\\includegraphics[<size>]{<file>}\n\n";
-$end = "\\end{document}\n\n";
+__version__ = "2.0"
 
-$size = shift(@ARGV);
+import optparse, os, subprocess, sys
+import util
 
-print "Printing plots of size $size\n";
+class InteractiveOptionParser (optparse.OptionParser):                
+    def exit(self, status=0, msg=None):
+        """self.error() raises an exception, so this should only be
+        called when optparse intends to exit successfully."""
+        if msg: print >>sys.stderr, msg
 
-open(FILE, "| latex") || die "can't do it!\n";
+    def error(self, msg):
+        """Raise an exception instead of exiting"""
+        raise optparse.OptionValueError, msg
 
-print FILE $beg;
-foreach (@ARGV) {
-#     if /gz/ {
-#         system "gunzip" + $_
-#     }
-	$out = $plot;
-	$out =~ s/<file>/$_/;
-	$out =~ s/<size>/$size/;
-	print FILE $out;
-}
-print FILE $end;
+class Document:
+    _head = r"""\documentclass{article}
+\usepackage{graphicx}
+\setlength{\textwidth}{7.5in}
+\setlength{\oddsidemargin}{-0.5in}
+\setlength{\topmargin}{-0.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\topskip}{0in}
+\setlength{\textheight}{10in}
+\begin{document}
+\noindent
+"""
+    # FIXME -- remove line breaks
+    _plot = r"\includegraphics[%(size)s]{%(filename)s} \hfill " + "\n"
+    _foot = r"\end{document}" + "\n\n"
+    def __init__(self, size, files):
+        self._size = size
+        self._files = files
 
-close(FILE) || die "can't close\n";
-#system "dvips article.dvi -P simplex -o";
-system "dvips article.dvi -o";
-system "lpr article.ps";
-system "rm -f article.ps";
-system "rm -f article.aux article.dvi article.log";
+    def toString(self):
+        result = self._head
+        for file in self._files:
+            result += self._plot % dict(size=self._size, filename=file)
+        result += self._foot
+        return result
+
+class process:
+    def __init__(self, doc, options):
+        self._doc = doc
+        self._leaveFiles = options.file
+        self._printer = options.printer
+
+    def run(self):
+        self._setUp()
+        if self._run():
+            self._print()
+        if not self._leaveFiles:
+            self._cleanUp()
+    
+    def _print(self):
+        if self._printer: cmd = 'lpr -P %s %s' % (self._printer, self._outputFile())
+        else: cmd = 'lpr %s' % self._outputFile()
+        os.system(cmd)
+
+    def _setUp(self): pass
+    def _run(self): pass
+    def _outputFile(self): pass
+    def _cleanUp(self): pass
+
+class pdflatexProcess (process): 
+    def _outputFile(self): return 'texput.pdf'
+
+    def _run(self):
+        latex = subprocess.Popen('pdflatex', shell=True, stdin=subprocess.PIPE)
+        latex.stdin.write(self._doc.toString())
+        latex.stdin.close()
+        latex.wait()
+        
+        return latex.returncode == 0
+        
+    def _cleanUp(self):
+        for fn in ('texput.pdf', 'texput.aux', 'texput.log'):
+            if os.path.isfile(fn):
+                os.remove(fn)
+
+class latexProcess (process):
+    def _outputFile(self): return 'texput.ps'
+        
+    def _run(self):
+        latex = subprocess.Popen('latex', shell=True, stdin=subprocess.PIPE)
+        latex.stdin.write(self._doc.toString())
+        latex.stdin.close()
+        latex.wait()
+
+        if latex.returncode == 0:
+            dvips = os.system('dvips texput.dvi -o')
+
+        return latex.returncode == 0 and dvips == 0
+        
+    def _cleanUp(self):
+        for fn in ('texput.ps', 'texput.aux', 'texput.dvi', 'texput.log'):
+            if os.path.isfile(fn):
+                os.remove(fn)
+    
+class gzipLatexProcess (latexProcess):
+    # gunzip some of the files.  Requires a little hack into the
+    # document object to get the filenames, gunzip them, convince the
+    # document to use the gunzipped filenames, and then gzip the files
+    # again.    
+    def _setUp(self):
+        self._gzipped = []
+        files = []
+        for file in self._doc._files:
+            if file.endswith('.gz'):
+                newFilename = file[:-3] # Strip the extension
+                files.append(newFilename)
+                self._gzipped.append(newFilename) 
+                os.system('gunzip %s' % file)
+            else:
+                files.append(file)
+
+        self._doc._files = files
+
+    def _cleanUp(self):
+        latexProcess._cleanUp(self)
+        for file in self._gzipped:
+            os.system('gzip %s' % file)
+
+def handleArgs(argv, interactive):
+    opArgs = dict(usage="%prog [-f] [-P PRINTER] size file1 [file2 ...]",
+                  version="%prog " + "%s" % __version__)
+
+    if interactive: parser = InteractiveOptionParser(**opArgs)
+    else: parser = optparse.OptionParser(**opArgs)
+
+    parser.add_option("-f", "--file", action='store_true', 
+                      help="Keep file, don't print it.")
+    parser.add_option("-P", "--printer", 
+                      help="Send output to this print queue")
+    
+    return parser.parse_args(args=argv[1:]) + (parser,)
+    
+def main(argv=None, interactive=True):
+    if argv is None: argv = sys.argv    
+    options, args, parser = handleArgs(argv, interactive)    
+
+    size, files = args[0], args[1:]
+    doc = Document(size, files)
+    
+    if util.every([file.endswith('pdf') for file in files]):
+        pdflatexProcess(doc, options).run()
+    elif util.every([file.endswith('eps') for file in files]):
+        latexProcess(doc, options).run()
+    elif util.every([file.endswith('eps.gz') or file.endswith('eps') for file in files]):
+        gzipLatexProcess(doc, options).run()
+    else:
+        parser.error("Not all files are of the same type.")
+        
+if __name__ == '__main__':
+    sys.exit(main(interactive=False))
+

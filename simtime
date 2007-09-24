@@ -1,0 +1,51 @@
+#!/u/gnovak/bin/local/bin/python
+
+import sys, os.path
+
+def main(argv=None):
+    if argv is None: argv = sys.argv    
+
+    nMax = 1000
+    fname = 'snapshot_%03d'
+    
+    if len(argv) == 1:
+        path = '.'
+        n = nMax
+    elif len(argv) == 2:
+        n = int(argv[1])
+        path = '.'
+    elif len(argv) == 3:
+        n = int(argv[1])
+        path = argv[2]
+    else:
+        raise RuntimeError
+
+    result = []
+    try:
+        for i in xrange(n+1):
+            t = os.path.getctime(os.path.join(path, fname % i))
+            result.append(t)
+    except OSError:
+        pass
+
+    total = 0
+    header = False
+    last1 = result[1]-result[0]
+    k = []
+    for i in range(len(result)-1):
+        dt = result[i+1] - result[i]
+        if dt > 3*last1:
+            if not header:
+                print "Breaks at",
+                header = True
+            print i+1, 
+            total += last1
+        else:
+            total += dt
+            last1 = dt
+
+    if header: print ""
+    print total/3600
+            
+if __name__ == '__main__':
+    sys.exit(main())

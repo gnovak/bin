@@ -1,4 +1,5 @@
 #!/bin/env python
+#!/usr/bin/env python
 
 import sys, os.path
 
@@ -27,8 +28,7 @@ def main(argv=None):
             result.append(t)
     except OSError:
         pass
-
-    total = 0
+    total = 0.0
     header = False
     last1 = result[1]-result[0]
     k = []

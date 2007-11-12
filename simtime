@@ -7,7 +7,7 @@ def main(argv=None):
     if argv is None: argv = sys.argv    
 
     nMax = 1000
-    fname = 'snapshot_%03d'
+    fname = 'snapshot_%04d'
     
     if len(argv) == 1:
         path = '.'

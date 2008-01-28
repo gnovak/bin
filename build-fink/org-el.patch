@@ -1,0 +1,94 @@
+diff --new-file --recursive --context org-5.19a/install org-work/install
+*** org-5.19a/install	Wed Dec 31 16:00:00 1969
+--- org-work/install	Sat Jan 26 14:45:30 2008
+***************
+*** 0 ****
+--- 1,40 ----
++ #!/bin/bash -e
++ #
++ # install file for the fink org-el emacs package.
++ 
++ set -o posix
++ 
++ FLAVOR=${1}
++ 
++ echo >&2 "install/org-el: Handling install of emacsen flavor ${FLAVOR}"
++ 
++ # if [ ${FLAVOR} == emacs20 ]
++ # then
++ #     echo "install/org-el: Skipping unsupported flavor ${FLAVOR}"
++ #     exit 0
++ # fi
++ 
++ if [ ${FLAVOR} == emacs ]
++ then
++     echo "install/org-el: Done."
++     exit 0
++ fi
++ 
++ echo >&2 -n "install/org-el: Byte-compiling for ${FLAVOR}..."
++ 
++ # NOTE that xemacs compatibility files are excluded since I don't use xemacs...
++ mkdir -p @PREFIX@/share/${FLAVOR}/site-lisp/org;
++ for i in org-export-latex.el org-install.el org-mouse.el org-publish.el org.el Makefile; do 
++     ln -s -f @PREFIX@/share/emacs/site-lisp/org/${i} @PREFIX@/share/${FLAVOR}/site-lisp/org/${i};
++ done
++ 
++ cd @PREFIX@/share/${FLAVOR}/site-lisp/org;
++ 
++ (make EMACS=${FLAVOR} PREFIX="@PREFIX@" INFODIR="@PREFIX@/share/info" --keep-going 2>&1) | gzip -9qf > @PREFIX@/share/doc/org-el/CompilationLog-${FLAVOR}.gz
++ 
++ rm @PREFIX@/share/${FLAVOR}/site-lisp/org/Makefile;
++ 
++ echo >&2 "done."
++ echo >&2 "install/org-el: Compilation log saved in @PREFIX@/share/doc/org-el/CompilationLog-${FLAVOR}.gz."
++ 
++ exit 0
+diff --new-file --recursive --context org-5.19a/org.texi org-work/org.texi
+*** org-5.19a/org.texi	Sat Jan 26 14:09:31 2008
+--- org-work/org.texi	Sat Jan 26 14:15:31 2008
+***************
+*** 1,6 ****
+  \input texinfo
+  @c %**start of header
+! @setfilename ../../info/org
+  @settitle Org Mode Manual
+  
+  @set VERSION 5.19
+--- 1,6 ----
+  \input texinfo
+  @c %**start of header
+! @setfilename org.info
+  @settitle Org Mode Manual
+  
+  @set VERSION 5.19
+diff --new-file --recursive --context org-5.19a/remove org-work/remove
+*** org-5.19a/remove	Wed Dec 31 16:00:00 1969
+--- org-work/remove	Sat Jan 26 14:46:18 2008
+***************
+*** 0 ****
+--- 1,24 ----
++ #!/bin/sh
++ # @PREFIX@/lib/emacsen-common/packages/remove/org-el
++ set -e
++ 
++ FLAVOR=$1
++ PACKAGE="org-el"
++ 
++ if [ -z "${FLAVOR}" ]; then
++   echo Need argument to determin FLAVOR of emacsen
++   exit 1
++ fi
++ if [ -z "${PACKAGE}" ]; then
++   echo Internal error: need package name
++   exit 1
++ fi
++ if [ "X${FLAVOR}" = Xemacs ]; then exit 0; fi
++ 
++ ELCDIR=@PREFIX@/share/${FLAVOR}/site-lisp/${PACKAGE}
++ 
++ /bin/echo "remove/${PACKAGE}: Handling removal of emacsen flavor ${FLAVOR} ...\c"
++ rm -rf ${ELCDIR}
++ echo " done."
++ 
++ exit 0

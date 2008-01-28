@@ -1,0 +1,46 @@
+Package: org-el
+Description: Latest version of org-mode
+Homepage: http://orgmode.org/
+Version: 5.19a
+Revision: 1
+Depends: emacsen
+Recommends: remember-el, bbdb
+Source: http://orgmode.org/org-%v.tar.gz
+Source-MD5: 6610206968de28f20c02d5db728f8bc1
+PatchScript: sed 's|@PREFIX@|%p|g' < %a/%n.patch | patch -p1
+InfoDocs: org.info org.info-1 org.info-2
+Maintainer: Greg Novak <novak@ucolick.org>
+# License: GPL 
+# Put restrictive to avoid hitting fink mirrors for source
+License: Restrictive
+DocFiles: README ChangeLog org.pdf orgcard.pdf orgcard.tex orgcard_letter.pdf request-assign-future.txt 
+CompileScript: <<
+  makeinfo org.texi
+<<
+InstallScript: <<
+  mkdir -p %i/share/emacs/site-lisp/org 
+  install -m 644 *.el %i/share/emacs/site-lisp/org
+  install -m 644 Makefile %i/share/emacs/site-lisp/org
+
+  mkdir -p %i/lib/emacsen-common/packages/install %i/lib/emacsen-common/packages/remove
+  install -m 755 install %i/lib/emacsen-common/packages/install/org-el
+  install -m 755 remove %i/lib/emacsen-common/packages/remove/org-el
+
+  mkdir -p %i/share/info
+  cp org.info %i/share/info/org.info
+  cp org.info-1 %i/share/info/org.info-1
+  cp org.info-2 %i/share/info/org.info-2
+<<
+PostInstScript: %p/lib/emacsen-common/emacs-package-install %n
+PreRmScript: %p/lib/emacsen-common/emacs-package-remove %n
+# InfoDocs: org
+DescDetail: <<
+Org-mode allows you to manage your life in Emacs.
+<<
+DescUsage: <<
+Enable org-mode by adding the form
+  (require 'org)
+to your .emacs file.
+<<
+
+ 

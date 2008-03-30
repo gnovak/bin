@@ -10,9 +10,9 @@ Maintainer: Lars Rosengreen <lrosengreen@gmail.com>
 Conflicts: openmcl-64bit
 Replaces: openmcl-64bit
 
-Source: ftp://clozure.com/pub/testing/openmcl-darwinppc-snapshot-061231.tar.gz
+Source: ftp://clozure.com/pub/testing/openmcl-darwinppc-snapshot-070722.tar.gz
 
-Source-MD5: ccfa865affbdd7772a0e044254f2c908
+Source-MD5: 9c272b88f861a006f1f6a7f7fa6ab2db
 
 SourceDirectory: ccl
 

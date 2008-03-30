@@ -1,12 +1,12 @@
 Package: org-el
 Description: Latest version of org-mode
 Homepage: http://orgmode.org/
-Version: 5.19a
+Version: 5.23
 Revision: 1
 Depends: emacsen
 Recommends: remember-el, bbdb
 Source: http://orgmode.org/org-%v.tar.gz
-Source-MD5: 6610206968de28f20c02d5db728f8bc1
+Source-MD5: 3b43bc127ba8c12b3a5c8a71c7d1b13b
 PatchScript: sed 's|@PREFIX@|%p|g' < %a/%n.patch | patch -p1
 InfoDocs: org.info org.info-1 org.info-2
 Maintainer: Greg Novak <novak@ucolick.org>

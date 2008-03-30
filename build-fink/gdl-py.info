@@ -1,6 +1,6 @@
 Info2: <<
 Package: gdl-py%type_pkg[python]
-Version: 0.9pre3
+Version: 0.9pre6
 Type: python(2.4 2.5)
 Revision: 3
 Description: GNU Data Language
@@ -23,7 +23,7 @@ BuildDepends: <<
   plplot-dev, qhull, szip, x11-dev
 <<
 Source: mirror:sourceforge:gnudatalanguage/gdl-%v.tar.gz
-Source-MD5: 00303eab8a9f28090cd9fb1e4d99ebf1
+Source-MD5: 5830539e7301f049f27f2a112467fab3
 ConfigureParams: --enable-python_module --with-plplotdir=%p --with-ncursesdir=%p --with-readlinedir=no --with-gsldir=%p --with-netcdf=no --without-hdf --with-hdf5=%p --with-python=%p --enable-python_version=%type_raw[python] --with-Magick=%p --with-fftw=%p --with-libproj4=no
 InstallScript: <<
 mkdir src/.libs/libgdl.lax

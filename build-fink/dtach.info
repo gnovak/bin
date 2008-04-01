@@ -1,0 +1,20 @@
+Package: dtach
+Version: 0.8
+Revision: 1
+Maintainer: Greg Novak <novak@ucolick.org>
+Source: http://prdownloads.sourceforge.net/dtach/dtach-%v.tar.gz
+Source-md5: ec5999f3b6bb67da19754fcb2e5221f3
+Description: Dis/connect from/to long-running programs
+DocFiles: README COPYING dtach.spec
+InstallScript: <<
+  mkdir -p %i/bin
+  install -m 755 dtach %i/bin 
+  mkdir -p %i/share/man/man1
+  install -m 755 dtach.1 %i/share/man/man1
+<<
+DescDetail: <<
+Connect and disconnect to long-running programs
+<<
+License: Restrictive
+# License: GPL
+Homepage: http://dtach.sourceforge.net/

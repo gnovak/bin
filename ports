@@ -93,23 +93,65 @@ commands = dict(
     governator =cmd('ssh -n -N -L8022:governator.ucsc.edu:22 ssh'),
 
     # Sshfs filesystems
-    upsandfs_only = cmd('mkdir /Volumes/upsand; ' + 
-                        'sshfs upsand:/home1/novak /Volumes/upsand ' +
-                        '-o volname=Upsand,%s' % sshfsOptions,
-                        priority=20, sleep_before=2),
-    upsandfs = ['upsand', 'upsandfs_only'],
-    dionysusfs_only = cmd('mkdir /Volumes/dionysus;' + 
-                          'sshfs dionysus:/home/novak /Volumes/dionysus ' + 
-                          '-o volname=Dionysus,%s' % sshfsOptions,
-                          priority=20, sleep_before=2),
-    dionysusfs = ['dionysus', 'dionysusfs_only'],
+    upsandfs = cmd('mkdir /Volumes/upsand; ' + 
+                   'sshfs upsand:/home1/novak /Volumes/upsand ' +
+                   '-o volname=Upsand,%s' % sshfsOptions,
+                   priority=20, sleep_before=2),
+    dionysusfs = cmd('mkdir /Volumes/dionysus;' + 
+                     'sshfs dionysus:/home/novak /Volumes/dionysus ' + 
+                     '-o volname=Dionysus,%s' % sshfsOptions,
+                     priority=20, sleep_before=2),
 
-    rumbafs_only = cmd('mkdir /Volumes/rumba;' + 
-                       'sshfs linuxhost:/home/public/novak /Volumes/rumba ' + 
-                       '-o volname=Rumba,%s' % sshfsOptions,
-                       priority=20, sleep_before=2),
-    rumbafs = ['linuxhost', 'rumbafs_only'],
+    governatorfs = cmd('mkdir /Volumes/governator;' + 
+                     'sshfs governator:/home/novak /Volumes/governator ' + 
+                     '-o volname=Governator,%s' % sshfsOptions),
+    gworkfs = cmd('mkdir /Volumes/governator-work;' + 
+                     'sshfs governator-work:/home/novak /Volumes/governator ' + 
+                     '-o volname=Governator-work,%s' % sshfsOptions),
 
+    rumbafs = cmd('mkdir /Volumes/rumba;' + 
+                  'sshfs linuxhost:/home/public/novak /Volumes/rumba ' + 
+                  '-o volname=Rumba,%s' % sshfsOptions,
+                  priority=20, sleep_before=2),
+
+    columbiafs = cmd('mkdir /Volumes/columbia;' + 
+                     'echo sshfs columbia:/u/gnovak /Volumes/columbia ' + 
+                     '-o volname=Columbia,sshfs_sync,jail_symlinks'),
+
+    cworkfs = cmd('mkdir /Volumes/columbia-work;' + 
+                     'echo sshfs columbia:/nobackup2d/gnovak /Volumes/columbia-work ' + 
+                     '-o volname=Columbia-work,sshfs_sync,jail_symlinks'),
+
+    seaborgfs = cmd('mkdir /Volumes/seaborg;' + 
+                     'sshfs seaborg:/home1/u3/novak /Volumes/seaborg ' + 
+                     '-o volname=Seaborg,%s' % sshfsOptions),
+    sworkfs = cmd('mkdir /Volumes/seaborg-work;' + 
+                  'sshfs seaborg:/scratch/scratchdirs/novak /Volumes/seaborg-work ' + 
+                  '-o volname=Seaborg-work,%s' % sshfsOptions),
+
+    bassifs = cmd('mkdir /Volumes/bassi;' + 
+                     'sshfs bassi:/u2/novak /Volumes/bassi ' + 
+                     '-o volname=Bassi,%s' % sshfsOptions),
+    bworkfs = cmd('mkdir /Volumes/bassi-work;' + 
+                     'sshfs bassi:/scratch/scratchdirs/novak /Volumes/bassi-work ' + 
+                     '-o volname=Bassi-work,%s' % sshfsOptions),
+
+    jacquardfs = cmd('mkdir /Volumes/jacquard;' + 
+                     'sshfs jacquard:/usr/common/homes/n/novak /Volumes/jacquard ' + 
+                     '-o volname=Jacquard,%s' % sshfsOptions),
+    jworkfs = cmd('mkdir /Volumes/jacquard-work;' + 
+                     'sshfs jacquard:/scratch/scratchdirs/novak /Volumes/jacquard-work ' + 
+                     '-o volname=Jacquard-work,%s' % sshfsOptions),
+
+    pleiadesfs = cmd('mkdir /Volumes/pleiades;' + 
+                     'sshfs pleiades:/home/novak /Volumes/pleiades ' + 
+                     '-o volname=Pleiades,%s' % sshfsOptions,
+                     priority=20, sleep_before=2),
+
+    pworkfs = cmd('mkdir /Volumes/pleiades-work;' + 
+                  'sshfs pleiades:/ibrixfs/novak /Volumes/pleiades-work ' + 
+                  '-o volname=Pleiades-work,%s' % sshfsOptions,
+                  priority=20, sleep_before=2),
 
     # Making IDL license server available
     idl =cmd('ssh -n -N -L:1700:mambo:1700 -L:32790:mambo:32790 ssh'),

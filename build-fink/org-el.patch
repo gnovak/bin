@@ -30,7 +30,7 @@ diff --new-file --recursive --context org-5.19a/install org-work/install
 + 
 + # NOTE that xemacs compatibility files are excluded since I don't use xemacs...
 + mkdir -p @PREFIX@/share/${FLAVOR}/site-lisp/org;
-+ for i in org-export-latex.el org-install.el org-mouse.el org-publish.el org.el Makefile; do 
++ for i in org-export-latex.el org-install.el org-mouse.el org-publish.el org-irc.el org-mac-message.el org.el Makefile; do 
 +     ln -s -f @PREFIX@/share/emacs/site-lisp/org/${i} @PREFIX@/share/${FLAVOR}/site-lisp/org/${i};
 + done
 + 

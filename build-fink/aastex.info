@@ -1,8 +1,9 @@
 Package: aastex
 Version: 52
-Revision: 2
+Revision: 3
 Maintainer: Greg Novak <novak@ucolick.org>
-Source: http://www.journals.uchicago.edu/AAS/AASTeX/aastex%v.tar.gz
+#Source: http://www.journals.uchicago.edu/AAS/AASTeX/aastex%v.tar.gz
+Source: http://www.ucolick.org/~novak/software/aastex%v.tar.gz
 Source-md5: 870dc132a8165e88586aa55d6422f4a5
 CompileScript: <<
 <<

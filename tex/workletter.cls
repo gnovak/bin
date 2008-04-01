@@ -8,8 +8,7 @@
 \address
 {
   Gregory S. Novak \\ 
-  Department of Astronomy and Astrophysics\\
-  University of California, Santa Cruz \\
+  Department of Astrophysics \\
   1156 High Street \\
   Santa Cruz, CA, 95064 \\
   831-459-3809 \\

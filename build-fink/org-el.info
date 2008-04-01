@@ -2,7 +2,7 @@ Package: org-el
 Description: Latest version of org-mode
 Homepage: http://orgmode.org/
 Version: 5.23
-Revision: 1
+Revision: 2
 Depends: emacsen
 Recommends: remember-el, bbdb
 Source: http://orgmode.org/org-%v.tar.gz
@@ -13,7 +13,7 @@ Maintainer: Greg Novak <novak@ucolick.org>
 # License: GPL 
 # Put restrictive to avoid hitting fink mirrors for source
 License: Restrictive
-DocFiles: README ChangeLog org.pdf orgcard.pdf orgcard.tex orgcard_letter.pdf request-assign-future.txt 
+DocFiles: README ChangeLog org.pdf orgcard.pdf orgcard.tex orgcard_letter.pdf CONTRIB/README
 CompileScript: <<
   makeinfo org.texi
 <<
@@ -30,6 +30,14 @@ InstallScript: <<
   cp org.info %i/share/info/org.info
   cp org.info-1 %i/share/info/org.info-1
   cp org.info-2 %i/share/info/org.info-2
+
+  # Put the contrib directory into doc
+  mkdir -p %i/share/doc/%n/contrib
+  cp -R CONTRIB %i/share/doc/%n/
+
+  # Lift the org-to-printout script from the contrib dir
+  mkdir -p %i/bin
+  cp CONTRIB/scripts/org2hpda %i/bin/
 <<
 PostInstScript: %p/lib/emacsen-common/emacs-package-install %n
 PreRmScript: %p/lib/emacsen-common/emacs-package-remove %n

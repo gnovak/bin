@@ -9,7 +9,7 @@ $size = shift(@ARGV);
 
 print "Printing plots of size $size\n";
 
-open(FILE, "| latex") || die "can't do it!\n";
+open(FILE, "| pdflatex") || die "can't do it!\n";
 
 print FILE $beg;
 foreach (@ARGV) {

@@ -47,10 +47,16 @@ config = dict(demeter = dict(source='/Users/',
 /novak/Projects/Thesis/big-endian-data
 /novak/Projects/Thesis/little-endian-data
 /novak/Projects/Thesis/data
+/novak/Projects/Thesis/Plots-old
+/novak/Projects/Thesis/old-stuff/Plots-07-29-05
+/novak/Projects/Thesis/Avishai-data
+/novak/Projects/Thesis/rudd
 /novak/waiting-to-delete
 /novak/waiting-to-delete
 /novak/.python23_compiled
-/novak/.python24_compiled"""),
+/novak/.python24_compiled
+/david/turbo_lines
+"""),
 
               dionysus_etc= dict(source='root@dionysus:/etc/',
                                  exclude=""),

@@ -1,0 +1,23 @@
+# Not tested since I don't want to sit through compiling gcc4
+Package: splash
+Version: 1.10.1
+Revision: 1
+Maintainer: Greg Novak <novak@ucolick.org>
+Source: http://www.astro.ex.ac.uk/people/dprice/splash/download/splash-%v.tar.gz
+Source-md5: 8bf872f593727261311d502966bd1069
+BuildDepends: gfortran
+Depends: pgplot, aquaterm
+CompileScript: <<
+make SYSTEM=gfortran PGPLOTLIBS='-L%p/lib -lpng -L%p/lib/pgplot -lpgplot -laquaterm -framework Foundation'
+<<
+InstallScript: <<
+mkdir -p %i/bin
+install ?splash %i/bin
+<<
+Description: Visualize Sph Data
+DescDetail: <<
+Visualize Sph Data
+<<
+# License: GPL
+License: Restrictive
+Homepage: http://www.astro.ex.ac.uk/people/dprice/splash/

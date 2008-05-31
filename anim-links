@@ -1,0 +1,54 @@
+#!/usr/bin/python
+
+__version__ = "0.1"
+
+import optparse, os, sys
+
+class InteractiveOptionParser (optparse.OptionParser):                
+    def exit(self, status=0, msg=None):
+        """self.error() raises an exception, so this should only be
+        called when optparse intends to exit successfully."""
+        if msg: print >>sys.stderr, msg
+
+    def error(self, msg):
+        """Raise an exception instead of exiting"""
+        raise optparse.OptionValueError, msg
+
+def handleArgs(argv, interactive):
+    opArgs = dict(usage="%prog [-d|--dry-run] prefix nDups files...",
+                  version="%prog " + "%s" % __version__)
+
+    if interactive: parser = InteractiveOptionParser(**opArgs)
+    else: parser = optparse.OptionParser(**opArgs)
+
+    parser.add_option("-d", "--dry-run", action='store_true', 
+                      help="Print what would be done.")
+    return parser.parse_args(args=argv[1:]) + (parser,)
+
+def main(argv=None, interactive=True):
+    if argv is None: argv = sys.argv    
+    options, args, parser = handleArgs(argv, interactive)    
+
+    if len(args) < 3:
+        parser.error("Not enough arguments.")
+
+    prefix, ndup, files = args[0], int(args[1]), args[2:]
+    
+    dot = files[0].rfind('.')
+    if dot != -1: suffix = files[0][dot:]
+    else:         suffix = ''
+    
+    ntot=0
+    for f in files:
+        src = f
+        for i in range(ndup):
+            ntot += 1
+            dst = '%s-%04d%s' % (prefix, ntot, suffix)
+
+            if options.dry_run:
+                print "ln -s", src, dst
+            else:
+                os.symlink(src, dst)
+                    
+if __name__ == '__main__':
+    sys.exit(main(interactive=False))

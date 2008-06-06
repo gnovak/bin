@@ -4,8 +4,8 @@ Type: python(2.3 2.4 2.5)
 Version: 1.9.3
 Revision: 1
 Maintainer: Greg Novak <novak@ucolick.org>
-Source: http://datamining.anu.edu.au/~ole/pypar/pypar_1_9_2.tgz
-Source-MD5: a21bf293f64ae4531ebcdb7be74b5415
+Source: http://internap.dl.sourceforge.net/sourceforge/pypar/pypar_%v.tgz
+Source-MD5: 7039dc549acd1db9806e7510c8eb93dc
 CompileScript:  <<
  python%type_raw[python] setup.py build 
 <<

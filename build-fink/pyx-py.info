@@ -1,27 +1,42 @@
 Info2: <<
 Package: pyx-py%type_pkg[python]
 Type: python(2.3 2.4 2.5)
-Version: 0.9
+Version: 0.10
 Revision: 1
-Maintainer: Andrea Riciputi <ariciputi@users.sourceforge.net>
+Maintainer: Greg Novak <novak@sourceforge.net>
 Depends: <<
- python%type_pkg[python] | python%type_pkg[python]-nox,
+ python%type_pkg[python],
  tetex-base | system-tetex,
  ghostscript | ghostscript-nox,
  ghostscript-fonts
 <<
 BuildDepends: libkpathsea4 | system-tetex
 Source: mirror:sourceforge:pyx/PyX-%v.tar.gz
-Source-MD5: c90c59e257e713cae1dc99677100ffeb
+Source-MD5: 20a8697a4b37c3ead10348ad5a49ba1a
 PatchScript: <<
  /usr/bin/sed -e 's|@PREFIX@|%p|g' -e 's|@PYTHON_FLAVOR@|%type_pkg[python]|g' < %a/pyx-py.patch | /usr/bin/patch -p1
 <<
 CompileScript:  <<
  #! /bin/bash -ev
- (cd manual/; ln -s %p/share/doc/python%type_pkg[python]/Doc/tools/mkhowto mkhowto; if [ "%type_raw[python]" == "2.4" ]; then mv graph.tex graph.tex.orig; echo "\\let\\e=\\textbackslash" > graph.tex; cat graph.tex.orig >> graph.tex; fi; make pdf)
- (cd faq/; make)
- (mv pyxrc pyxrc-py%type_pkg[python])
+ cd manual/; 
+ ln -s %p/share/doc/python%type_pkg[python]/Doc/tools/mkhowto mkhowto
+ if [ "%type_raw[python]" == "2.4" ]; then 
+   mv graph.tex graph.tex.orig
+   echo "\\let\\e=\\textbackslash" > graph.tex
+   cat graph.tex.orig >> graph.tex
+ fi
+ make pdf
+ cd ../faq
+ make
+ cd ..
+ mv pyxrc pyxrc-py%type_pkg[python]
 <<
+# CompileScript:  <<
+#  #! /bin/bash -ev
+#  (cd manual/; ln -s %p/share/doc/python%type_pkg[python]/Doc/tools/mkhowto mkhowto; if [ "%type_raw[python]" == "2.4" ]; then mv graph.tex graph.tex.orig; echo "\\let\\e=\\textbackslash" > graph.tex; cat graph.tex.orig >> graph.tex; fi; make pdf)
+#  (cd faq/; make)
+#  (mv pyxrc pyxrc-py%type_pkg[python])
+# <<
 InstallScript: <<
  python%type_raw[python] setup.py install --root=%d
  mkdir -p %i/share/doc/%n/
@@ -39,6 +54,7 @@ DescDetail: <<
   It combines an abstraction of the PostScript drawing model with a TeX/LaTeX
   interface. Complex tasks like 2d and 3d plots in publication-ready quality 
   are built out of these primitives.
+  Original packaging by Andrea Riciputi <ariciputi@users.sourceforge.net>
 <<
 License: Restrictive 
 Homepage: http://pyx.sourceforge.net/

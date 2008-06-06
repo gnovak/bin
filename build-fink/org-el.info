@@ -35,6 +35,9 @@ InstallScript: <<
   mkdir -p %i/share/doc/%n/contrib
   cp -R CONTRIB %i/share/doc/%n/
 
+  # Remove one elc file that's accidentally included in the source dist.
+  rm -f %i/share/doc/org-el/contrib/lisp/org-id.elc
+
   # Lift the org-to-printout script from the contrib dir
   mkdir -p %i/bin
   cp CONTRIB/scripts/org2hpda %i/bin/

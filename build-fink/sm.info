@@ -2,8 +2,8 @@ Package: sm
 Version: 2.4.30
 Revision: 1
 Maintainer: Greg Novak <novak@ucolick.org>
-Source: ftp://www.astro.princeton.edu/rhl/sm/release/sm2_4_30.tar.gz
-SourceDirectory: sm2_4_30
+Source: ftp://ftp.astro.princeton.edu/rhl/sm/release/sm2_4_30.tar.gz
+Sourcedirectory: sm2_4_30
 Source-MD5: 590deb431b275d1a74c054cfe21967ba
 Suggests: swig
 DocFiles: README LICENSE sm.install

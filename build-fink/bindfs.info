@@ -2,7 +2,7 @@ Package: bindfs
 Version: 1.5
 Revision: 1
 Maintainer: Greg Novak <novak@ucolick.org>
-Source: http://www.cs.helsinki.fi/u/partel/bindfs/releases/bindfs-1.5.tar.gz
+Source: http://www.cs.helsinki.fi/u/partel/bindfs/releases/bindfs-%v.tar.gz
 # Patch: bindfs.patch
 Source-md5: cfb447448f3de7e4d97a0babc387bee2
 Description: Bind Filesystem via Fuse

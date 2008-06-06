@@ -4,47 +4,74 @@ Version: 0.9pre6
 Type: python(2.4 2.5)
 Revision: 1
 Description: GNU Data Language
-License: Restrictive
-Maintainer: Sebastien Maret <bmaret@users.sourceforge.net>
+License: GPL
+Maintainer: Greg Novak <novak@ucolick.org>
+Shlibs: !%p/lib/python%type_raw[python]/site-packages/GDL.so
+PatchScript: <<
+aclocal
+automake
+autoconf
+patch -p1 < %a/gdl-py.patch
+<<
 Depends: <<
-  bzip2-shlibs, gsl-shlibs, hdf5-shlibs (>= 1.6.5-1002),
-  imagemagick-shlibs (>= 6.1.8-1002), lcms-shlibs, libiconv,
-  libjpeg-shlibs, libncurses5-shlibs (>= 5.4-20041023-1006),
+  bzip2-shlibs, fftw3-shlibs (>= 3.1.1-5), freetype219-shlibs, gsl-shlibs, 
+  hdf5-shlibs (>= 1.6.5-1010), imagemagick10-shlibs, lcms-shlibs, 
+  libiconv, libjpeg-shlibs, libncurses5-shlibs (>= 5.4-20041023-1006),
   libpng3-shlibs, libtiff-shlibs, libtool14-shlibs, libxml2-shlibs,
-  ncurses (>= 5.4-20041023-1006), matplotlib-py%type_pkg[python] (>= 0.86.1-1002),
-  numarray-py%type_pkg[python] (>= 1.4.1-2), plplot-shlibs, python%type_pkg[python] (>=
-  1:2.4.2-1004), python%type_pkg[python]-shlibs (>= 1:2.4.2-1004), 
-  (>= 5.0-1004), szip-shlibs, x11-shlibs
+  ncurses (>= 5.4-20041023-1006), 
+  matplotlib-py%type_pkg[python], numarray-py%type_pkg[python], 
+  plplot (>= 5.6.1-1008), plplot-shlibs (>= 5.6.1-1008), python%type_pkg[python], 
+  python%type_pkg[python]-shlibs, readline5-shlibs (>= 5.0-1004), szip-shlibs, 
+  x11-shlibs
 <<
 BuildDepends: <<
-  bzip2-dev, gsl, hdf5 (>= 1.6.5-1002), imagemagick-dev (>=
-  6.1.8-1002), lcms, libiconv-dev, libjpeg, libncurses5 (>=
-  5.4-20041023-1006), libpng3, libtiff, libtool14, libxml2,
-  plplot-dev, qhull, szip, x11-dev
+  bzip2-dev, fftw3 (>= 3.1.1-5), freetype219, gsl, hdf5 (>= 1.6.5-1010), 
+  imagemagick-dev, lcms, libiconv-dev, libjpeg, 
+  libncurses5 (>= 5.4-20041023-1006), libpng3, libtiff, libtool14, 
+  libxml2, plplot-dev (>= 5.6.1-1008), qhull, readline5 (>= 5.0-1004), 
+  szip, x11-dev, fink (>= 0.28)
 <<
 Source: mirror:sourceforge:gnudatalanguage/gdl-%v.tar.gz
 Source-MD5: 5830539e7301f049f27f2a112467fab3
-ConfigureParams: --enable-python_module --with-plplotdir=%p --with-ncursesdir=%p --with-readlinedir=no --with-gsldir=%p --with-netcdf=no --without-hdf --with-hdf5=%p --with-python=%p --enable-python_version=%type_raw[python] --with-Magick=%p --with-fftw=%p --with-libproj4=no
+ConfigureParams: --enable-python_module --with-python=%p --enable-python_version=%type_raw[python] --with-plplotdir=%p --with-gsldir=%p --with-readlinedir=no --without-ncurses --without-netcdf --without-hdf --without-hdf5 --without-Magick --without-fftw --without-libproj4 --without-mpich
+# ConfigureParams: --enable-python_module --with-plplotdir=%p --with-ncursesdir=%p --with-readlinedir=no --with-gsldir=%p --without-netcdf --without-hdf --with-hdf5=%p --with-python=%p --enable-python_version=%type_raw[python] --with-Magick=%p --with-fftw=%p 
 InstallScript: <<
-mkdir src/.libs/libgdl.lax
-rm -fr src/.libs/libgdl.lax/libantlr.a
-mkdir src/.libs/libgdl.lax/libantlr.a
-(cd src/.libs/libgdl.lax/libantlr.a && ar x %b/src/antlr/.libs/libantlr.a)
-(cd src && g++ -bundle ${wl}-flat_namespace ${wl}-undefined ${wl}suppress -o .libs/libgdl.0.0.0.dylib  .libs/assocdata.o .libs/basic_fun_cl.o .libs/basic_fun.o .libs/basic_fun_jmg.o .libs/basic_op.o .libs/basic_pro.o .libs/basic_pro_jmg.o .libs/CFMTLexer.o .libs/color.o .libs/convert2.o .libs/datatypes.o .libs/dcommon.o .libs/dcompiler.o .libs/default_io.o .libs/dinterpreter.o .libs/dnode.o .libs/dpro.o .libs/dstructdesc.o .libs/dstructgdl.o .libs/dvar.o .libs/envt.o .libs/extrat.o .libs/FMTIn.o .libs/FMTLexer.o .libs/fmtnode.o .libs/FMTOut.o .libs/FMTParser.o .libs/gdleventhandler.o .libs/gdlexception.o .libs/gdlgstream.o .libs/GDLInterpreter.o .libs/GDLLexer.o .libs/GDLParser.o .libs/gdlpsstream.o .libs/gdlpython.o .libs/GDLTreeParser.o .libs/gdlwinstream.o .libs/gdlxstream.o .libs/getfmtast.o .libs/graphics.o .libs/gsl_fun.o .libs/ifmt.o .libs/initct.o .libs/initsysvar.o .libs/io.o .libs/libinit_cl.o .libs/libinit.o .libs/libinit_jmg.o .libs/math_fun.o .libs/math_fun_jmg.o .libs/math_utl.o .libs/ncdf_att_cl.o .libs/ncdf_cl.o .libs/ncdf_dim_cl.o .libs/ncdf_var_cl.o .libs/new.o .libs/objects.o .libs/ofmt.o .libs/plotting.o .libs/print.o .libs/print_tree.o .libs/read.o .libs/str.o .libs/terminfo.o .libs/topython.o .libs/typetraits.o .libs/hdf_fun.o .libs/hdf_pro.o .libs/magick_cl.o .libs/gdlwidget.o .libs/widget.o .libs/basegdl.o .libs/hdf5_fun.o .libs/libinit_mes.o .libs/file.o .libs/image.o .libs/gdljournal.o .libs/convol.o .libs/convol_inc0.o .libs/convol_inc1.o .libs/convol_inc2.o .libs/sigfpehandler.o .libs/gdlzstream.o .libs/arrayindex.o .libs/fftw.o .libs/mpi.o .libs/plot3d_nr.o .libs/pythongdl.o .libs/libgdl.lax/libantlr.a/ANTLRUtil.o .libs/libgdl.lax/libantlr.a/ASTFactory.o .libs/libgdl.lax/libantlr.a/ASTNULLType.o .libs/libgdl.lax/libantlr.a/ASTRefCount.o .libs/libgdl.lax/libantlr.a/BaseAST.o .libs/libgdl.lax/libantlr.a/BitSet.o .libs/libgdl.lax/libantlr.a/CharBuffer.o .libs/libgdl.lax/libantlr.a/CharScanner.o .libs/libgdl.lax/libantlr.a/CommonAST.o .libs/libgdl.lax/libantlr.a/CommonASTWithHiddenTokens.o .libs/libgdl.lax/libantlr.a/CommonHiddenStreamToken.o .libs/libgdl.lax/libantlr.a/CommonToken.o .libs/libgdl.lax/libantlr.a/InputBuffer.o .libs/libgdl.lax/libantlr.a/LLkParser.o .libs/libgdl.lax/libantlr.a/MismatchedCharException.o .libs/libgdl.lax/libantlr.a/MismatchedTokenException.o .libs/libgdl.lax/libantlr.a/NoViableAltException.o .libs/libgdl.lax/libantlr.a/NoViableAltForCharException.o .libs/libgdl.lax/libantlr.a/Parser.o .libs/libgdl.lax/libantlr.a/RecognitionException.o .libs/libgdl.lax/libantlr.a/String.o .libs/libgdl.lax/libantlr.a/Token.o .libs/libgdl.lax/libantlr.a/TokenBuffer.o .libs/libgdl.lax/libantlr.a/TokenStreamBasicFilter.o .libs/libgdl.lax/libantlr.a/TokenStreamHiddenTokenFilter.o .libs/libgdl.lax/libantlr.a/TokenStreamSelector.o .libs/libgdl.lax/libantlr.a/TreeParser.o   -L%p/lib -L%p -L%p/lib/python2.4/config -L%p/lib/freetype219/lib %p/lib/freetype219/lib/libfreetype.dylib -lz %p/lib/libcsirocsa.dylib %p/lib/libcsironn.dylib -lqhull %p/lib/libltdl.dylib -lm -L/usr/X11R6/lib64 -L/usr/X11R6/lib -lX11 -lncurses %p/lib/libgsl.dylib %p/lib/libgslcblas.dylib %p/lib/libplplotd.dylib %p/lib/libplplotcxxd.dylib -lpython2.4  -Wl,-m )
-  mkdir -p %d/lib/python%type_raw[python]/site-packages
+#  make install prefix=%i
+#  mkdir -p %i/share/%n
+#  cp -R src/pro %i/share/%n
+#  cp -R src/py  %i/share/%n
+#  /bin/mv -f %i/lib/libantlr.a %i/lib/libantlr-gdl.a
+  mkdir -p %i/lib/python%type_raw[python]/site-packages
   cp src/.libs/libgdl.0.0.0.dylib %i/lib/python%type_raw[python]/site-packages/GDL.so
 <<
 DocFiles: AUTHORS ChangeLog COPYING HACKING INSTALL NEWS PYTHON.txt README TODO 
+RuntimeVars: <<
+  GDL_PATH: "+%p/share/gdl/pro"
+<<
 DescDetail: <<
 GDL is a free IDL (Interactive Data Language) compatible incremental
 compiler. It features a full syntax compatibility with IDL
-6.0. Overall more than 250 library routines are implemented.
+6.0. Overall more than 330 library routines are implemented.
 <<
 Homepage: http://gnudatalanguage.sf.net/
 DescPackaging: <<
-Fails to compile with netcdf and hdf-4 support, because some symbols
-are defined in both libraries. Disabling hdf-4 support for now.
+Fails to compile with netcdf, so disabling it. See:
 
-Originally packaged by Jeffrey Whitaker.
+http://sourceforge.net/tracker/index.php?func=detail&aid=1839638&group_id=97659&atid=618683
+
+I think that hdf contains netcdf, so it might be enough to enable hdf
+only. However, hdf is not present in 10.5, so we disabling it for now.
+
+May want --with-netcdf=no and --with-libproj4=no in the configure line
+Might need to regenerate configure script on os x
+readline says that it's obligatory but is disabled by the official fink gdl package
+may want --with-pic
+
+Added patch file to use pyssizet instead of int.  Also needed to ad buildepends on fink > whatever to use patch file.  
+
+Added shlibs field at insistance of fink validation.  Also needed builddepends fink < whatever to user "private library" notation in shlibs field.
+
+Originally packaged by Jeffrey Whitaker and Sebastien Maret
+<bmaret@users.sourceforge.net>
 <<
 <<

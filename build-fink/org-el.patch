@@ -1,9 +1,27 @@
-diff --new-file --recursive --context org-5.19a/install org-work/install
-*** org-5.19a/install	Wed Dec 31 16:00:00 1969
---- org-work/install	Sat Jan 26 14:45:30 2008
+diff --new-file --recursive --context org-6.04c.orig/doc/org.texi org-6.04c/doc/org.texi
+*** org-6.04c.orig/doc/org.texi	Mon May 26 23:10:31 2008
+--- org-6.04c/doc/org.texi	Fri Jun 13 15:52:37 2008
+***************
+*** 1,6 ****
+  \input texinfo
+  @c %**start of header
+! @setfilename ../../info/org
+  @settitle The Org Manual
+  
+  @set VERSION 6.04c
+--- 1,6 ----
+  \input texinfo
+  @c %**start of header
+! @setfilename org.info
+  @settitle The Org Manual
+  
+  @set VERSION 6.04c
+diff --new-file --recursive --context org-6.04c.orig/install org-6.04c/install
+*** org-6.04c.orig/install	Wed Dec 31 16:00:00 1969
+--- org-6.04c/install	Fri Jun 13 16:08:34 2008
 ***************
 *** 0 ****
---- 1,40 ----
+--- 1,45 ----
 + #!/bin/bash -e
 + #
 + # install file for the fink org-el emacs package.
@@ -29,9 +47,11 @@ diff --new-file --recursive --context org-5.19a/install org-work/install
 + echo >&2 -n "install/org-el: Byte-compiling for ${FLAVOR}..."
 + 
 + # NOTE that xemacs compatibility files are excluded since I don't use xemacs...
-+ mkdir -p @PREFIX@/share/${FLAVOR}/site-lisp/org;
-+ for i in org-export-latex.el org-install.el org-mouse.el org-publish.el org-irc.el org-mac-message.el org.el Makefile; do 
-+     ln -s -f @PREFIX@/share/emacs/site-lisp/org/${i} @PREFIX@/share/${FLAVOR}/site-lisp/org/${i};
++ mkdir -p @PREFIX@/share/${FLAVOR}/site-lisp/org/lisp;
++ ln -s -f @PREFIX@/share/emacs/site-lisp/org/Makefile @PREFIX@/share/${FLAVOR}/site-lisp/org/Makefile
++ # Makefile now wants source files to be in a lisp/ subdir, so put them there.
++ for i in org-agenda.el org-faces.el org-mhe.el org-archive.el org-gnus.el org-mouse.el org-bbdb.el org-id.el org-publish.el org-bibtex.el org-info.el org-remember.el org-clock.el org-install.el org-rmail.el org-colview-xemacs.el org-irc.el org-table.el org-colview.el org-jsinfo.el org-vm.el org-compat.el org-mac-message.el org-wl.el org-exp.el org-macs.el org.el org-export-latex.el org-mew.el ; do 
++     ln -s -f @PREFIX@/share/emacs/site-lisp/org/${i} @PREFIX@/share/${FLAVOR}/site-lisp/org/lisp/${i};
 + done
 + 
 + cd @PREFIX@/share/${FLAVOR}/site-lisp/org;
@@ -39,32 +59,17 @@ diff --new-file --recursive --context org-5.19a/install org-work/install
 + (make EMACS=${FLAVOR} PREFIX="@PREFIX@" INFODIR="@PREFIX@/share/info" --keep-going 2>&1) | gzip -9qf > @PREFIX@/share/doc/org-el/CompilationLog-${FLAVOR}.gz
 + 
 + rm @PREFIX@/share/${FLAVOR}/site-lisp/org/Makefile;
++ # Now move everything _up_ from the lisp subdir to the org dir, b/c I
++ # like them better there.
++ mv @PREFIX@/share/${FLAVOR}/site-lisp/org/lisp/* @PREFIX@/share/${FLAVOR}/site-lisp/org/
 + 
 + echo >&2 "done."
 + echo >&2 "install/org-el: Compilation log saved in @PREFIX@/share/doc/org-el/CompilationLog-${FLAVOR}.gz."
 + 
 + exit 0
-diff --new-file --recursive --context org-5.19a/org.texi org-work/org.texi
-*** org-5.19a/org.texi	Sat Jan 26 14:09:31 2008
---- org-work/org.texi	Sat Jan 26 14:15:31 2008
-***************
-*** 1,6 ****
-  \input texinfo
-  @c %**start of header
-! @setfilename ../../info/org
-  @settitle Org Mode Manual
-  
-  @set VERSION 5.19
---- 1,6 ----
-  \input texinfo
-  @c %**start of header
-! @setfilename org.info
-  @settitle Org Mode Manual
-  
-  @set VERSION 5.19
-diff --new-file --recursive --context org-5.19a/remove org-work/remove
-*** org-5.19a/remove	Wed Dec 31 16:00:00 1969
---- org-work/remove	Sat Jan 26 14:46:18 2008
+diff --new-file --recursive --context org-6.04c.orig/remove org-6.04c/remove
+*** org-6.04c.orig/remove	Wed Dec 31 16:00:00 1969
+--- org-6.04c/remove	Fri Jun 13 15:51:33 2008
 ***************
 *** 0 ****
 --- 1,24 ----

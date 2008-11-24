@@ -7,10 +7,11 @@
 \signature{Greg Novak}
 \address
 {
-  Gregory S. Novak \\ 
-  Department of Astrophysics \\
-  1156 High Street \\
-  Santa Cruz, CA, 95064 \\
-  831-459-3809 \\
-  novak@ucolick.org 
+  Dr. Gregory S. Novak \\ 
+  Department of Astrophysical Sciences \\
+  Peyton Hall \\
+  Princeton University \\
+  Princeton, NJ  08544-1001 \\
+  609-258-0457 \\
+  novak@astro.princeton.edu
   }

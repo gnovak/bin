@@ -1,25 +1,25 @@
 Package: org-el
 Description: Latest version of org-mode
 Homepage: http://orgmode.org/
-Version: 5.23
-Revision: 2
+Version: 6.04c
+Revision: 1
 Depends: emacsen
 Recommends: remember-el, bbdb
 Source: http://orgmode.org/org-%v.tar.gz
-Source-MD5: 3b43bc127ba8c12b3a5c8a71c7d1b13b
+Source-MD5: 910d2ed11786e2a03f2bed0b5c5467f6
 PatchScript: sed 's|@PREFIX@|%p|g' < %a/%n.patch | patch -p1
 InfoDocs: org.info org.info-1 org.info-2
 Maintainer: Greg Novak <novak@ucolick.org>
 # License: GPL 
 # Put restrictive to avoid hitting fink mirrors for source
 License: Restrictive
-DocFiles: README ChangeLog org.pdf orgcard.pdf orgcard.tex orgcard_letter.pdf CONTRIB/README
+DocFiles: README ChangeLog Changes.org doc/org.pdf doc/orgcard.pdf doc/orgcard.tex doc/orgcard_letter.pdf CONTRIB/README
 CompileScript: <<
-  makeinfo org.texi
+  makeinfo doc/org.texi
 <<
 InstallScript: <<
   mkdir -p %i/share/emacs/site-lisp/org 
-  install -m 644 *.el %i/share/emacs/site-lisp/org
+  install -m 644 lisp/*.el %i/share/emacs/site-lisp/org
   install -m 644 Makefile %i/share/emacs/site-lisp/org
 
   mkdir -p %i/lib/emacsen-common/packages/install %i/lib/emacsen-common/packages/remove
@@ -33,10 +33,7 @@ InstallScript: <<
 
   # Put the contrib directory into doc
   mkdir -p %i/share/doc/%n/contrib
-  cp -R CONTRIB %i/share/doc/%n/
-
-  # Remove one elc file that's accidentally included in the source dist.
-  rm -f %i/share/doc/org-el/contrib/lisp/org-id.elc
+  cp -R contrib %i/share/doc/%n/
 
   # Lift the org-to-printout script from the contrib dir
   mkdir -p %i/bin

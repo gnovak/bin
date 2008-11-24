@@ -29,7 +29,7 @@ class Document:
 \noindent
 """
     # FIXME -- remove line breaks
-    _plot = r"\includegraphics[%(size)s]{%(filename)s} \hfill " + "\n"
+    _plot = r"\noindent \includegraphics[%(size)s]{%(filename)s} \hfill " + "\n\n"
     _foot = r"\end{document}" + "\n\n"
     def __init__(self, size, files):
         self._size = size

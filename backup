@@ -11,13 +11,15 @@ import re
 
 base=4
 
-destination = '/Volumes/WD-PASSPORT/'
+#destination = '/Volumes/WD-PASSPORT/'
+destination = r'/Volumes/My Passport/'
 
 # REMOTE_USER="novak"
 # RSYNC_RSH="/usr/bin/ssh -F /Users/novak/.ssh/config"
 rsync_command = "rsync"
 # --delete --delete-excluded --numeric-ids 
-rsync_options="--archive --exclude-from=-"
+#rsync_options="--archive --exclude-from=-"
+rsync_options="--verbose --progress --archive --exclude-from=-"
 
 config = dict(demeter = dict(source='/Users/',
                              exclude=
@@ -44,6 +46,11 @@ config = dict(demeter = dict(source='/Users/',
 /novak/bin/build
 /novak/bin/build-rpm
 /novak/bin/build-fink
+/novak/bin/build-ubuntu
+/novak/waiting-to-delete
+/novak/.python23_compiled
+/novak/.python24_compiled
+/novak/.python25_compiled
 /novak/Projects/Thesis/big-endian-data
 /novak/Projects/Thesis/little-endian-data
 /novak/Projects/Thesis/data
@@ -51,11 +58,8 @@ config = dict(demeter = dict(source='/Users/',
 /novak/Projects/Thesis/old-stuff/Plots-07-29-05
 /novak/Projects/Thesis/Avishai-data
 /novak/Projects/Thesis/rudd
-/novak/waiting-to-delete
-/novak/waiting-to-delete
-/novak/.python23_compiled
-/novak/.python24_compiled
-/david/turbo_lines
+/david/SPECTRUM
+/novak/Desktop/ubuntu
 """),
 
               dionysus_etc= dict(source='root@dionysus:/etc/',

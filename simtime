@@ -7,7 +7,7 @@ def main(argv=None):
     if argv is None: argv = sys.argv    
 
     nMax = 1000
-    fname = 'snapshot_%04d'
+    fnames = ['snapshot_%03d', 'snapshot_%04d']
     
     if len(argv) == 1:
         path = '.'
@@ -22,14 +22,22 @@ def main(argv=None):
         raise RuntimeError
 
     result = []
-    try:
-        for i in xrange(n+1):
-            t = os.path.getctime(os.path.join(path, fname % i))
-            result.append(t)
-    except OSError:
-        pass
+    for fname in fnames:
+        try:
+            for i in xrange(n+1):
+                t = os.path.getctime(os.path.join(path, fname % i))
+                t = os.path.getmtime(os.path.join(path, fname % i))
+                result.append(t)
+        except OSError:
+            pass
+        # Break the loop over possible snapshot filenames as soon as
+        # you find some snapshots
+        if len(result) > 0:
+            break
+    
     total = 0.0
     header = False
+    #print [r -  result[0] for r in result]
     last1 = result[1]-result[0]
     k = []
     for i in range(len(result)-1):

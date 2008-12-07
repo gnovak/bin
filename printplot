@@ -3,7 +3,6 @@
 __version__ = "2.0"
 
 import optparse, os, subprocess, sys
-import util
 
 class InteractiveOptionParser (optparse.OptionParser):                
     def exit(self, status=0, msg=None):
@@ -124,6 +123,9 @@ class gzipLatexProcess (latexProcess):
         for file in self._gzipped:
             os.system('gzip %s' % file)
 
+def every(args):
+    return reduce(lambda x,y: x and y, args, True)
+
 def handleArgs(argv, interactive):
     opArgs = dict(usage="%prog [-f] [-P PRINTER] size file1 [file2 ...]",
                   version="%prog " + "%s" % __version__)
@@ -145,11 +147,11 @@ def main(argv=None, interactive=True):
     size, files = args[0], args[1:]
     doc = Document(size, files)
     
-    if util.every([file.endswith('pdf') for file in files]):
+    if every([file.endswith('pdf') for file in files]):
         pdflatexProcess(doc, options).run()
-    elif util.every([file.endswith('eps') for file in files]):
+    elif every([file.endswith('eps') for file in files]):
         latexProcess(doc, options).run()
-    elif util.every([file.endswith('eps.gz') or file.endswith('eps') for file in files]):
+    elif every([file.endswith('eps.gz') or file.endswith('eps') for file in files]):
         gzipLatexProcess(doc, options).run()
     else:
         parser.error("Not all files are of the same type.")

@@ -1,0 +1,65 @@
+# 
+
+PortSystem      1.0
+
+name		org-mode
+version         6.13a
+categories      editors
+platforms       darwin
+maintainers     greg.novak@gmail.com
+description     Org-mode is a mode for keeping notes, maintaining ToDo lists, and doing project planning with a fast and effective plain-text system.
+
+long_description \
+    Org-mode develops organizational tasks around NOTES files that \
+    contain information about projects as plain text. Org-mode is \
+    implemented on top of outline-mode, which makes it possible to \
+    keep the content of large files well structured. Visibility \
+    cycling and structure editing help to work with the tree. Tables \
+    are easily created with a built-in table editor. Org-mode supports \
+    ToDo items, deadlines, time stamps, and scheduling. It dynamically \
+    compiles entries into an agenda. Plain text URL-like links connect \
+    to websites, emails, Usenet messages, BBDB entries, and any files \
+    related to the projects. For printing and sharing of notes, an \
+    Org-mode file can be exported as a structured ASCII file, HTML, \
+    and LaTeX.
+
+homepage        http://orgmode.org/
+master_sites    http://orgmode.org/
+distname        org-${version}
+
+checksums       md5 59bb9d0841dc66ba38a9afb76e6dc781 \
+                sha1 4d27f54be63bf70502f1c4efd2e00c694274102d \
+                rmd160 60277b1669c91177f52cc0d25c5f88014fdce808
+
+# FIXME -- does this fail to build if /opt/local/bin/emacs is not installed?
+depends_build   port:emacs port:texinfo path:bin/emacs:emacs
+depends_run     port:emacs
+
+use_configure   no
+
+#build {
+#    system "cd ${worksrcpath} && \
+#        emacs --batch --eval \
+#            '(progn (setq load-path (cons \".\" load-path)) \
+#                (byte-compile-file \"doctest-mode.el\") \
+#                (byte-compile-file \"pycomplete.el\") \
+#                (byte-compile-file \"python-mode.el\"))'"
+#}
+
+#FIXME -- check info
+# FIXME -- install docs
+destroot {
+    system "cd ${worksrcpath} && make install prefix=${destroot}${prefix}"
+    system "cd ${worksrcpath} && make install-info prefix=${destroot}${prefix}"
+    system "mv ${destroot}${prefix}/share/info/org ${destroot}${prefix}/share/info/org-mode"
+}
+
+#destroot {
+#    xinstall -d ${destroot}${prefix}/share/emacs/site-lisp
+#    eval xinstall -m 0644 [glob -directory ${worksrcpath} *.el *.elc] \
+#        ${destroot}${prefix}/share/emacs/site-lisp
+#}
+
+# universal_variant   no
+
+

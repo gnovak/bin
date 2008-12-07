@@ -4,7 +4,7 @@
 # Look for a file identifying the host
 # This is necessary b/c DHCP sometimes gives the computer a 
 # different hostname
-if ( grep --silent demeter ~/.hostname || grep --silent euterpe ~/.hostname || grep --silent jen ~/.hostname ); then
+if ( grep --silent clio ~/.hostname || grep --silent thalia ~/.hostname || grep --silent euterpe ~/.hostname || grep --silent jen ~/.hostname); then
     # Prefer wired connections
     if ( /sbin/ifconfig en0 | grep --silent inet ); then
 	/sbin/ifconfig en0 | grep inet | grep netmask | \
@@ -14,13 +14,6 @@ if ( grep --silent demeter ~/.hostname || grep --silent euterpe ~/.hostname || g
     # Then wireless connections
     if ( /sbin/ifconfig en1 | grep --silent inet ); then
 	/sbin/ifconfig en1 | grep inet | grep netmask | \
-	    sed 's/.*inet //g' | sed 's/ .*//' 
-	exit
-    fi
-elif ( grep --silent 'jen' ~/.hostname ); then
-    # Prefer wired connections
-    if ( /sbin/ifconfig en0 | grep --silent inet ); then
-	/sbin/ifconfig en0 | grep inet | grep netmask | \
 	    sed 's/.*inet //g' | sed 's/ .*//' 
 	exit
     fi

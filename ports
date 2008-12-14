@@ -92,6 +92,9 @@ commands = dict(
     twopiter   =cmd('ssh -n -N -L6022:twopiter:22 andromeda'),
     governator =cmd('ssh -n -N -L8022:governator.ucsc.edu:22 ssh'),
 
+    clio  =cmd('ssh -n -N -L2022:clio:22 armstrong.astro.princeton.edu'),
+    hecate  =cmd('ssh -n -N -L3022:hecate:22 armstrong.astro.princeton.edu'),
+
     # Sshfs filesystems
     upsandfs = cmd('mkdir /Volumes/upsand; ' + 
                    'sshfs upsand:/home1/novak /Volumes/upsand ' +

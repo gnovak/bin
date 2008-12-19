@@ -1,0 +1,113 @@
+# $Id: Portfile 40154 2008-09-22 22:19:55Z ryandesign@macports.org $
+
+PortSystem 1.0
+
+name		vtk5
+version		5.2.0
+set branch	[join [lrange [split ${version} .] 0 1] .]
+categories	graphics devel
+maintainers	rene.donner@mac.com
+description	3D visualization toolkit
+long_description	an open source, freely available software system  \
+	for 3D computer graphics, image processing, and visualization     \
+	used by thousands of researchers and developers around the world. \
+	VTK consists of a C++ class library, and several interpreted      \
+	interface layers including Tcl/Tk, Java, and Python.
+
+homepage	http://www.vtk.org/
+platforms	darwin freebsd
+master_sites	http://www.vtk.org/files/release/${branch}/
+checksums	vtk-${version}.tar.gz md5 eb8c3b463c027490164538b0fc3b35ad \
+	 	vtkdata-${version}.tar.gz md5 4da83c829cf38663f9c77b681f29a921
+
+
+depends_build	bin:cmake:cmake \
+		port:readline
+distfiles	vtk-${version}.tar.gz \
+		vtkdata-${version}.tar.gz
+distname	VTK
+
+post-extract {
+	delete ${worksrcpath}/Utilities/vtktiff/tif_fax3sm.c
+#    set fl [open "| grep VTK_BUILD_VERSION ${worksrcpath}/CMakeLists.txt | grep 6"]
+#    set data [read $fl]
+#    close $fl
+#    if {$data != "SET(VTK_BUILD_VERSION 6)\n"} { ui_msg "$data
+#================================================================
+#Warning : the Latest VTK version is not the same as the Portfile
+#The build may still succeed but this should be reported as a bug
+#================================================================"
+#    }
+}
+
+configure	{ system "cd ${worksrcpath} && ${configure.env} cmake ${configure.args} ${worksrcpath}" }
+configure.args	-DBUILD_SHARED_LIBS:BOOL=OFF \
+		-DCMAKE_LIBRARY_PATH:PATH=${prefix}/lib \
+		-DCMAKE_INCLUDE_PATH:PATH=${prefix}/include \
+		-DCMAKE_INSTALL_PREFIX:PATH=${prefix} \
+		-DCMAKE_INSTALL_NAME_DIR:STRING=${prefix}/lib \
+		-DCMAKE_EXE_LINKER_FLAGS:STRING=-rpath ${prefix}/lib \
+		-DVTK_INSTALL_PREFIX:PATH=${prefix} \
+		-DVTK_USE_HYBRID:BOOL=ON \
+		-DVTK_USE_CARBON:BOOL=OFF \
+		-DVTK_WRAP_TCL:BOOL=ON \
+		-DVTK_USE_COCOA:BOOL=ON \
+		-DVTK_DATA_ROOT:PATH=${prefix}/share/VTKData \
+		-DVTK_TCL_LIBRARY_DIR:FILEPATH=${prefix}/lib/tcl8.4 \
+		-DVTK_REQUIRED_EXE_LINKER_FLAGS:STRING=-rpath ${prefix}/lib
+
+configure.env	LDFLAGS="-L${prefix}/lib" \
+		CPPFLAGS="-I${prefix}/include"
+
+post-configure {
+	reinplace "s|c++|c++ -L${prefix}/lib |"	${worksrcpath}/Infovis/Testing/Cxx/CMakeFiles/InfovisCxxTests.dir/link.txt \
+						${worksrcpath}/IO/Testing/Cxx/CMakeFiles/IOCxxTests.dir/link.txt \
+						${worksrcpath}/Views/Testing/Cxx/CMakeFiles/ViewsCxxTests.dir/link.txt \
+						${worksrcpath}/Wrapping/Tcl/CMakeFiles/vtk.dir/link.txt
+}
+
+platform darwin 8 {
+	configure.env-append	CC=/usr/bin/gcc-4.0 CPP=/usr/bin/cpp-4.0 MACOSX_DEPLOYMENT_TARGET=10.4
+}
+
+platform darwin 9 {
+	configure.env-append	MACOSX_DEPLOYMENT_TARGET=10.5
+}
+
+variant x11 {
+	depends_build-append	lib:libX11:XFree86
+	configure.args-delete	"-D VTK_USE_COCOA:BOOL=ON"
+	configure.args-append	-DVTK_USE_COCOA:BOOL=OFF \
+				-DVTK_USE_X:BOOL=ON \
+				-DOPENGL_gl_LIBRARY:FILEPATH=/usr/X11R6/lib/libGL.dylib \
+				-DOPENGL_glu_LIBRARY:FILEPATH=/usr/X11R6/lib/libGLU.dylib
+}
+
+variant python {
+	depends_build-append	port:python25
+	configure.args-append	-DPYTHON_DEBUG_LIBRARY:FILEPATH=${prefix}/lib/libpython2.5.dylib \
+				-DPYTHON_EXECUTABLE:FILEPATH=${prefix}/bin/python2.5 \
+				-DPYTHON_INCLUDE_PATH:FILEPATH=${prefix}/include/python2.5 \
+				-DPYTHON_LIBRARY:FILEPATH=${prefix}/lib/libpython2.5.dylib \
+				-DVTK_WRAP_PYTHON:BOOL=ON \
+				-DVTK_PYTHON_SETUP_ARGS:STRING="--prefix=${prefix} --root=${destdir}
+}
+
+set vtkdest	${destroot}${prefix}/share/doc/${name}
+
+post-destroot {
+	xinstall -d -m 0755 ${vtkdest}
+	file copy ${worksrcpath}/README.html ${vtkdest}
+	file copy ${worksrcpath}/Copyright.txt ${vtkdest}
+	file copy ${worksrcpath}/Testing.txt ${vtkdest}
+
+	# Must set RPATH on executables
+
+	# Provide some examples
+	file copy ${worksrcpath}/Examples ${vtkdest}
+	foreach x {CommonCxxTests FilteringCxxTests GenericFilteringCxxTests GraphicsCxxTests IOCxxTests} { file copy ${worksrcpath}/bin/$x ${vtkdest}/Examples }
+	foreach x {ImagingCxxTests RenderingCxxTests TestCxxFeatures TestInstantiator VTKBenchMark VolumeRenderingCxxTests WidgetsCxxTests} { file copy ${worksrcpath}/bin/$x ${vtkdest}/Examples }
+
+	# Provide data files
+	system "tar -C ${destroot}${prefix}/share -xzvf ${distpath}/vtkdata-${version}.tar.gz"
+}

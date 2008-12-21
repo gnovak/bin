@@ -1,0 +1,31 @@
+# 
+
+PortSystem          1.0
+
+name                detachtty
+version             9
+categories          sysutils
+maintainers         greg.novak@gmail.com
+description         detachtty lets you run interactive programs non-interactively. 
+
+long_description    Detachtty lets you run interactive programs \
+                    non-interactively.  It allows you to connect to them over \
+                    the network when you do need to interact with them.  \
+                    It's intended for use with long-running server processes
+
+homepage            http://www.cliki.net/detachtty
+master_sites        ftp://ftp.linux.org.uk/pub/lisp/detachtty/
+checksums           md5 85695016ec47ce0262a2a5aa2a48b577 \
+                    sha1 6b2e058c44d80ca68789ec0fcd511c756edeeadd \
+                    rmd160 b2cd846b1171c847c43673ee6b393f449a7c6571
+distname            ${name}_${version}
+worksrcdir          ${name}-${version}
+use_configure       no
+build.args          OS_CFLAGS="-DNEED_LOCAL_FORKPTY_H -I${prefix}/include" \
+                    OS_LOADLIBES="-L${prefix}/lib -lpoll"
+
+destroot {
+    system "cd ${worksrcpath} && make install DESTDIR=${destroot} INSTALL_DIR=${prefix}/bin"
+    xinstall -d ${destroot}/${prefix}/man/man1
+    xinstall ${worksrcpath}/detachtty.1 ${destroot}/${prefix}/share/man/man1
+}

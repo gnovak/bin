@@ -73,6 +73,17 @@ variant python {
 				-DVTK_WRAP_PYTHON:BOOL=ON 
 }
 
+variant python2 {
+        # vtkpython in build directory successfully runs examples.
+	depends_build-append	port:python25
+	configure.args-append   -DBUILD_SHARED_LIBS:BOOL=ON \
+                                -DPYTHON_INCLUDE_PATH:PATH=${prefix}/Library/Frameworks/Python.framework/Headers \
+                                -DPYTHON_LIBRARY:FILEPATH=${prefix}/Library/Frameworks/Python.framework/Headers \
+				-DPYTHON_EXECUTABLE:FILEPATH=${prefix}/bin/python2.5 \
+                                -DVTK_PYTHON_SETUP_ARGS:STRING="--prefix="${prefix} --root=${destdir}" \
+				-DVTK_WRAP_PYTHON:BOOL=ON 
+}
+
 variant tcl {
         configure.args-delete   -DWRAP_TCL:BOOL=OFF
 	configure.args-append   -DWRAP_TCL:BOOL=ON

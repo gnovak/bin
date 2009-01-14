@@ -11,8 +11,7 @@ import re
 
 base=4
 
-#destination = '/Volumes/WD-PASSPORT/'
-destination = r'/Volumes/My Passport/'
+default_destination = r'/Volumes/My Passport/'
 
 # REMOTE_USER="novak"
 # RSYNC_RSH="/usr/bin/ssh -F /Users/novak/.ssh/config"
@@ -22,6 +21,7 @@ rsync_command = "rsync"
 rsync_options="--verbose --progress --archive --exclude-from=-"
 
 config = dict(demeter = dict(source='/Users/',
+                             destination=default_destination,
                              exclude=
 """/novak/.Trash 
 /novak/Library/Caches
@@ -41,6 +41,7 @@ config = dict(demeter = dict(source='/Users/',
 """),
 
               dionysus= dict(source='dionysus:/home/',
+                             destination=default_destination,
                              exclude=
 """/novak/.Trash
 /novak/bin/build
@@ -63,9 +64,11 @@ config = dict(demeter = dict(source='/Users/',
 """),
 
               dionysus_etc= dict(source='root@dionysus:/etc/',
+                                 destination=default_destination,
                                  exclude=""),
               
               euterpe = dict(source='/Users/',
+                             destination=default_destination,
                              exclude=
 """; The /Users is implicit
 /novak/.Trash
@@ -85,6 +88,7 @@ config = dict(demeter = dict(source='/Users/',
 """),
 
               jen = dict(source='/Users/',
+                         destination=default_destination,
                          exclude=
 """/Shared/GarageBand Demo Songs
 /jen/Documents/installers
@@ -96,23 +100,27 @@ config = dict(demeter = dict(source='/Users/',
 """),
 
               usb_key = dict(source='/Volumes/USB-Disk/',
+                             destination=default_destination,
                              exclude=
 """
 /.Trashes
 """),
 
               web = dict(source='jenandgreg@jenandgreg.org:/home/jenandgreg/',
-                             exclude=
+                         destination=default_destination,
+                         exclude=
 """
 /.cpan
 /.wusage
 """),
 
               web_www = dict(source='jenandgreg@jenandgreg.org:/home/jenandgreg/www/',
+                             destination=default_destination,
                              rsync_options = '--copy-links',
                              exclude=""),
 
               web_sql = dict(source='jenandgreg@jenandgreg.org:/var/lib/mysql/weddingwikidb/',
+                             destination=default_destination,
                              exclude=""),)
 
 import sys
@@ -127,7 +135,7 @@ def main():
     
 def backup(system):
     starting_dir = os.getcwd()    
-    os.chdir(destination)
+    os.chdir(system['destination'])
     
     last_fn = get_last_filename(system)
     next_fn = get_next_filename(system)

@@ -75,36 +75,96 @@ pids = {}
 #                running any other tasks (because those tasks depend
 #                on this one).
 
-def cmd(command,priority=0,sleep_after=0, sleep_before=0):
+def cmd(command,priority=0,sleep_after=0, sleep_before=0,
+        shutdown=None, sleep_before_shutdown=2):
     """Produce "Command info dictionary" with some defaults"""
     return dict(command=command, priority=priority,
-                sleep_after=sleep_after, sleep_before=sleep_before)
+                sleep_after=sleep_after, sleep_before=sleep_before,
+                shutdown=shutdown, sleep_before_shutdown=3)
 
-# Suggested sshfs options according to some blog post -C -o
+# Suggested sshfs options for performance according to some blog post 
 # -C -oping_diskarb,noappledouble,noreadahead,
-# remoteuser@remotehost:/path/to/dir ~/yourLocalFolder
 
-sshfsOptions = 'compression=yes,auto_cache,reconnect,jail_symlinks,follow_symlinks,transform_symlinks,'
+sshfsOptions = 'compression=yes,auto_cache,reconnect,jail_symlinks,follow_symlinks,transform_symlinks'
 
 commands = dict(
+    work=['clio', 'hecate', 'cliofs', 'hecatefs', 'cobaltfs'],
     ### Getting to machines behind firewalls
     # UCSC
     governator =cmd('ssh -n -N -L2022:governator.ucsc.edu:22 dionysus.ucsc.edu'),
 
     # Princeton
-    clio  =cmd('ssh -n -N -L3022:clio:22 armstrong.astro.princeton.edu'),
-    hecate  =cmd('ssh -n -N -L4022:hecate:22 armstrong.astro.princeton.edu'),
+    clio  =cmd('ssh -n -N -L3022:clio:22 armstrong.astro.princeton.edu',
+               priority=-10),
+    hecate  =cmd('ssh -n -N -L4022:hecate:22 armstrong.astro.princeton.edu',
+                 priority=-10),
 
     # Sshfs filesystems
     dionysusfs = cmd('mkdir /Volumes/dionysus;' + 
                      'sshfs dionysus:/home/novak /Volumes/dionysus ' + 
                      '-o volname=Dionysus,%s' % sshfsOptions,
-                     priority=20, sleep_before=2),
-
+                     sleep_before=2),
+    # Clio
     cliofs = cmd('mkdir /Volumes/clio;' + 
                  'sshfs clio:/Users/novak /Volumes/clio ' + 
-                 '-o volname=clio,%s' % sshfsOptions),
+                 '-o volname=clio,%s' % sshfsOptions,
+                 shutdown='umount /Volumes/clio', sleep_before=2),
 
+    # Hecate
+    hecatehomefs = cmd('mkdir /Volumes/hecate-home;' + 
+                       'sshfs hecate:/home/astro/gnovak /Volumes/hecate-home ' + 
+                       '-o volname="Hecate Home",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/hecate-home', sleep_before=2),
+    hecateworkfs = cmd('mkdir /Volumes/hecate-work;' + 
+                       'sshfs hecate:/tigress-hsm/gnovak /Volumes/hecate-work ' + 
+                       '-o volname="Hecate Work",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/hecate-work', sleep_before=2),
+    hecatefs = ['hecateworkfs', 'hecatehomefs'],
+
+    # Cobalt
+    cobalthomefs = cmd('mkdir /Volumes/cobalt-home;' + 
+                       'sshfs cobalt:/u/ac/novak /Volumes/cobalt-home ' + 
+                       '-o volname="Cobalt Home",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/cobalt-home', sleep_before=2),
+    cobaltworkfs = cmd('mkdir /Volumes/cobalt-work;' + 
+                       'sshfs cobalt:/scratch/users/novak /Volumes/cobalt-work ' + 
+                       '-o volname="Cobalt Work",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/cobalt-work', sleep_before=2),
+    cobaltfs = ['cobaltworkfs', 'cobalthomefs'],
+
+    # Columbia
+    columbiahomefs = cmd('mkdir /Volumes/columbia-home;' + 
+                       'sshfs columbia:/home/gnovak /Volumes/columbia-home ' + 
+                       '-o volname="Columbia Home",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/columbia-home', sleep_before=2),
+    columbiaworkfs = cmd('mkdir /Volumes/columbia-work;' + 
+                       'sshfs columbia:/nobackup2d/gnovak /Volumes/columbia-work ' + 
+                       '-o volname="Columbia Work",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/columbia-work', sleep_before=2),
+    columbiafs = ['columbiaworkfs', 'columbiahomefs'],
+
+    # Nasa Pleaides
+    nasapleiadeshomefs = cmd('mkdir /Volumes/nasa-pleiades-home;' + 
+                       'sshfs nasa-pleiades:/home/gnovak /Volumes/nasa-pleiades-home ' + 
+                       '-o volname="Nasa-Pleiades Home",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/nasa-pleiades-home', sleep_before=2),
+    nasapleiadesworkfs = cmd('mkdir /Volumes/nasa-pleiades-work;' + 
+                       'sshfs nasa-pleiades:/nobackup2d/gnovak /Volumes/nasa-pleiades-work ' + 
+                       '-o volname="Nasa-Pleiades Work",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/nasa-pleiades-work', sleep_before=2),
+    nasapleiadesfs = ['nasapleiadesworkfs', 'nasapleiadeshomefs'],
+
+    # Ucsc Pleaides
+    ucscpleiadeshomefs = cmd('mkdir /Volumes/ucsc-pleiades-home;' + 
+                       'sshfs ucsc-pleiades:/home/novak /Volumes/ucsc-pleiades-home ' + 
+                       '-o volname="Ucsc-Pleiades Home",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/ucsc-pleiades-home', sleep_before=2),
+    ucscpleiadesworkfs = cmd('mkdir /Volumes/ucsc-pleiades-work;' + 
+                       'sshfs ucsc-pleiades:/ifs/novak /Volumes/ucsc-pleiades-work ' + 
+                       '-o volname="Ucsc-Pleiades Work",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/ucsc-pleiades-work', sleep_before=2),
+    ucscpleiadesfs = ['ucscpleiadesworkfs', 'ucscpleiadeshomefs'],
+         
     # Making IDL license server available
     idl =cmd('ssh -n -N -L:1700:mambo:1700 -L:32790:mambo:32790 ssh'),
 
@@ -265,6 +325,9 @@ def kill_processes(names):
         names = list(names)
         names.sort(unprioritize) # sort a copy
         for name in names:            
+            if commands[name]['shutdown']:
+                time.sleep(commands[name]['sleep_before_shutdown'])
+                os.system(commands[name]['shutdown'])                
             print "Killing %s, pid %d" % (name, pids[name])
             os.system("kill %d" % pids[name])
             del pids[name]

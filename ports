@@ -88,13 +88,12 @@ sshfsOptions = 'compression=yes,auto_cache,reconnect,jail_symlinks,follow_symlin
 
 commands = dict(
     ### Getting to machines behind firewalls
-    # Princeton
-    clio  =cmd('ssh -n -N -L2022:clio:22 armstrong.astro.princeton.edu'),
-    hecate  =cmd('ssh -n -N -L3022:hecate:22 armstrong.astro.princeton.edu'),
-
     # UCSC
-    governator =cmd('ssh -n -N -L8022:governator.ucsc.edu:22 dionysus.ucsc.edu'),
+    governator =cmd('ssh -n -N -L2022:governator.ucsc.edu:22 dionysus.ucsc.edu'),
 
+    # Princeton
+    clio  =cmd('ssh -n -N -L3022:clio:22 armstrong.astro.princeton.edu'),
+    hecate  =cmd('ssh -n -N -L4022:hecate:22 armstrong.astro.princeton.edu'),
 
     # Sshfs filesystems
     dionysusfs = cmd('mkdir /Volumes/dionysus;' + 

@@ -80,81 +80,31 @@ def cmd(command,priority=0,sleep_after=0, sleep_before=0):
     return dict(command=command, priority=priority,
                 sleep_after=sleep_after, sleep_before=sleep_before)
 
-sshfsOptions = 'reconnect,sshfs_sync,jail_symlinks'
+# Suggested sshfs options according to some blog post -C -o
+# -C -oping_diskarb,noappledouble,noreadahead,
+# remoteuser@remotehost:/path/to/dir ~/yourLocalFolder
+
+sshfsOptions = 'compression=yes,auto_cache,reconnect,jail_symlinks,follow_symlinks,transform_symlinks,'
 
 commands = dict(
-    # Getting to machines behind firewalls
-    dionysus   =cmd('ssh -n -N -L2022:dionysus:22 ssh'),
-    desktop    =cmd('ssh -n -N -L2022:dionysus.ucolick.org:22 dionysus.ucolick.org'),
-    sunhost    =cmd('ssh -n -N -L3022:publichost:22 ssh'),
-    linuxhost  =cmd('ssh -n -N -L4022:rumba:22 ssh'),
-    upsand     =cmd('ssh -n -N -L5022:upsand:22 andromeda'),
-    twopiter   =cmd('ssh -n -N -L6022:twopiter:22 andromeda'),
-    governator =cmd('ssh -n -N -L8022:governator.ucsc.edu:22 ssh'),
-
+    ### Getting to machines behind firewalls
+    # Princeton
     clio  =cmd('ssh -n -N -L2022:clio:22 armstrong.astro.princeton.edu'),
     hecate  =cmd('ssh -n -N -L3022:hecate:22 armstrong.astro.princeton.edu'),
 
+    # UCSC
+    governator =cmd('ssh -n -N -L8022:governator.ucsc.edu:22 dionysus.ucsc.edu'),
+
+
     # Sshfs filesystems
-    upsandfs = cmd('mkdir /Volumes/upsand; ' + 
-                   'sshfs upsand:/home1/novak /Volumes/upsand ' +
-                   '-o volname=Upsand,%s' % sshfsOptions,
-                   priority=20, sleep_before=2),
     dionysusfs = cmd('mkdir /Volumes/dionysus;' + 
                      'sshfs dionysus:/home/novak /Volumes/dionysus ' + 
                      '-o volname=Dionysus,%s' % sshfsOptions,
                      priority=20, sleep_before=2),
 
-    governatorfs = cmd('mkdir /Volumes/governator;' + 
-                     'sshfs governator:/home/novak /Volumes/governator ' + 
-                     '-o volname=Governator,%s' % sshfsOptions),
-    gworkfs = cmd('mkdir /Volumes/governator-work;' + 
-                     'sshfs governator-work:/home/novak /Volumes/governator ' + 
-                     '-o volname=Governator-work,%s' % sshfsOptions),
-
-    rumbafs = cmd('mkdir /Volumes/rumba;' + 
-                  'sshfs linuxhost:/home/public/novak /Volumes/rumba ' + 
-                  '-o volname=Rumba,%s' % sshfsOptions,
-                  priority=20, sleep_before=2),
-
-    columbiafs = cmd('mkdir /Volumes/columbia;' + 
-                     'echo sshfs columbia:/u/gnovak /Volumes/columbia ' + 
-                     '-o volname=Columbia,sshfs_sync,jail_symlinks'),
-
-    cworkfs = cmd('mkdir /Volumes/columbia-work;' + 
-                     'echo sshfs columbia:/nobackup2d/gnovak /Volumes/columbia-work ' + 
-                     '-o volname=Columbia-work,sshfs_sync,jail_symlinks'),
-
-    seaborgfs = cmd('mkdir /Volumes/seaborg;' + 
-                     'sshfs seaborg:/home1/u3/novak /Volumes/seaborg ' + 
-                     '-o volname=Seaborg,%s' % sshfsOptions),
-    sworkfs = cmd('mkdir /Volumes/seaborg-work;' + 
-                  'sshfs seaborg:/scratch/scratchdirs/novak /Volumes/seaborg-work ' + 
-                  '-o volname=Seaborg-work,%s' % sshfsOptions),
-
-    bassifs = cmd('mkdir /Volumes/bassi;' + 
-                     'sshfs bassi:/u2/novak /Volumes/bassi ' + 
-                     '-o volname=Bassi,%s' % sshfsOptions),
-    bworkfs = cmd('mkdir /Volumes/bassi-work;' + 
-                     'sshfs bassi:/scratch/scratchdirs/novak /Volumes/bassi-work ' + 
-                     '-o volname=Bassi-work,%s' % sshfsOptions),
-
-    jacquardfs = cmd('mkdir /Volumes/jacquard;' + 
-                     'sshfs jacquard:/usr/common/homes/n/novak /Volumes/jacquard ' + 
-                     '-o volname=Jacquard,%s' % sshfsOptions),
-    jworkfs = cmd('mkdir /Volumes/jacquard-work;' + 
-                     'sshfs jacquard:/scratch/scratchdirs/novak /Volumes/jacquard-work ' + 
-                     '-o volname=Jacquard-work,%s' % sshfsOptions),
-
-    pleiadesfs = cmd('mkdir /Volumes/pleiades;' + 
-                     'sshfs pleiades:/home/novak /Volumes/pleiades ' + 
-                     '-o volname=Pleiades,%s' % sshfsOptions,
-                     priority=20, sleep_before=2),
-
-    pworkfs = cmd('mkdir /Volumes/pleiades-work;' + 
-                  'sshfs pleiades:/ibrixfs/novak /Volumes/pleiades-work ' + 
-                  '-o volname=Pleiades-work,%s' % sshfsOptions,
-                  priority=20, sleep_before=2),
+    cliofs = cmd('mkdir /Volumes/clio;' + 
+                 'sshfs clio:/Users/novak /Volumes/clio ' + 
+                 '-o volname=clio,%s' % sshfsOptions),
 
     # Making IDL license server available
     idl =cmd('ssh -n -N -L:1700:mambo:1700 -L:32790:mambo:32790 ssh'),
@@ -168,8 +118,6 @@ commands = dict(
 
     # Xload -- 
     dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665',
-                       priority=20, sleep_before=2),
-    upsand_xload=cmd('ssh -f upsand  /usr/X11R6/bin/xload -geometry 70x80+797+665',
                        priority=20, sleep_before=2),
     )
 

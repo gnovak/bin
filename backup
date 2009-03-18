@@ -13,11 +13,7 @@ base=4
 
 default_destination = r'/Volumes/My Passport/'
 
-# REMOTE_USER="novak"
-# RSYNC_RSH="/usr/bin/ssh -F /Users/novak/.ssh/config"
 rsync_command = "rsync"
-# --delete --delete-excluded --numeric-ids 
-#rsync_options="--archive --exclude-from=-"
 rsync_options="--verbose --progress --archive --exclude-from=-"
 
 config = dict(demeter = dict(source='/Users/',

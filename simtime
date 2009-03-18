@@ -1,59 +1,79 @@
-#!/bin/env python
 #!/usr/bin/env python
 
-import sys, os.path
+__version__ = "2.0"
 
-def main(argv=None):
+import optparse, sys, os.path
+
+class InteractiveOptionParser (optparse.OptionParser):                
+    def exit(self, status=0, msg=None):
+        """self.error() raises an exception, so this should only be
+        called when optparse intends to exit successfully."""
+        if msg: print >>sys.stderr, msg
+
+    def error(self, msg):
+        """Raise an exception instead of exiting"""
+        raise optparse.OptionValueError, msg
+
+def handleArgs(argv, interactive):
+    opArgs = dict(usage="%prog -n [slice] [location] [prefix]",
+                  version="%prog " + "%s" % __version__)
+
+    if interactive: parser = InteractiveOptionParser(**opArgs)
+    else: parser = optparse.OptionParser(**opArgs)
+
+    parser.add_option("-n", "--number", 
+                      help="Look at time consumed by subset of simulation")
+
+    return parser.parse_args(args=argv[1:]) + (parser,)
+
+def main(argv=None, interactive=True):
     if argv is None: argv = sys.argv    
+    options, args, parser = handleArgs(argv, interactive)    
 
-    nMax = 1000
-    fnames = ['snapshot_%03d', 'snapshot_%04d']
+    # Parse options, set defaults
+    if len(args) >= 1: location = args[0]
+    else: location = '.'
+    if len(args) >= 2: prefixes = [args[1]]
+    else: prefixes = ['snapshot', 'param']
+    num = options.number or ':'
     
-    if len(argv) == 1:
-        path = '.'
-        n = nMax
-    elif len(argv) == 2:
-        n = int(argv[1])
-        path = '.'
-    elif len(argv) == 3:
-        n = int(argv[1])
-        path = argv[2]
-    else:
-        raise RuntimeError
+    # Find which prefix to use
+    files = os.listdir(location)    
+    for prefix in prefixes:
+        snapshots = [ f for f in files if f.startswith(prefix)]
+        if snapshots: break
 
-    result = []
-    for fname in fnames:
-        try:
-            for i in xrange(n+1):
-                t = os.path.getctime(os.path.join(path, fname % i))
-                t = os.path.getmtime(os.path.join(path, fname % i))
-                result.append(t)
-        except OSError:
-            pass
-        # Break the loop over possible snapshot filenames as soon as
-        # you find some snapshots
-        if len(result) > 0:
-            break
-    
+    if not snapshots:
+        parser.error("No Snapshots Found!")
+
+    # Sort and prune snapshot list
+    snapshots = sorted(snapshots)
+    snapshots = eval('snapshots[%s]' % num)
+
+    # Fetch times of snapshots in the list
+    times = [os.path.getmtime(os.path.join(location, snapshot))
+            for snapshot in snapshots]
+
+    # Total up time spent
     total = 0.0
-    header = False
-    #print [r -  result[0] for r in result]
-    last1 = result[1]-result[0]
-    k = []
-    for i in range(len(result)-1):
-        dt = result[i+1] - result[i]
+    last1 = times[1] - times[0]
+    breaks = []    
+    for i in range(len(times)-1):
+        dt = times[i+1] - times[i]
         if dt > 3*last1:
-            if not header:
-                print "Breaks at",
-                header = True
-            print i+1, 
             total += last1
+            breaks.append(snapshots[i+1])
         else:
             total += dt
             last1 = dt
 
-    if header: print ""
+    if breaks:
+        print "Breaks before",
+        for br in breaks:
+            print br,
+        print ""
+    print "From", snapshots[0], "to", snapshots[-1], "in", location
     print total/3600
             
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(main(interactive=False))

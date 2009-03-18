@@ -75,84 +75,104 @@ pids = {}
 #                running any other tasks (because those tasks depend
 #                on this one).
 
-def cmd(command,priority=0,sleep_after=0, sleep_before=0):
+def cmd(command,priority=0,sleep_after=0, sleep_before=0,
+        shutdown=None, sleep_before_shutdown=2):
     """Produce "Command info dictionary" with some defaults"""
     return dict(command=command, priority=priority,
-                sleep_after=sleep_after, sleep_before=sleep_before)
+                sleep_after=sleep_after, sleep_before=sleep_before,
+                shutdown=shutdown, sleep_before_shutdown=3)
 
-sshfsOptions = 'reconnect,sshfs_sync,jail_symlinks'
+# Suggested sshfs options for performance according to some blog post 
+# -C -oping_diskarb,noappledouble,noreadahead,
+
+# Worry about double compression here in sshfs and port forwarding
+# Also, with VPN don't really need to worry about firewalls
+sshfsOptions = 'compression=yes,auto_cache,jail_symlinks,follow_symlinks,transform_symlinks'
 
 commands = dict(
-    # Getting to machines behind firewalls
-    dionysus   =cmd('ssh -n -N -L2022:dionysus:22 ssh'),
-    desktop    =cmd('ssh -n -N -L2022:dionysus.ucolick.org:22 dionysus.ucolick.org'),
-    sunhost    =cmd('ssh -n -N -L3022:publichost:22 ssh'),
-    linuxhost  =cmd('ssh -n -N -L4022:rumba:22 ssh'),
-    upsand     =cmd('ssh -n -N -L5022:upsand:22 andromeda'),
-    twopiter   =cmd('ssh -n -N -L6022:twopiter:22 andromeda'),
-    governator =cmd('ssh -n -N -L8022:governator.ucsc.edu:22 ssh'),
+    work=['cliofs', 'tigressfs', 'hecatefs', 'cobaltfs'],
+    ### Getting to machines behind firewalls
+    # UCSC
+    governator =cmd('ssh -n -N -L2022:governator.ucsc.edu:22 dionysus.ucsc.edu'),
+
+    # Princeton
+    clio  =cmd('ssh -n -N -L3022:clio:22 armstrong.astro.princeton.edu',
+               priority=-10),
+    hecate  =cmd('ssh -n -N -L4022:hecate:22 armstrong.astro.princeton.edu',
+                 priority=-10),
 
     # Sshfs filesystems
-    upsandfs = cmd('mkdir /Volumes/upsand; ' + 
-                   'sshfs upsand:/home1/novak /Volumes/upsand ' +
-                   '-o volname=Upsand,%s' % sshfsOptions,
-                   priority=20, sleep_before=2),
     dionysusfs = cmd('mkdir /Volumes/dionysus;' + 
                      'sshfs dionysus:/home/novak /Volumes/dionysus ' + 
                      '-o volname=Dionysus,%s' % sshfsOptions,
-                     priority=20, sleep_before=2),
+                     sleep_before=2),
+    # Clio
+    cliofs = cmd('mkdir /Volumes/clio;' + 
+                 'sshfs clio:/Users/novak /Volumes/clio ' + 
+                 '-o volname=clio,%s' % sshfsOptions,
+                 shutdown='umount /Volumes/clio', sleep_before=2),
 
-    governatorfs = cmd('mkdir /Volumes/governator;' + 
-                     'sshfs governator:/home/novak /Volumes/governator ' + 
-                     '-o volname=Governator,%s' % sshfsOptions),
-    gworkfs = cmd('mkdir /Volumes/governator-work;' + 
-                     'sshfs governator-work:/home/novak /Volumes/governator ' + 
-                     '-o volname=Governator-work,%s' % sshfsOptions),
+    # Hecate
+    hecatefs = cmd('mkdir /Volumes/hecate;' + 
+                       'sshfs hecate:/home/astro/gnovak /Volumes/hecate ' + 
+                       '-o volname="Hecate",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/hecate', sleep_before=2),
 
-    rumbafs = cmd('mkdir /Volumes/rumba;' + 
-                  'sshfs linuxhost:/home/public/novak /Volumes/rumba ' + 
-                  '-o volname=Rumba,%s' % sshfsOptions,
-                  priority=20, sleep_before=2),
+    # tigress
+    tigresshomefs = cmd('mkdir /Volumes/tigress-home;' + 
+                       'sshfs tigressdata:/home/gnovak /Volumes/tigress-home ' + 
+                       '-o volname="Tigress Home",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/tigress-home', sleep_before=2),
+    tigressworkfs = cmd('mkdir /Volumes/tigress;' + 
+                       'sshfs tigressdata:/tigress-hsm/gnovak /Volumes/tigress ' + 
+                       '-o volname="Tigress",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/tigress', sleep_before=2),
+    tigressfs = ['tigressworkfs', 'tigresshomefs'],
 
-    columbiafs = cmd('mkdir /Volumes/columbia;' + 
-                     'echo sshfs columbia:/u/gnovak /Volumes/columbia ' + 
-                     '-o volname=Columbia,sshfs_sync,jail_symlinks'),
+    # Cobalt
+    cobalthomefs = cmd('mkdir /Volumes/cobalt-home;' + 
+                       'sshfs cobalt:/u/ac/novak /Volumes/cobalt-home ' + 
+                       '-o volname="Cobalt Home",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/cobalt-home', sleep_before=2),
+    cobaltworkfs = cmd('mkdir /Volumes/cobalt-work;' + 
+                       'sshfs cobalt:/scratch/users/novak /Volumes/cobalt-work ' + 
+                       '-o volname="Cobalt Work",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/cobalt-work', sleep_before=2),
+    cobaltfs = ['cobaltworkfs', 'cobalthomefs'],
 
-    cworkfs = cmd('mkdir /Volumes/columbia-work;' + 
-                     'echo sshfs columbia:/nobackup2d/gnovak /Volumes/columbia-work ' + 
-                     '-o volname=Columbia-work,sshfs_sync,jail_symlinks'),
+    # Columbia
+    columbiahomefs = cmd('mkdir /Volumes/columbia-home;' + 
+                       'sshfs columbia:/home/gnovak /Volumes/columbia-home ' + 
+                       '-o volname="Columbia Home",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/columbia-home', sleep_before=2),
+    columbiaworkfs = cmd('mkdir /Volumes/columbia-work;' + 
+                       'sshfs columbia:/nobackup2d/gnovak /Volumes/columbia-work ' + 
+                       '-o volname="Columbia Work",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/columbia-work', sleep_before=2),
+    columbiafs = ['columbiaworkfs', 'columbiahomefs'],
 
-    seaborgfs = cmd('mkdir /Volumes/seaborg;' + 
-                     'sshfs seaborg:/home1/u3/novak /Volumes/seaborg ' + 
-                     '-o volname=Seaborg,%s' % sshfsOptions),
-    sworkfs = cmd('mkdir /Volumes/seaborg-work;' + 
-                  'sshfs seaborg:/scratch/scratchdirs/novak /Volumes/seaborg-work ' + 
-                  '-o volname=Seaborg-work,%s' % sshfsOptions),
+    # Nasa Pleaides
+    nasapleiadeshomefs = cmd('mkdir /Volumes/nasa-pleiades-home;' + 
+                       'sshfs nasa-pleiades:/home/gnovak /Volumes/nasa-pleiades-home ' + 
+                       '-o volname="Nasa-Pleiades Home",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/nasa-pleiades-home', sleep_before=2),
+    nasapleiadesworkfs = cmd('mkdir /Volumes/nasa-pleiades-work;' + 
+                       'sshfs nasa-pleiades:/nobackup2d/gnovak /Volumes/nasa-pleiades-work ' + 
+                       '-o volname="Nasa-Pleiades Work",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/nasa-pleiades-work', sleep_before=2),
+    nasapleiadesfs = ['nasapleiadesworkfs', 'nasapleiadeshomefs'],
 
-    bassifs = cmd('mkdir /Volumes/bassi;' + 
-                     'sshfs bassi:/u2/novak /Volumes/bassi ' + 
-                     '-o volname=Bassi,%s' % sshfsOptions),
-    bworkfs = cmd('mkdir /Volumes/bassi-work;' + 
-                     'sshfs bassi:/scratch/scratchdirs/novak /Volumes/bassi-work ' + 
-                     '-o volname=Bassi-work,%s' % sshfsOptions),
-
-    jacquardfs = cmd('mkdir /Volumes/jacquard;' + 
-                     'sshfs jacquard:/usr/common/homes/n/novak /Volumes/jacquard ' + 
-                     '-o volname=Jacquard,%s' % sshfsOptions),
-    jworkfs = cmd('mkdir /Volumes/jacquard-work;' + 
-                     'sshfs jacquard:/scratch/scratchdirs/novak /Volumes/jacquard-work ' + 
-                     '-o volname=Jacquard-work,%s' % sshfsOptions),
-
-    pleiadesfs = cmd('mkdir /Volumes/pleiades;' + 
-                     'sshfs pleiades:/home/novak /Volumes/pleiades ' + 
-                     '-o volname=Pleiades,%s' % sshfsOptions,
-                     priority=20, sleep_before=2),
-
-    pworkfs = cmd('mkdir /Volumes/pleiades-work;' + 
-                  'sshfs pleiades:/ibrixfs/novak /Volumes/pleiades-work ' + 
-                  '-o volname=Pleiades-work,%s' % sshfsOptions,
-                  priority=20, sleep_before=2),
-
+    # Ucsc Pleaides
+    ucscpleiadeshomefs = cmd('mkdir /Volumes/ucsc-pleiades-home;' + 
+                       'sshfs ucsc-pleiades:/home/novak /Volumes/ucsc-pleiades-home ' + 
+                       '-o volname="Ucsc-Pleiades Home",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/ucsc-pleiades-home', sleep_before=2),
+    ucscpleiadesworkfs = cmd('mkdir /Volumes/ucsc-pleiades-work;' + 
+                       'sshfs ucsc-pleiades:/ifs/novak /Volumes/ucsc-pleiades-work ' + 
+                       '-o volname="Ucsc-Pleiades Work",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/ucsc-pleiades-work', sleep_before=2),
+    ucscpleiadesfs = ['ucscpleiadesworkfs', 'ucscpleiadeshomefs'],
+         
     # Making IDL license server available
     idl =cmd('ssh -n -N -L:1700:mambo:1700 -L:32790:mambo:32790 ssh'),
 
@@ -161,12 +181,10 @@ commands = dict(
 
     # Slime 
     slime_greymonster =cmd('ssh -n -N -L4005:192.168.1.1:4005 greymonster'),
-    slime_jen         =cmd('ssh -n -N -L4005:127.0.0.1:4005 jen'),
+    slime_jen         =cmd('ssh -n -N -L4005:127.0.0.1:4005 192.168.0.198'),
 
     # Xload -- 
     dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665',
-                       priority=20, sleep_before=2),
-    upsand_xload=cmd('ssh -f upsand  /usr/X11R6/bin/xload -geometry 70x80+797+665',
                        priority=20, sleep_before=2),
 
     emacs_hecate = cmd("ssh -f hecate /home/astro/gnovak/bin/local/bin/emacs " +
@@ -321,6 +339,9 @@ def kill_processes(names):
         names = list(names)
         names.sort(unprioritize) # sort a copy
         for name in names:            
+            if commands[name]['shutdown']:
+                time.sleep(commands[name]['sleep_before_shutdown'])
+                os.system(commands[name]['shutdown'])                
             print "Killing %s, pid %d" % (name, pids[name])
             os.system("kill %d" % pids[name])
             del pids[name]

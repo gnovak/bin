@@ -16,7 +16,18 @@ default_destination = r'/Volumes/My Passport/'
 rsync_command = "rsync"
 rsync_options="--verbose --progress --archive --exclude-from=-"
 
-config = dict(demeter = dict(source='/Users/',
+config = dict(
+    thalia = dict(source='/Users/novak/',
+                             destination=default_destination,
+                  exclude=
+"""
+/.Trash
+/Music
+/Desktop/Orig-In
+/Desktop/In-euterpe
+"""),
+
+    demeter = dict(source='/Users/',
                              destination=default_destination,
                              exclude=
 """/novak/.Trash 

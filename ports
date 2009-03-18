@@ -85,10 +85,12 @@ def cmd(command,priority=0,sleep_after=0, sleep_before=0,
 # Suggested sshfs options for performance according to some blog post 
 # -C -oping_diskarb,noappledouble,noreadahead,
 
-sshfsOptions = 'compression=yes,auto_cache,reconnect,jail_symlinks,follow_symlinks,transform_symlinks'
+# Worry about double compression here in sshfs and port forwarding
+# Also, with VPN don't really need to worry about firewalls
+sshfsOptions = 'compression=yes,auto_cache,jail_symlinks,follow_symlinks,transform_symlinks'
 
 commands = dict(
-    work=['clio', 'hecate', 'cliofs', 'hecatefs', 'cobaltfs'],
+    work=['cliofs', 'tigressfs', 'hecatefs', 'cobaltfs'],
     ### Getting to machines behind firewalls
     # UCSC
     governator =cmd('ssh -n -N -L2022:governator.ucsc.edu:22 dionysus.ucsc.edu'),
@@ -111,15 +113,21 @@ commands = dict(
                  shutdown='umount /Volumes/clio', sleep_before=2),
 
     # Hecate
-    hecatehomefs = cmd('mkdir /Volumes/hecate-home;' + 
-                       'sshfs hecate:/home/astro/gnovak /Volumes/hecate-home ' + 
-                       '-o volname="Hecate Home",%s' % sshfsOptions,
-                       shutdown='umount /Volumes/hecate-home', sleep_before=2),
-    hecateworkfs = cmd('mkdir /Volumes/hecate-work;' + 
-                       'sshfs hecate:/tigress-hsm/gnovak /Volumes/hecate-work ' + 
-                       '-o volname="Hecate Work",%s' % sshfsOptions,
-                       shutdown='umount /Volumes/hecate-work', sleep_before=2),
-    hecatefs = ['hecateworkfs', 'hecatehomefs'],
+    hecatefs = cmd('mkdir /Volumes/hecate;' + 
+                       'sshfs hecate:/home/astro/gnovak /Volumes/hecate ' + 
+                       '-o volname="Hecate",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/hecate', sleep_before=2),
+
+    # tigress
+    tigresshomefs = cmd('mkdir /Volumes/tigress-home;' + 
+                       'sshfs tigressdata:/home/gnovak /Volumes/tigress-home ' + 
+                       '-o volname="Tigress Home",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/tigress-home', sleep_before=2),
+    tigressworkfs = cmd('mkdir /Volumes/tigress;' + 
+                       'sshfs tigressdata:/tigress-hsm/gnovak /Volumes/tigress ' + 
+                       '-o volname="Tigress",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/tigress', sleep_before=2),
+    tigressfs = ['tigressworkfs', 'tigresshomefs'],
 
     # Cobalt
     cobalthomefs = cmd('mkdir /Volumes/cobalt-home;' + 
@@ -173,7 +181,7 @@ commands = dict(
 
     # Slime 
     slime_greymonster =cmd('ssh -n -N -L4005:192.168.1.1:4005 greymonster'),
-    slime_jen         =cmd('ssh -n -N -L4005:127.0.0.1:4005 jen'),
+    slime_jen         =cmd('ssh -n -N -L4005:127.0.0.1:4005 192.168.0.198'),
 
     # Xload -- 
     dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665',

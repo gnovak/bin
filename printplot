@@ -149,6 +149,8 @@ def main(argv=None, interactive=True):
     
     if every([file.endswith('pdf') for file in files]):
         pdflatexProcess(doc, options).run()
+    if every([file.endswith('png') for file in files]):
+        pdflatexProcess(doc, options).run()
     elif every([file.endswith('eps') for file in files]):
         latexProcess(doc, options).run()
     elif every([file.endswith('eps.gz') or file.endswith('eps') for file in files]):

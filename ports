@@ -168,6 +168,12 @@ commands = dict(
                        priority=20, sleep_before=2),
     upsand_xload=cmd('ssh -f upsand  /usr/X11R6/bin/xload -geometry 70x80+797+665',
                        priority=20, sleep_before=2),
+
+    emacs_hecate = cmd("ssh -f hecate /home/astro/gnovak/bin/local/bin/emacs " +
+                       "--name='emacs@hecate'"),
+    emacs_cobalt = cmd("ssh -f cobalt /u/ac/novak/bin/local/bin/emacs " +
+                       "--name='emacs@cobalt'"),
+    emacs_columbia = cmd("ssh -f cfe2 /u/gnovak/bin/local/bin/emacs --name='emacs@columbia'"),
     )
 
 commands['all'] = commands.keys()

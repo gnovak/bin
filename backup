@@ -21,7 +21,17 @@ rsync_command = "rsync"
 #rsync_options="--archive --exclude-from=-"
 rsync_options="--verbose --progress --archive --exclude-from=-"
 
-config = dict(demeter = dict(source='/Users/',
+config = dict(
+    thalia = dict(source='/Users/novak/',
+                  exclude=
+"""
+/.Trash
+/Music
+/Desktop/Orig-In
+/Desktop/In-euterpe
+"""),
+
+    demeter = dict(source='/Users/',
                              exclude=
 """/novak/.Trash 
 /novak/Library/Caches

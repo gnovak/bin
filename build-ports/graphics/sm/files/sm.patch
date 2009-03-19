@@ -1,6 +1,6 @@
-diff --new-file --recursive --context orig/LICENSE new/LICENSE
-*** orig/LICENSE	Wed Dec 31 19:00:00 1969
---- new/LICENSE	Thu Mar 19 15:13:36 2009
+diff --context --new-file --recursive orig/LICENSE new/LICENSE
+*** orig/LICENSE	1969-12-31 19:00:00.000000000 -0500
+--- new/LICENSE	2009-03-19 15:13:36.000000000 -0400
 ***************
 *** 0 ****
 --- 1,47 ----
@@ -51,9 +51,9 @@ diff --new-file --recursive --context orig/LICENSE new/LICENSE
 + Contact:
 + If you have further questions, please send mail to <monger@mcmaster.ca>.
 + 
-diff --new-file --recursive --context orig/Makefile.skl new/Makefile.skl
-*** orig/Makefile.skl	Wed Nov  1 10:47:51 2006
---- new/Makefile.skl	Thu Mar 19 15:17:33 2009
+diff --context --new-file --recursive orig/Makefile.skl new/Makefile.skl
+*** orig/Makefile.skl	2006-11-01 10:47:51.000000000 -0500
+--- new/Makefile.skl	2009-03-19 15:17:33.000000000 -0400
 ***************
 *** 41,53 ****
   #	DESTMAN: manual page(s)
@@ -193,9 +193,9 @@ diff --new-file --recursive --context orig/Makefile.skl new/Makefile.skl
   		done;\
   		) > $(DESTETC)/.sm; \
   	   fi
-diff --new-file --recursive --context orig/edit_options_h new/edit_options_h
-*** orig/edit_options_h	Wed Dec 31 19:00:00 1969
---- new/edit_options_h	Thu Mar 19 15:13:36 2009
+diff --context --new-file --recursive orig/edit_options_h new/edit_options_h
+*** orig/edit_options_h	1969-12-31 19:00:00.000000000 -0500
+--- new/edit_options_h	2009-03-19 15:13:36.000000000 -0400
 ***************
 *** 0 ****
 --- 1,22 ----
@@ -221,12 +221,12 @@ diff --new-file --recursive --context orig/edit_options_h new/edit_options_h
 + #           open(PRINTER, "| lpr -Plp1")    || die "cannot fork: $!";
 + #           print PRINTER "stuff\n";
 + #           close(PRINTER)                  || die "can't close lpr: $!";
-diff --new-file --recursive --context orig/get_response new/get_response
-*** orig/get_response	Wed Dec 31 19:00:00 1969
---- new/get_response	Thu Mar 19 15:13:36 2009
+diff --context --new-file --recursive orig/get_response new/get_response
+*** orig/get_response	1969-12-31 19:00:00.000000000 -0500
+--- new/get_response	2009-03-19 15:13:36.000000000 -0400
 ***************
 *** 0 ****
---- 1,23 ----
+--- 1,24 ----
 + #!/usr/bin/perl
 + $fname = "options_h_message.txt";
 + 
@@ -237,22 +237,39 @@ diff --new-file --recursive --context orig/get_response new/get_response
 + }
 + close MESSAGE;
 + print "**********************************\n";
-+ print "A MESSAGE FROM THE SM PACKAGE MAINTAINER"
++ print "A MESSAGE FROM THE SM PACKAGE MAINTAINER";
 + print "Please see the above message from the SM authors.\n";
 + print "In order to make the macports install seamless, I have modified\n";
 + print "the options.h. file, but in order to preserve their rights\n";
 + print "please type \"yes\" and press enter to legally indicate that\n";
 + print "you have done what they've asked.\n";
 + print "? ";
-+ $response = <>;
++ # $response = <>;
++ $response = "yes";
 + $response =~ s/\W//g;
 + $response =~ tr/A-Z/a-z/;
 + if ($response ne "yes") {
 +     exit 1;
 + }
-diff --new-file --recursive --context orig/set_opts new/set_opts
-*** orig/set_opts	Wed Nov  1 09:34:37 2006
---- new/set_opts	Thu Mar 19 15:13:36 2009
+diff --context --new-file --recursive orig/set_opts new/set_opts
+*** orig/set_opts	2006-11-01 09:34:37.000000000 -0500
+--- new/set_opts	2009-03-19 16:25:57.000000000 -0400
+***************
+*** 240,245 ****
+--- 240,252 ----
+  					! -f /usr/lib/libX11.a ]; then
+  		syslibX11="/usr/X11R6/lib"
+  	fi
++ 
++ 	if [ -f /opt/local/include/X11/Xlib.h ]; then
++ 		sysincX11="/opt/local/include"
++ 	fi
++ 	if [ -f /opt/local/lib/libX11.a ]; then
++ 		syslibX11="/opt/local/lib"
++ 	fi
+  	devs="TK X11";;
+    rs6000)
+  	version="`uname -a | awk '{print $4}'`"
 ***************
 *** 785,795 ****
   		dest=$reply
@@ -266,7 +283,7 @@ diff --new-file --recursive --context orig/set_opts new/set_opts
   #
   while [ "$destflag" != "1" ]; do
   	echo "The commands make install (and make installinfo)"\
---- 785,802 ----
+--- 792,809 ----
   		dest=$reply
   	fi
   fi
@@ -297,7 +314,7 @@ diff --new-file --recursive --context orig/set_opts new/set_opts
   	;;
   esac
   #
---- 840,849 ----
+--- 847,856 ----
   	destlisp=""
   	;;
     *)
@@ -326,7 +343,7 @@ diff --new-file --recursive --context orig/set_opts new/set_opts
   	-e "s|^LIBSUFFIX =.*|LIBSUFFIX = $libsuffix|" \
   	-e "$choose_parser" \
   	-e "$sed_build_swig" \
---- 1028,1051 ----
+--- 1035,1058 ----
   #
   # Start with Makefile
   #

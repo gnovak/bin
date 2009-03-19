@@ -1,6 +1,7 @@
 # 
 
 PortSystem          1.0
+revision        6
 
 name                sm
 version             2.4.34
@@ -22,15 +23,15 @@ use_configure       no
 patchfiles		sm.patch 
 patch.pre_args        -p1
 
-#destroot.post_args MACPORTSPREFIx=${destroot.destdir}
+destroot.destdir MACPORTSPREFIX=${destroot}/${prefix} CFGPREFIX=${prefix}
 
-#build {
-#system "chmod 755 ${worksrcpath}/edit_options_h"
-#system "chmod 755 ${worksrcpath}/get_response"
-#system "cd ${worksrcpath} && ./set_opts -i ${prefix}"
-#system "cd ${worksrcpath} && ./edit_options_h src/options.h"
-#system "cd ${worksrcpath} && ./get_response"
-#system "cd ${worksrcpath} && make"
-#}
+build {
+system "chmod 755 ${worksrcpath}/edit_options_h"
+system "chmod 755 ${worksrcpath}/get_response"
+system "cd ${worksrcpath} && ./set_opts -i ${prefix}"
+system "cd ${worksrcpath} && ./edit_options_h src/options.h"
+system "cd ${worksrcpath} && ./get_response"
+system "cd ${worksrcpath} && make"
+}
 
 

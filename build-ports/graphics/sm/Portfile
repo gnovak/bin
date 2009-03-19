@@ -1,0 +1,36 @@
+# 
+
+PortSystem          1.0
+
+name                sm
+version             2.4.34
+categories          graphics
+maintainers         greg.novak@gmail.com
+description         Scientific plotting package
+
+long_description    Scientific plotting package
+
+homepage            http://www.astro.princeton.edu/~rhl/sm/
+distname            ${name}2_4_34
+distfiles           ${name}2_4_34.tar.gz
+master_sites        ftp://ftp.astro.princeton.edu/rhl/sm/release/
+checksums           md5 8d76fcac83aa37de3f4dd0977a7fc397 \
+                    sha1 ab44a119db920ed9e900494bbffec5d3195ea8b3 \
+                    rmd160 bf2d5e53e592ce1e968fc7600cdef40324f7d3cb
+use_configure       no
+
+patchfiles		sm.patch 
+patch.pre_args        -p1
+
+#destroot.post_args MACPORTSPREFIx=${destroot.destdir}
+
+#build {
+#system "chmod 755 ${worksrcpath}/edit_options_h"
+#system "chmod 755 ${worksrcpath}/get_response"
+#system "cd ${worksrcpath} && ./set_opts -i ${prefix}"
+#system "cd ${worksrcpath} && ./edit_options_h src/options.h"
+#system "cd ${worksrcpath} && ./get_response"
+#system "cd ${worksrcpath} && make"
+#}
+
+

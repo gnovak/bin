@@ -1,6 +1,6 @@
-diff --context --recursive -P pristine/LICENSE dist/LICENSE
-*** pristine/LICENSE	Wed Dec 31 16:00:00 1969
---- dist/LICENSE	Mon Mar  3 02:06:31 2003
+diff --new-file --recursive --context orig/LICENSE new/LICENSE
+*** orig/LICENSE	Wed Dec 31 19:00:00 1969
+--- new/LICENSE	Thu Mar 19 15:13:36 2009
 ***************
 *** 0 ****
 --- 1,47 ----
@@ -51,9 +51,9 @@ diff --context --recursive -P pristine/LICENSE dist/LICENSE
 + Contact:
 + If you have further questions, please send mail to <monger@mcmaster.ca>.
 + 
-diff --context --recursive -P pristine/Makefile.skl dist/Makefile.skl
-*** pristine/Makefile.skl	Mon Mar  3 02:07:18 2003
---- dist/Makefile.skl	Mon Mar  3 03:18:17 2003
+diff --new-file --recursive --context orig/Makefile.skl new/Makefile.skl
+*** orig/Makefile.skl	Wed Nov  1 10:47:51 2006
+--- new/Makefile.skl	Thu Mar 19 15:17:33 2009
 ***************
 *** 41,53 ****
   #	DESTMAN: manual page(s)
@@ -98,7 +98,7 @@ diff --context --recursive -P pristine/Makefile.skl dist/Makefile.skl
   # Suffix for SM libraries; usually "" if REAL is float, _d if double
   #
 ***************
-*** 104,113 ****
+*** 110,119 ****
   		if test "$$f" = ""; then continue; fi; \
   		fd=`echo $$f | sed -e 's#/[^/]*$$##'`; \
   		if test ! -d $$fd ; then \
@@ -109,7 +109,7 @@ diff --context --recursive -P pristine/Makefile.skl dist/Makefile.skl
   		fi; \
   	done
   	cp src/sm rasterise make_tags $(DESTDIR)
---- 118,127 ----
+--- 124,133 ----
   		if test "$$f" = ""; then continue; fi; \
   		fd=`echo $$f | sed -e 's#/[^/]*$$##'`; \
   		if test ! -d $$fd ; then \
@@ -121,7 +121,7 @@ diff --context --recursive -P pristine/Makefile.skl dist/Makefile.skl
   	done
   	cp src/sm rasterise make_tags $(DESTDIR)
 ***************
-*** 133,167 ****
+*** 142,176 ****
   		echo "graphcap.local exists; I am not modifying it"; \
   	else \
   		echo "	Setting up graphcap.local"; \
@@ -141,23 +141,23 @@ diff --context --recursive -P pristine/Makefile.skl dist/Makefile.skl
   		echo File $(DESTETC)/.sm exists\; I am not modifying it; \
   	   else \
   		( \
-! 		echo "fonts		$(DESTETC)/fonts.bin" ;\
+! 		echo "fonts		//fonts.bin" ;\
   		echo "history_file	.smhist" ;\
   		echo "history		80" ;\
   		echo "temp_dir	/tmp/" ;\
-! 		echo "+graphcap	$(DESTETC)/graphcap.local" ;\
+! 		echo "+graphcap	//graphcap.local" ;\
   		for f in filecap graphcap ; do \
-! 			echo "$$f		$(DESTETC)/$$f" ;\
+! 			echo "$$f		//$$f" ;\
   		done;\
   		if test ! -f /etc/termcap; then \
-! 			echo "termcap		$(DESTETC)/termcap" ;\
+! 			echo "termcap		//termcap" ;\
   		fi; \
   		for f in help macro ; do \
-! 			echo "$$f		$(DESTETC)/$$f/" ;\
+! 			echo "$$f		//$$f/" ;\
   		done;\
   		) > $(DESTETC)/.sm; \
   	   fi
---- 147,181 ----
+--- 156,190 ----
   		echo "graphcap.local exists; I am not modifying it"; \
   	else \
   		echo "	Setting up graphcap.local"; \
@@ -193,9 +193,9 @@ diff --context --recursive -P pristine/Makefile.skl dist/Makefile.skl
   		done;\
   		) > $(DESTETC)/.sm; \
   	   fi
-diff --context --recursive -P pristine/edit_options_h dist/edit_options_h
-*** pristine/edit_options_h	Wed Dec 31 16:00:00 1969
---- dist/edit_options_h	Mon Mar  3 02:06:26 2003
+diff --new-file --recursive --context orig/edit_options_h new/edit_options_h
+*** orig/edit_options_h	Wed Dec 31 19:00:00 1969
+--- new/edit_options_h	Thu Mar 19 15:13:36 2009
 ***************
 *** 0 ****
 --- 1,22 ----
@@ -221,9 +221,9 @@ diff --context --recursive -P pristine/edit_options_h dist/edit_options_h
 + #           open(PRINTER, "| lpr -Plp1")    || die "cannot fork: $!";
 + #           print PRINTER "stuff\n";
 + #           close(PRINTER)                  || die "can't close lpr: $!";
-diff --context --recursive -P pristine/get_response dist/get_response
-*** pristine/get_response	Wed Dec 31 16:00:00 1969
---- dist/get_response	Mon Mar  3 02:06:27 2003
+diff --new-file --recursive --context orig/get_response new/get_response
+*** orig/get_response	Wed Dec 31 19:00:00 1969
+--- new/get_response	Thu Mar 19 15:13:36 2009
 ***************
 *** 0 ****
 --- 1,23 ----
@@ -250,11 +250,11 @@ diff --context --recursive -P pristine/get_response dist/get_response
 + if ($response ne "yes") {
 +     exit 1;
 + }
-diff --context --recursive -P pristine/set_opts dist/set_opts
-*** pristine/set_opts	Mon Mar  3 02:07:19 2003
---- dist/set_opts	Mon Mar  3 02:47:42 2003
+diff --new-file --recursive --context orig/set_opts new/set_opts
+*** orig/set_opts	Wed Nov  1 09:34:37 2006
+--- new/set_opts	Thu Mar 19 15:13:36 2009
 ***************
-*** 760,770 ****
+*** 785,795 ****
   		dest=$reply
   	fi
   fi
@@ -266,7 +266,7 @@ diff --context --recursive -P pristine/set_opts dist/set_opts
   #
   while [ "$destflag" != "1" ]; do
   	echo "The commands make install (and make installinfo)"\
---- 760,777 ----
+--- 785,802 ----
   		dest=$reply
   	fi
   fi
@@ -286,7 +286,7 @@ diff --context --recursive -P pristine/set_opts dist/set_opts
   while [ "$destflag" != "1" ]; do
   	echo "The commands make install (and make installinfo)"\
 ***************
-*** 808,817 ****
+*** 833,842 ****
   	destlisp=""
   	;;
     *)
@@ -297,7 +297,7 @@ diff --context --recursive -P pristine/set_opts dist/set_opts
   	;;
   esac
   #
---- 815,824 ----
+--- 840,849 ----
   	destlisp=""
   	;;
     *)
@@ -309,7 +309,7 @@ diff --context --recursive -P pristine/set_opts dist/set_opts
   esac
   #
 ***************
-*** 939,954 ****
+*** 1021,1036 ****
   #
   # Start with Makefile
   #
@@ -325,8 +325,8 @@ diff --context --recursive -P pristine/set_opts dist/set_opts
 ! 	-e "s|^DESTMAN =.*|DESTMAN = $destman|" \
   	-e "s|^LIBSUFFIX =.*|LIBSUFFIX = $libsuffix|" \
   	-e "$choose_parser" \
-  	< Makefile.skl > Makefile~
---- 946,969 ----
+  	-e "$sed_build_swig" \
+--- 1028,1051 ----
   #
   # Start with Makefile
   #
@@ -350,4 +350,4 @@ diff --context --recursive -P pristine/set_opts dist/set_opts
 ! 	-e "s|^MACPORTSLISP = .*|MACPORTSLISP = $macportslisp|" \
   	-e "s|^LIBSUFFIX =.*|LIBSUFFIX = $libsuffix|" \
   	-e "$choose_parser" \
-  	< Makefile.skl > Makefile~
+  	-e "$sed_build_swig" \

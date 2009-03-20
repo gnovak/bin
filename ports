@@ -141,23 +141,29 @@ commands = dict(
     cobaltfs = ['cobaltworkfs', 'cobalthomefs'],
 
     # Columbia
-    columbiahomefs = cmd('mkdir /Volumes/columbia-home;' + 
-                       'sshfs columbia:/home/gnovak /Volumes/columbia-home ' + 
+    columbiahomefs = cmd('echo mkdir /Volumes/columbia-home;' + 
+                       'echo sshfs columbia:/home/gnovak /Volumes/columbia-home ' + 
                        '-o volname="Columbia Home",%s' % sshfsOptions,
                        shutdown='umount /Volumes/columbia-home', sleep_before=2),
-    columbiaworkfs = cmd('mkdir /Volumes/columbia-work;' + 
-                       'sshfs columbia:/nobackup2d/gnovak /Volumes/columbia-work ' + 
+    columbiaworkfs = cmd('echo mkdir /Volumes/columbia-work;' + 
+                       'echo sshfs columbia:/nobackup2d/gnovak /Volumes/columbia-work ' + 
                        '-o volname="Columbia Work",%s' % sshfsOptions,
                        shutdown='umount /Volumes/columbia-work', sleep_before=2),
     columbiafs = ['columbiaworkfs', 'columbiahomefs'],
 
+    # Lou
+    loufs = cmd('echo mkdir /Volumes/lou;' + 
+                'echo sshfs lou2:/u/gnovak /Volumes/lou ' + 
+                '-o volname="Lou",%s' % sshfsOptions,
+                shutdown='umount /Volumes/lou', sleep_before=2),
+
     # Nasa Pleaides
-    nasapleiadeshomefs = cmd('mkdir /Volumes/nasa-pleiades-home;' + 
-                       'sshfs nasa-pleiades:/home/gnovak /Volumes/nasa-pleiades-home ' + 
+    nasapleiadeshomefs = cmd('echo mkdir /Volumes/nasa-pleiades-home;' + 
+                       'echo sshfs nasa-pleiades:/home/gnovak /Volumes/nasa-pleiades-home ' + 
                        '-o volname="Nasa-Pleiades Home",%s' % sshfsOptions,
                        shutdown='umount /Volumes/nasa-pleiades-home', sleep_before=2),
-    nasapleiadesworkfs = cmd('mkdir /Volumes/nasa-pleiades-work;' + 
-                       'sshfs nasa-pleiades:/nobackup2d/gnovak /Volumes/nasa-pleiades-work ' + 
+    nasapleiadesworkfs = cmd('echo mkdir /Volumes/nasa-pleiades-work;' + 
+                       'echo sshfs nasa-pleiades:/nobackup2d/gnovak /Volumes/nasa-pleiades-work ' + 
                        '-o volname="Nasa-Pleiades Work",%s' % sshfsOptions,
                        shutdown='umount /Volumes/nasa-pleiades-work', sleep_before=2),
     nasapleiadesfs = ['nasapleiadesworkfs', 'nasapleiadeshomefs'],
@@ -187,6 +193,8 @@ commands = dict(
     dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665',
                        priority=20, sleep_before=2),
 
+    emacs_tigress = cmd("ssh -f tigressdata /home/gnovak/bin/local/bin/emacs " +
+                       "--name='emacs@tigress'"),
     emacs_hecate = cmd("ssh -f hecate /home/astro/gnovak/bin/local/bin/emacs " +
                        "--name='emacs@hecate'"),
     emacs_cobalt = cmd("ssh -f cobalt /u/ac/novak/bin/local/bin/emacs " +

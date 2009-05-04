@@ -18,15 +18,13 @@ rsync_options="--verbose --progress --archive --exclude-from=-"
 
 config = dict(
     thalia = dict(source='/Users/novak/',
-                             destination=default_destination,
-                  exclude=
-"""
+                  destination=default_destination,
+                  exclude="""
 /.Trash
 /Music
 /Desktop/Orig-In
 /Desktop/In-euterpe
 """),
-
     demeter = dict(source='/Users/',
                              destination=default_destination,
                              exclude=
@@ -142,7 +140,7 @@ def main():
     
 def backup(system):
     starting_dir = os.getcwd()    
-    os.chdir(system['destination'])
+    os.chdir(config[system]['destination'])
     
     last_fn = get_last_filename(system)
     next_fn = get_next_filename(system)

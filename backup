@@ -21,9 +21,12 @@ config = dict(
                   destination=default_destination,
                   exclude="""
 /.Trash
-/Music
-/Desktop/Orig-In
-/Desktop/In-euterpe
+/Projects/gsnpy/output
+/Music/iTunes/iTunes Music/TV Shows/House
+/Music/iTunes/iTunes Music/TV Shows/The Daily Show With Jon Stewart
+/Desktop/Orig-ucsc-files/euterpe/novak/Pictures
+/Desktop/In-euterpe/Pictures
+/Music/iTunes/iTunes Music/Podcasts
 """),
     demeter = dict(source='/Users/',
                              destination=default_destination,

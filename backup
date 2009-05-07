@@ -28,26 +28,6 @@ config = dict(
 /Desktop/In-euterpe/Pictures
 /Music/iTunes/iTunes Music/Podcasts
 """),
-    demeter = dict(source='/Users/',
-                             destination=default_destination,
-                             exclude=
-"""/novak/.Trash 
-/novak/Library/Caches
-/novak/.backup
-/novak/Pictures
-/novak/Music
-/novak/Sites/Catalog
-/novak/Sites/Plots
-/novak/Projects/Thesis
-/novak/Desktop/Audio
-/novak/Desktop/vtk
-/novak/Desktop/lush
-/orlith/.Trash
-/orlith/Library/Caches
-/test/.Trash
-/test/Library/Caches
-"""),
-
               dionysus= dict(source='dionysus:/home/',
                              destination=default_destination,
                              exclude=
@@ -74,27 +54,6 @@ config = dict(
               dionysus_etc= dict(source='root@dionysus:/etc/',
                                  destination=default_destination,
                                  exclude=""),
-              
-              euterpe = dict(source='/Users/',
-                             destination=default_destination,
-                             exclude=
-"""; The /Users is implicit
-/novak/.Trash
-/novak/bin/build
-/novak/Library/Caches
-/novak/.python23_compiled
-/novak/.python24_compiled
-/novak/Music
-/novak/Projects/Thesis/Plots
-/novak/Projects/Thesis/data
-/novak/Projects/Thesis/tag-jail
-/novak/Projects/Thesis/jail
-/novak/Projects/Thesis/old-plots
-/novak/Projects/Thesis/Sbc201a10x-n4
-/novak/Projects/Thesis/old-junk
-/novak/Projects/Lisp/netflix
-"""),
-
               jen = dict(source='/Users/',
                          destination=default_destination,
                          exclude=

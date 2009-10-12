@@ -68,7 +68,9 @@ pid = os.fork()
 if pid != 0: # parent
     pids['sln-' + lfile + '-port'] = pid
 else: # child
-    command = 'ssh -n -R %d:%s:%d %s /home/novak/bin/watch-file %s localhost %d' \
+#    command = 'ssh -n -R %d:%s:%d %s /home/novak/bin/watch-file %s localhost %d' \
+#              % (port, lhost, port, rhost, rfile, port)
+    command = 'ssh -n -R %d:%s:%d %s \~/bin/watch-file %s localhost %d' \
               % (port, lhost, port, rhost, rfile, port)
     os.execl('/bin/sh','junk', '-c', command)
     

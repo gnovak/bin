@@ -14,9 +14,43 @@ base=4
 default_destination = r'/Volumes/My Passport/'
 
 rsync_command = "rsync"
-rsync_options="--verbose --progress --archive --exclude-from=-"
+rsync_options="--archive --exclude-from=-"
 
 config = dict(
+              artemis= dict(source='artemis:',
+                           destination=default_destination,
+                           exclude= """ """),
+
+              tigressdata= dict(source='tigressdata:',
+                           destination=default_destination,
+                           exclude= """ """),
+
+              hecate= dict(source='hecate:',
+                           destination=default_destination,
+                           exclude= """ """),
+
+              armstrong= dict(source='armstrong:',
+                           destination=default_destination,
+                           exclude= """ """),
+              
+    clio = dict(source='/Users/novak/',
+                  destination=default_destination,
+                  exclude="""
+/.Trash
+/Projects/gsnpy/OUTPUT*
+/Projects/Thesis/data
+/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/data
+/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/movie-data
+/Desktop/Orig-ucsc-files/euterpe/novak/Pictures
+/Projects/Thesis/rudd
+/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/rudd
+/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/blargh
+/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/nv-data
+/Projects/Thesis/all-data
+/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/all-data
+/Projects/Thesis/data-multi
+/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/data-multi
+"""),
     thalia = dict(source='/Users/novak/',
                   destination=default_destination,
                   exclude="""

@@ -143,11 +143,11 @@ commands = dict(
     # Columbia
     columbiahomefs = cmd('echo mkdir /Volumes/columbia-home;' + 
                        'echo sshfs cfe2:/u/gnovak /Volumes/columbia-home ' + 
-                       '-o volname=\"Columbia Home\",%s' % sshfsOptions,
+                       '-o volname=\"Columbia-Home\",%s' % sshfsOptions,
                        shutdown='umount /Volumes/columbia-home'),
     columbiaworkfs = cmd('echo mkdir /Volumes/columbia-work;' + 
                        'echo sshfs cfe2:/nobackup2d/gnovak /Volumes/columbia-work ' + 
-                       '-o volname=\"Columbia Work\",%s' % sshfsOptions,
+                       '-o volname=\"Columbia-Work\",%s' % sshfsOptions,
                        shutdown='umount /Volumes/columbia-work'),
     columbiafs = ['columbiaworkfs', 'columbiahomefs'],
 

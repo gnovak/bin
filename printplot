@@ -50,7 +50,8 @@ class process:
     def run(self):
         self._setUp()
         if self._run():
-            self._print()
+            if not self._leaveFiles:
+                self._print()
         if not self._leaveFiles:
             self._cleanUp()
     

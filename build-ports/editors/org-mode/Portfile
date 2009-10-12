@@ -3,7 +3,7 @@
 PortSystem      1.0
 
 name		org-mode
-version         6.13a
+version         6.31a
 categories      editors
 platforms       darwin
 maintainers     greg.novak@gmail.com
@@ -27,9 +27,9 @@ homepage        http://orgmode.org/
 master_sites    http://orgmode.org/
 distname        org-${version}
 
-checksums       md5 59bb9d0841dc66ba38a9afb76e6dc781 \
-                sha1 4d27f54be63bf70502f1c4efd2e00c694274102d \
-                rmd160 60277b1669c91177f52cc0d25c5f88014fdce808
+checksums       md5 b0fd1493770f1487b327c13e05d38ea8 \
+                sha1 089e64f6eaa370808135a0bdfe429e643777f452 \
+                rmd160 dbabe49f94fc1371fb32db8209696efeaf6a2ddb
 
 # FIXME -- does this fail to build if /opt/local/bin/emacs is not installed?
 depends_build   port:emacs port:texinfo path:bin/emacs:emacs
@@ -46,7 +46,7 @@ use_configure   no
 #                (byte-compile-file \"python-mode.el\"))'"
 #}
 
-#FIXME -- check info
+# FIXME -- check info
 # FIXME -- install docs
 destroot {
     system "cd ${worksrcpath} && make install prefix=${destroot}${prefix}"

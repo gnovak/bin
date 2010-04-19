@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for f in OUT* ; do
+    cd $f
+    pwd
+    concat-files bh
+    concat-files sf
+    cd .. 
+done
+    

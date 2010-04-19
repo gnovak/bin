@@ -1,0 +1,7 @@
+#!/bin/bash
+FILES=`ls -1 -t -r $1.[0-9]*`
+if [ "$FILES" ]; then 
+    cat $FILES | fix-fortran-exponents > $1.txt
+else 
+    echo "concat-files:Files not found in" `pwd`
+fi

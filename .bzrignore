@@ -10,3 +10,5 @@ readme.txt
 elisp/ipython.el
 build
 .DS_Store
+elisp/python-mode.el
+local

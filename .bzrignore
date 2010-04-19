@@ -24,3 +24,5 @@ lou
 pleiades
 build-ports/PortIndex.quick
 emacs
+elisp/python-mode.el
+local

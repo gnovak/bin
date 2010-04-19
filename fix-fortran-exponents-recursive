@@ -1,0 +1,3 @@
+#find . -name fort\* -execdir fix-fortran-exponents-command {} b{} \; 
+find . -name bh.txt -execdir fix-fortran-exponents-command {} bbh.txt \; 
+find . -name sf.txt -execdir fix-fortran-exponents-command {} bsf.txt \; 

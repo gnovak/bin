@@ -1,0 +1,3 @@
+mkdir $2
+cp $1/run $2/
+cp $1/zmp_inp $2/

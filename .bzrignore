@@ -26,3 +26,4 @@ build-ports/PortIndex.quick
 emacs
 elisp/python-mode.el
 local
+elisp/ppindent.el

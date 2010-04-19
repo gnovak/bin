@@ -4,4 +4,3 @@ import os, sys, subprocess
 print "cd", os.getcwd()
 for line in sys.stdin:
     print line
-    

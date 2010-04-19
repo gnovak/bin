@@ -1,0 +1,11 @@
+rsync --archive --exclude-from=- $1 $2 <<DONE
+*.o
+stdout.*
+hdfaa*
+resaa*
+fort.*
+afort.*
+tsl*aa
+zmp_log
+#*
+DONE

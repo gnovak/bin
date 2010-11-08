@@ -19,19 +19,52 @@ rsync_options="--archive --exclude-from=-"
 config = dict(
               artemis= dict(source='artemis:',
                            destination=default_destination,
-                           exclude= """ """),
+                           exclude= """
+/bin/local
+/bin/build
+"""),
+
+              sesame= dict(source='sesame1:',
+                           destination=default_destination,
+                           exclude= """
+/bin/local
+/bin/build
+"""),
+
+              woodhen= dict(source='woodhen:',
+                           destination=default_destination,
+                           exclude= """
+/bin/local
+/bin/build
+"""),
+
+              della= dict(source='della:',
+                           destination=default_destination,
+                           exclude= """
+/bin/local
+/bin/build
+"""),
 
               tigressdata= dict(source='tigressdata:',
                            destination=default_destination,
-                           exclude= """ """),
+                           exclude= """
+/bin/local
+/bin/build
+"""),
 
               hecate= dict(source='hecate:',
                            destination=default_destination,
-                           exclude= """ """),
+                           exclude= """
+/bin/local
+/bin/build
+"""),
 
               armstrong= dict(source='armstrong:',
                            destination=default_destination,
-                           exclude= """ """),
+                           exclude= """
+/bin/local
+/bin/build
+"""),
               
     clio = dict(source='/Users/novak/',
                   destination=default_destination,

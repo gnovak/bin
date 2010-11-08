@@ -1,1 +1,1 @@
-emacs -nw --eval "(ediff-files \"$1\" \"$2\")"
+emacs --no-init-file --no-site-file -nw --eval "(ediff-files \"$1\" \"$2\")"

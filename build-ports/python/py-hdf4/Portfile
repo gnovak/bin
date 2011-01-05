@@ -1,0 +1,35 @@
+# 
+
+PortSystem 1.0
+PortGroup python25 1.0
+
+name			py-hdf4
+version			0.8.3
+revision		1
+categories		python
+platforms		darwin
+maintainers		nomaintainer
+description		pyhdf reads HDF4 files in Python
+long_description	pyhdf reads HDF4 files in Python
+
+build.cmd               ${python.bin} setup.py 
+build.env-append        INCLUDE_DIRS=${prefix}/include
+build.env-append        LIBRARY_DIRS=${prefix}/lib
+worksrcdir              pyhdf-0.8.3
+destroot.cmd            ${python.bin} setup.py 
+
+homepage		http://pysclint.sourceforge.net/pyhdf/
+master_sites		http://downloads.sourceforge.net/project/pysclint/pyhdf/0.8.3/pyhdf-0.8.3.tar.gz?use_mirror=hivelocity
+checksums		sha1 fd7c068b25105e829a2bdffcf0c916e3ad9f943e
+
+depends_lib-append      port:hdf4
+
+#post-destroot {
+#	xinstall -m 644 -W ${worksrcpath} AUTHORS CHANGES INSTALL LICENSE \
+#		README ${destroot}${prefix}/share/doc/${name}
+#	file delete -force ${destroot}/etc
+#
+#	# fix the paths that were calculated
+#	reinplace "s|${destroot}||g" ${destroot}${python.pkgd}/pyx/siteconfig.py
+#	reinplace "s|/etc|${prefix}/etc|g" ${destroot}${python.pkgd}/pyx/siteconfig.py
+#}

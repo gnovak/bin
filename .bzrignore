@@ -27,3 +27,6 @@ emacs
 elisp/python-mode.el
 local
 elisp/ppindent.el
+sesame
+della
+tex/aastex52

@@ -1,0 +1,36 @@
+#!/bin/bash
+if [ "$#" = "0" ]; then
+	echo Usage is not like that
+	exit	
+fi
+
+for oldfile in $* ; do
+	# skip first arg b/c it's the number to add
+	if [ $oldfile != $1 ]; then
+		num=`echo $oldfile | sed s/.*-// | sed s/[.].*//`
+		# sadly, strip leading 0's
+		strnum=`echo $num | sed s/^0*//`
+		newnum=$[ $strnum + $1 ] 
+		# now try to put leading zero's back in
+		if let $[ $newnum < 10 ]; then
+			unstrnewnum="0000$newnum"
+		elif let $[ $newnum < 100 ]; then
+			unstrnewnum="000$newnum"
+		elif let $[ $newnum < 1000 ]; then
+			unstrnewnum="00$newnum"
+		elif let $[ $newnum < 10000 ]; then
+			unstrnewnum="0$newnum"
+		else 
+			unstrnewnum=$newnum
+		fi
+		newfile=`echo $oldfile | sed s/-$num/-$unstrnewnum/`
+		echo $oldfile $newfile
+		mv $oldfile $newfile.tmp
+	fi
+done 
+
+for file in *.tmp ; do 
+    mv $file `echo $file | sed s/.tmp$//` 
+done
+
+#xmv tmp 

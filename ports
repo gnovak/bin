@@ -112,11 +112,28 @@ commands = dict(
                  '-o volname=clio,%s' % sshfsOptions,
                  shutdown='umount /Volumes/clio', sleep_before=2),
 
+    # Thalia
+    thaliafs = cmd('mkdir /Volumes/thalia;' + 
+                 'sshfs thalia:/Users/novak /Volumes/thalia ' + 
+                 '-o volname=thalia,%s' % sshfsOptions,
+                 shutdown='umount /Volumes/thalia', sleep_before=2),
+
     # Hecate
     hecatefs = cmd('mkdir /Volumes/hecate;' + 
                        'sshfs hecate:/home/astro/gnovak /Volumes/hecate ' + 
                        '-o volname="Hecate",%s' % sshfsOptions,
                        shutdown='umount /Volumes/hecate', sleep_before=2),
+
+    # sesame
+    sesamehomefs = cmd('mkdir /Volumes/sesame-home;' + 
+                       'sshfs sesame1:/home/gnovak /Volumes/sesame-home ' + 
+                       '-o volname="Sesame Home",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/sesame-home', sleep_before=2),
+    sesameworkfs = cmd('mkdir /Volumes/sesame;' + 
+                       'sshfs sesame1:/sesame-hsm/gnovak /Volumes/sesame ' + 
+                       '-o volname="Sesame",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/sesame', sleep_before=2),
+    sesamefs = ['sesameworkfs', 'sesamehomefs'],
 
     # tigress
     tigresshomefs = cmd('mkdir /Volumes/tigress-home;' + 

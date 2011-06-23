@@ -11,6 +11,7 @@ import re
 
 base=4
 
+#default_destination = r'/Volumes/thalia/Backup'
 default_destination = r'/Volumes/My Passport/'
 
 rsync_command = "rsync"
@@ -25,13 +26,6 @@ config = dict(
 """),
 
               sesame= dict(source='sesame1:',
-                           destination=default_destination,
-                           exclude= """
-/bin/local
-/bin/build
-"""),
-
-              woodhen= dict(source='woodhen:',
                            destination=default_destination,
                            exclude= """
 /bin/local
@@ -70,19 +64,10 @@ config = dict(
                   destination=default_destination,
                   exclude="""
 /.Trash
-/Projects/gsnpy/OUTPUT*
-/Projects/Thesis/data
-/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/data
-/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/movie-data
 /Desktop/Orig-ucsc-files/euterpe/novak/Pictures
 /Projects/Thesis/rudd
 /Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/rudd
-/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/blargh
 /Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/nv-data
-/Projects/Thesis/all-data
-/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/all-data
-/Projects/Thesis/data-multi
-/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/data-multi
 """),
     thalia = dict(source='/Users/novak/',
                   destination=default_destination,

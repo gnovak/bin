@@ -4,22 +4,32 @@
 # Look for a file identifying the host
 # This is necessary b/c DHCP sometimes gives the computer a 
 # different hostname
-if ( grep --silent clio ~/.hostname || grep --silent thalia ~/.hostname || grep --silent euterpe ~/.hostname || grep --silent jen ~/.hostname); then
+if [ -f ~/.hostname ]; then 
+    if ( grep --silent clio ~/.hostname || grep --silent thalia ~/.hostname || grep --silent euterpe ~/.hostname || grep --silent jen ~/.hostname); then        
+    # Mac systems, some laptops, may or may not actually be connected.
     # Prefer wired connections
-    if ( /sbin/ifconfig en0 | grep --silent inet ); then
-	/sbin/ifconfig en0 | grep inet | grep netmask | \
-	    sed 's/.*inet //g' | sed 's/ .*//' 
-	exit
-    fi
+        if ( /sbin/ifconfig en0 | grep --silent inet ); then
+	    /sbin/ifconfig en0 | grep inet | grep netmask | \
+	        sed 's/.*inet //g' | sed 's/ .*//' 
+	    exit
+        fi
     # Then wireless connections
-    if ( /sbin/ifconfig en1 | grep --silent inet ); then
-	/sbin/ifconfig en1 | grep inet | grep netmask | \
-	    sed 's/.*inet //g' | sed 's/ .*//' 
-	exit
+        if ( /sbin/ifconfig en1 | grep --silent inet ); then
+	    /sbin/ifconfig en1 | grep inet | grep netmask | \
+	        sed 's/.*inet //g' | sed 's/ .*//' 
+	    exit
+        fi
+    elif ( grep --silent lerma90 ~/.hostname ); then
+        # Linux machines with more or less permanent wired connections
+        /sbin/ifconfig eth0 | grep inet | grep Masque | \
+            sed 's/.*adr://g' | sed 's/ .*//'
+    elif ( grep --silent dionysus ~/.hostname ); then
+        echo Not implemented
+    else 
+        echo "Host Unknown!"
+        exit
     fi
-elif ( grep --silent dionysus ~/.hostname ); then
-    echo Not implemented
-else 
-    echo "Host Unknown!"
+else
+    echo "Can't find .hostname file!"
     exit
 fi

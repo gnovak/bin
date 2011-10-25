@@ -30,7 +30,7 @@
   (if (null point-stack)
       (message "Stack is empty.")
     (switch-to-buffer (caar point-stack))
-    (goto-char (cadar point-stack))
+    (goto-char (car (cdr (car point-stack))))
     (setq point-stack (cdr point-stack))))
 
 (provide 'point-stack)

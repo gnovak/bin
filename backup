@@ -13,11 +13,31 @@ base=4
 
 #default_destination = r'/Volumes/thalia/Backup'
 default_destination = r'/Volumes/My Passport/'
+#default_destination = r'/Volumes/My Passport 1/'
+#default_destination = r'/Volumes/Extra Storage Space/'
 
 rsync_command = "rsync"
 rsync_options="--archive --exclude-from=-"
 
 config = dict(
+              wd_300g_disk = dict(source=r'/Volumes/WD\ 300G/',
+                           destination=default_destination,
+                           exclude= """ """),
+
+              wd_80g_disk = dict(source=r'/Volumes/Extra\ Storage\ Space/',
+                           destination=default_destination,
+                           exclude= """ """),
+
+              lerma90= dict(source='lerma90:',
+                           destination=default_destination,
+                           exclude= """
+/bin/local
+/bin/build
+/.Trash
+/.mozilla/firefox/62qsftnv.default/Cache
+/.Downloads
+"""),
+
               artemis= dict(source='artemis:',
                            destination=default_destination,
                            exclude= """
@@ -60,26 +80,62 @@ config = dict(
 /bin/build
 """),
               
-    clio = dict(source='/Users/novak/',
+    clio = dict(source='clio.local:/Users/novak/',
+    ##source='clio:/Users/novak/',
+    ## source='/Users/novak/',
                   destination=default_destination,
                   exclude="""
-/.Trash
-/Desktop/Orig-ucsc-files/euterpe/novak/Pictures
-/Projects/Thesis/rudd
-/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/rudd
-/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/nv-data
+/.Trash                                                                         
+/Desktop/Orig-ucsc-files/euterpe/novak/Pictures                                 
+/Projects/Thesis/rudd                                                           
+/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/rudd                          
+/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/nv-data                       
 """),
+
+    clio_jen = dict(source='clio.local:/Users/jen/',
+    ##source='clio:/Users/novak/',
+    ## source='/Users/novak/',
+                  destination=default_destination,
+                  exclude="""
+/.Trash                                                                         
+"""),
+
+    clio_shared = dict(source='jen@clio.local:/Users/Shared/',
+    ##source='clio:/Users/novak/',
+    ## source='/Users/novak/',
+                  destination=default_destination,
+                  exclude="""
+/.Trash                                                                         
+"""),
+
+             # TEMPORARILY don't back up music
+
     thalia = dict(source='/Users/novak/',
                   destination=default_destination,
                   exclude="""
 /.Trash
-/Projects/gsnpy/output
-/Music/iTunes/iTunes Music/TV Shows/House
-/Music/iTunes/iTunes Music/TV Shows/The Daily Show With Jon Stewart
-/Desktop/Orig-ucsc-files/euterpe/novak/Pictures
-/Desktop/In-euterpe/Pictures
+/Desktop/OSX-10-5.dmg
+/Projects/Simulations
 /Music/iTunes/iTunes Music/Podcasts
+/Music/iTunes/iTunes Music/iTunes U
+/Music/iTunes/iTunes Music/Foreign Service Institute
+/Music/iTunes/Mobile Applications
+/Music/eMusic
 """),
+
+    aaa = dict(source='/usr/local/.aaa/',
+                  destination=default_destination,
+                  exclude="""
+/in
+"""),
+
+    thalia_jen = dict(source='/Users/jen/',
+                  destination=default_destination,
+                  exclude="""
+/.Trash
+"""),
+# eMusic: Verify that these are duplicated.
+              
               dionysus= dict(source='dionysus:/home/',
                              destination=default_destination,
                              exclude=
@@ -117,6 +173,57 @@ config = dict(
 /novak/bin/build
 /novak/Library/Caches
 """),
+
+              jen_from_net = dict(source='192.168.0.198:/Users/',
+                         destination=default_destination,
+                         exclude=
+"""/Shared/GarageBand Demo Songs
+/jen/Documents/installers
+/jen/.Trash
+/jen/Library/Caches
+/novak/.Trash
+/novak/bin/build
+/novak/Library/Caches
+"""),
+
+              france_jen_net = dict(source='jen@zuggernaut.local:/Users/jen/',
+                         destination=default_destination,
+                         exclude=
+"""/.Trash
+"""),
+
+              france_greg_net = dict(source='zuggernaut.local:/Users/novak/',
+                         destination=default_destination,
+                         exclude=
+"""/.Trash
+"""),
+
+#              jen_jen_net = dict(source='jen@192.168.0.198:/Users/jen/',
+              jen_jen_net = dict(source='jen@Zuggerific-MacMini.local:/Users/jen/',
+                         destination=default_destination,
+                         exclude=
+"""
+/Documents/installers
+/.Trash
+/Library/Caches
+"""),
+
+#              jen_greg_net = dict(source='192.168.0.198:/Users/novak/',
+              jen_greg_net = dict(source='Zuggerific-MacMini.local:/Users/novak/',
+                         destination=default_destination,
+                         exclude=
+"""/.Trash
+/bin/build
+/Library/Caches
+"""),
+
+
+#              jen_shared_net = dict(source='192.168.0.198:/Users/Shared/',
+              jen_shared_net = dict(source='Zuggerific-MacMini.local:/Users/Shared/',
+                         destination=default_destination,
+                         exclude=
+""""""),
+
 
               usb_key = dict(source='/Volumes/USB-Disk/',
                              destination=default_destination,

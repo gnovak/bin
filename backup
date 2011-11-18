@@ -20,69 +20,12 @@ rsync_command = "rsync"
 rsync_options="--archive --exclude-from=-"
 
 config = dict(
-              wd_300g_disk = dict(source=r'/Volumes/WD\ 300G/',
-                           destination=default_destination,
-                           exclude= """ """),
-
-              wd_80g_disk = dict(source=r'/Volumes/Extra\ Storage\ Space/',
-                           destination=default_destination,
-                           exclude= """ """),
-
-              lerma90= dict(source='lerma90:',
-                           destination=default_destination,
-                           exclude= """
-/bin/local
-/bin/build
-/.Trash
-/.mozilla/firefox/62qsftnv.default/Cache
-/.Downloads
-"""),
-
-              artemis= dict(source='artemis:',
-                           destination=default_destination,
-                           exclude= """
-/bin/local
-/bin/build
-"""),
-
-              sesame= dict(source='sesame1:',
-                           destination=default_destination,
-                           exclude= """
-/bin/local
-/bin/build
-"""),
-
-              della= dict(source='della:',
-                           destination=default_destination,
-                           exclude= """
-/bin/local
-/bin/build
-"""),
-
-              tigressdata= dict(source='tigressdata:',
-                           destination=default_destination,
-                           exclude= """
-/bin/local
-/bin/build
-"""),
-
-              hecate= dict(source='hecate:',
-                           destination=default_destination,
-                           exclude= """
-/bin/local
-/bin/build
-"""),
-
-              armstrong= dict(source='armstrong:',
-                           destination=default_destination,
-                           exclude= """
-/bin/local
-/bin/build
-"""),
-              
+    ######################
+    ## Home Computers
+    
     clio = dict(source='/Users/novak/',
-                  destination=default_destination,
-                  exclude="""
+                destination=default_destination,
+                exclude="""
 /.Trash
 /Desktop/Orig-ucsc-files/euterpe/novak/Pictures
 /Projects/Thesis/rudd
@@ -91,8 +34,8 @@ config = dict(
 """),
 
     clio_jen = dict(source='/Users/jen/',
-                  destination=default_destination,
-                  exclude="""
+                    destination=default_destination,
+                    exclude="""
 /.Trash
 """),
 
@@ -102,38 +45,8 @@ config = dict(
 /.Trash
 """),
 
-##############################
-#### From laptop
-#     clio = dict(source='clio.local:/Users/novak/',
-#     ##source='clio:/Users/novak/',
-#     ## source='/Users/novak/',
-#                   destination=default_destination,
-#                   exclude="""
-# /.Trash                                                                         
-# /Desktop/Orig-ucsc-files/euterpe/novak/Pictures                                 
-# /Projects/Thesis/rudd                                                           
-# /Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/rudd                          
-# /Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/nv-data                       
-# """),
-#     clio_jen = dict(source='clio.local:/Users/jen/',
-#     ##source='clio:/Users/novak/',
-#     ## source='/Users/novak/',
-#                   destination=default_destination,
-#                   exclude="""
-# /.Trash                                                                         
-# """),
-#     clio_shared = dict(source='jen@clio.local:/Users/Shared/',
-#     ##source='clio:/Users/novak/',
-#     ## source='/Users/novak/',
-#                   destination=default_destination,
-#                   exclude="""
-# /.Trash                                                                         
-# """),
-#### End From laptop
-##############################
-
-# TEMPORARILY don't back up music
-    thalia = dict(source='/Users/novak/',
+# eMusic: Verify that these are duplicated.              
+    thalia = dict(source='thalia.local:/Users/novak/',
                   destination=default_destination,
                   exclude="""
 /.Trash
@@ -146,22 +59,130 @@ config = dict(
 /Music/eMusic
 """),
 
-    aaa = dict(source='/usr/local/.aaa/',
+    thalia_jen = dict(source='thalia.local:/Users/jen/',
+                  destination=default_destination,
+                  exclude="""
+/.Trash
+"""),
+
+    aaa = dict(source='thalia.local:/usr/local/.aaa/',
                   destination=default_destination,
                   exclude="""
 /in
 """),
 
-    thalia_jen = dict(source='/Users/jen/',
+    france_jen_net = dict(source='jen@zuggernaut.local:/Users/jen/',
+                          destination=default_destination,
+                          exclude=
+"""/.Trash
+"""),
+
+    france_greg_net = dict(source='zuggernaut.local:/Users/novak/',
+                           destination=default_destination,
+                           exclude=
+"""/.Trash
+"""),
+
+    ######################
+    ## External disks
+
+    usb_key = dict(source='/Volumes/USB-Disk/',
+                   destination=default_destination,
+                   exclude=
+"""
+/.Trashes
+"""),
+
+    wd_300g_disk = dict(source=r'/Volumes/WD\ 300G/',
+                        destination=default_destination,
+                        exclude= """ """),
+    
+    wd_80g_disk = dict(source=r'/Volumes/Extra\ Storage\ Space/',
+                       destination=default_destination,
+                       exclude= """ """),
+
+    ######################
+    ## Web space
+
+    web = dict(source='jenandgreg@jenandgreg.org:/home/jenandgreg/',
+               destination=default_destination,
+               exclude=
+"""
+/.cpan
+/.wusage
+"""),
+
+    web_www = dict(source='jenandgreg@jenandgreg.org:/home/jenandgreg/www/',
+                   destination=default_destination,
+                   rsync_options = '--copy-links',
+                   exclude=""),
+
+    web_sql = dict(source='jenandgreg@jenandgreg.org:/var/lib/mysql/weddingwikidb/',
+                   destination=default_destination,
+                   exclude=""),
+    
+    ######################
+    ## Paris computers
+
+    rubicon= dict(source='rubicon:',
                   destination=default_destination,
-                  exclude="""
+                  exclude= """
+/bin/local
+/bin/build
 /.Trash
 """),
-# eMusic: Verify that these are duplicated.
+
+
+    aramis= dict(source='aramis:',
+                  destination=default_destination,
+                  exclude= """
+/bin/local
+/bin/build
+/.Trash
+"""),
+
+
+    # Will be removed soon...
+    lerma90= dict(source='lerma90:',
+                  destination=default_destination,
+                  exclude= """
+/bin/local
+/bin/build
+/.Trash
+"""),
+
+
+    ######################
+    ## Princeton computers
+
+    armstrong= dict(source='armstrong:',
+                    destination=default_destination,
+                    exclude= """
+/bin/local
+/bin/build
+"""),
               
-              dionysus= dict(source='dionysus:/home/',
-                             destination=default_destination,
-                             exclude=
+    sesame= dict(source='sesame1:',
+                 destination=default_destination,
+                 exclude= """
+/bin/local
+/bin/build
+"""),
+
+    tigressdata= dict(source='tigressdata:',
+                      destination=default_destination,
+                      exclude= """
+/bin/local
+/bin/build
+"""),
+
+
+    ######################
+    ## UCSC Computers
+    
+    dionysus= dict(source='dionysus:/home/',
+                   destination=default_destination,
+                   exclude=
 """/novak/.Trash
 /novak/bin/build
 /novak/bin/build-rpm
@@ -182,95 +203,10 @@ config = dict(
 /novak/Desktop/ubuntu
 """),
 
-              dionysus_etc= dict(source='root@dionysus:/etc/',
-                                 destination=default_destination,
-                                 exclude=""),
-              jen = dict(source='/Users/',
-                         destination=default_destination,
-                         exclude=
-"""/Shared/GarageBand Demo Songs
-/jen/Documents/installers
-/jen/.Trash
-/jen/Library/Caches
-/novak/.Trash
-/novak/bin/build
-/novak/Library/Caches
-"""),
-
-              jen_from_net = dict(source='192.168.0.198:/Users/',
-                         destination=default_destination,
-                         exclude=
-"""/Shared/GarageBand Demo Songs
-/jen/Documents/installers
-/jen/.Trash
-/jen/Library/Caches
-/novak/.Trash
-/novak/bin/build
-/novak/Library/Caches
-"""),
-
-              france_jen_net = dict(source='jen@zuggernaut.local:/Users/jen/',
-                         destination=default_destination,
-                         exclude=
-"""/.Trash
-"""),
-
-              france_greg_net = dict(source='zuggernaut.local:/Users/novak/',
-                         destination=default_destination,
-                         exclude=
-"""/.Trash
-"""),
-
-#              jen_jen_net = dict(source='jen@192.168.0.198:/Users/jen/',
-              jen_jen_net = dict(source='jen@Zuggerific-MacMini.local:/Users/jen/',
-                         destination=default_destination,
-                         exclude=
-"""
-/Documents/installers
-/.Trash
-/Library/Caches
-"""),
-
-#              jen_greg_net = dict(source='192.168.0.198:/Users/novak/',
-              jen_greg_net = dict(source='Zuggerific-MacMini.local:/Users/novak/',
-                         destination=default_destination,
-                         exclude=
-"""/.Trash
-/bin/build
-/Library/Caches
-"""),
-
-
-#              jen_shared_net = dict(source='192.168.0.198:/Users/Shared/',
-              jen_shared_net = dict(source='Zuggerific-MacMini.local:/Users/Shared/',
-                         destination=default_destination,
-                         exclude=
-""""""),
-
-
-              usb_key = dict(source='/Volumes/USB-Disk/',
-                             destination=default_destination,
-                             exclude=
-"""
-/.Trashes
-"""),
-
-              web = dict(source='jenandgreg@jenandgreg.org:/home/jenandgreg/',
-                         destination=default_destination,
-                         exclude=
-"""
-/.cpan
-/.wusage
-"""),
-
-              web_www = dict(source='jenandgreg@jenandgreg.org:/home/jenandgreg/www/',
-                             destination=default_destination,
-                             rsync_options = '--copy-links',
-                             exclude=""),
-
-              web_sql = dict(source='jenandgreg@jenandgreg.org:/var/lib/mysql/weddingwikidb/',
-                             destination=default_destination,
-                             exclude=""),)
+    dionysus_etc= dict(source='root@dionysus:/etc/',
+                       destination=default_destination,
+                       exclude=""),
+    )
 
 import sys
 import threading

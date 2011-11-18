@@ -30,3 +30,13 @@ elisp/ppindent.el
 sesame
 della
 tex/aastex52
+sesame1
+sesame2
+thalia
+lilypond-font-lock.el
+lilypond-indent.el
+lilypond-init.el
+lilypond-mode.el
+lilypond-song.el
+lilypond-what-beat.el
+lilypond-words.el

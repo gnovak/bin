@@ -100,7 +100,10 @@ commands = dict(
                  priority=-10),
     sesame1  =cmd('ssh -n -N -L3022:sesame1:22 armstrong.astro.princeton.edu',
                  priority=-10),
-
+    # Paris
+    aramis  =cmd('ssh -n -N -L4022:aramis:22 gnovak@rubicon.obspm.fr',
+                 priority=-10),
+    
     # Making IDL license server available
     # Keep around as an example
     # idl =cmd('ssh -n -N -L:1700:mambo:1700 -L:32790:mambo:32790 ssh'),

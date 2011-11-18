@@ -90,49 +90,41 @@ def cmd(command,priority=0,sleep_after=0, sleep_before=0,
 sshfsOptions = 'compression=yes,auto_cache,jail_symlinks,follow_symlinks,transform_symlinks'
 
 commands = dict(
-    work=['cliofs', 'tigressfs', 'hecatefs', 'cobaltfs'],
+    work=['tigressfs', ],
     ### Getting to machines behind firewalls
     # UCSC
-    governator =cmd('ssh -n -N -L2022:governator.ucsc.edu:22 dionysus.ucsc.edu'),
+    governator =cmd('ssh -n -N -L1022:governator.ucsc.edu:22 dionysus.ucsc.edu'),
 
     # Princeton
-    #clio  =cmd('ssh -n -N -L3022:clio:22 armstrong.astro.princeton.edu',
-    #           priority=-10),
-    hecate  =cmd('ssh -n -N -L4022:hecate:22 armstrong.astro.princeton.edu',
+    tigressdata  =cmd('ssh -n -N -L2022:tigressdata:22 armstrong.astro.princeton.edu',
                  priority=-10),
-    tigressdata  =cmd('ssh -n -N -L5022:tigressdata:22 clio.astro.princeton.edu',
+    sesame1  =cmd('ssh -n -N -L3022:sesame1:22 armstrong.astro.princeton.edu',
                  priority=-10),
-    #tigressdata  =cmd('ssh -n -N -L5022:tigressdata:22 armstrong.astro.princeton.edu',
-    #             priority=-10),
-    #artemis  =cmd('ssh -n -N -L6022:artemis:22 armstrong.astro.princeton.edu',
-    #             priority=-10),
-    artemis  =cmd('ssh -n -N -L6022:artemis:22 clio.astro.princeton.edu',
-                 priority=-10),
-    sesame1  =cmd('ssh -n -N -L7022:sesame1:22 clio.astro.princeton.edu',
-                 priority=-10),
+
+    # Making IDL license server available
+    # Keep around as an example
+    # idl =cmd('ssh -n -N -L:1700:mambo:1700 -L:32790:mambo:32790 ssh'),
+
+    # IPython
+    # Keep around as an example
+    # ipy_upsand = cmd('ssh -n -N -L10105:upsand:10105 -L10113:upsand:10113 andromeda'),
+
+    # Slime 
+    slime_greymonster =cmd('ssh -n -N -L4005:192.168.1.1:4005 greymonster'),
+    slime_jen         =cmd('ssh -n -N -L4005:127.0.0.1:4005 192.168.0.198'),
+
+    # Programs: xload and emacs
+    dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665',
+                       priority=20, sleep_before=2),
+
+    emacs_hecate = cmd("ssh -f hecate /home/astro/gnovak/bin/local/bin/emacs " +
+                       "--name='emacs@hecate'"),
 
     # Sshfs filesystems
     dionysusfs = cmd('mkdir /Volumes/dionysus;' + 
                      'sshfs dionysus:/home/novak /Volumes/dionysus ' + 
                      '-o volname=Dionysus,%s' % sshfsOptions,
                      sleep_before=2),
-    # Clio
-    cliofs = cmd('mkdir /Volumes/clio;' + 
-                 'sshfs clio:/Users/novak /Volumes/clio ' + 
-                 '-o volname=clio,%s' % sshfsOptions,
-                 shutdown='umount /Volumes/clio', sleep_before=2),
-
-    # Thalia
-    thaliafs = cmd('mkdir /Volumes/thalia;' + 
-                 'sshfs thalia:/Users/novak /Volumes/thalia ' + 
-                 '-o volname=thalia,%s' % sshfsOptions,
-                 shutdown='umount /Volumes/thalia', sleep_before=2),
-
-    # Hecate
-    hecatefs = cmd('mkdir /Volumes/hecate;' + 
-                       'sshfs hecate:/home/astro/gnovak /Volumes/hecate ' + 
-                       '-o volname="Hecate",%s' % sshfsOptions,
-                       shutdown='umount /Volumes/hecate', sleep_before=2),
 
     # sesame
     sesamehomefs = cmd('mkdir /Volumes/sesame-home;' + 
@@ -155,17 +147,6 @@ commands = dict(
                        '-o volname="Tigress",%s' % sshfsOptions,
                        shutdown='umount /Volumes/tigress', sleep_before=2),
     tigressfs = ['tigressworkfs', 'tigresshomefs'],
-
-    # Cobalt
-    cobalthomefs = cmd('mkdir /Volumes/cobalt-home;' + 
-                       'sshfs cobalt:/u/ac/novak /Volumes/cobalt-home ' + 
-                       '-o volname="Cobalt Home",%s' % sshfsOptions,
-                       shutdown='umount /Volumes/cobalt-home', sleep_before=2),
-    cobaltworkfs = cmd('mkdir /Volumes/cobalt-work;' + 
-                       'sshfs cobalt:/scratch/users/novak /Volumes/cobalt-work ' + 
-                       '-o volname="Cobalt Work",%s' % sshfsOptions,
-                       shutdown='umount /Volumes/cobalt-work', sleep_before=2),
-    cobaltfs = ['cobaltworkfs', 'cobalthomefs'],
 
     # Columbia
     columbiahomefs = cmd('echo mkdir /Volumes/columbia-home;' + 
@@ -211,32 +192,7 @@ commands = dict(
                        shutdown='umount /Volumes/ucsc-pleiades-ifs', sleep_before=2),
     ucscpleiadesfs = ['ucscpleiadesibrixfs', 'ucscpleiadesifs', 'ucscpleiadeshomefs'],
          
-    jenfs = cmd('mkdir /Volumes/jen;' + 
-                       'sshfs 192.168.0.198:/Users/novak /Volumes/jen ' + 
-                       '-o volname="Jen",%s' % sshfsOptions,
-                       shutdown='umount /Volumes/jen', sleep_before=2),
 
-    # Making IDL license server available
-    idl =cmd('ssh -n -N -L:1700:mambo:1700 -L:32790:mambo:32790 ssh'),
-
-    # IPython
-    ipy_upsand = cmd('ssh -n -N -L10105:upsand:10105 -L10113:upsand:10113 andromeda'),
-
-    # Slime 
-    slime_greymonster =cmd('ssh -n -N -L4005:192.168.1.1:4005 greymonster'),
-    slime_jen         =cmd('ssh -n -N -L4005:127.0.0.1:4005 192.168.0.198'),
-
-    # Xload -- 
-    dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665',
-                       priority=20, sleep_before=2),
-
-    emacs_tigress = cmd("ssh -f tigressdata /home/gnovak/bin/local/bin/emacs " +
-                       "--name='emacs@tigress'"),
-    emacs_hecate = cmd("ssh -f hecate /home/astro/gnovak/bin/local/bin/emacs " +
-                       "--name='emacs@hecate'"),
-    emacs_cobalt = cmd("ssh -f cobalt /u/ac/novak/bin/local/bin/emacs " +
-                       "--name='emacs@cobalt'"),
-    emacs_columbia = cmd("ssh -f cfe2 /u/gnovak/bin/local/bin/emacs --name='emacs@columbia'"),
     )
 
 commands['all'] = commands.keys()

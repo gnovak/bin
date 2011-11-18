@@ -96,9 +96,19 @@ commands = dict(
     governator =cmd('ssh -n -N -L2022:governator.ucsc.edu:22 dionysus.ucsc.edu'),
 
     # Princeton
-    clio  =cmd('ssh -n -N -L3022:clio:22 armstrong.astro.princeton.edu',
-               priority=-10),
+    #clio  =cmd('ssh -n -N -L3022:clio:22 armstrong.astro.princeton.edu',
+    #           priority=-10),
     hecate  =cmd('ssh -n -N -L4022:hecate:22 armstrong.astro.princeton.edu',
+                 priority=-10),
+    tigressdata  =cmd('ssh -n -N -L5022:tigressdata:22 clio.astro.princeton.edu',
+                 priority=-10),
+    #tigressdata  =cmd('ssh -n -N -L5022:tigressdata:22 armstrong.astro.princeton.edu',
+    #             priority=-10),
+    #artemis  =cmd('ssh -n -N -L6022:artemis:22 armstrong.astro.princeton.edu',
+    #             priority=-10),
+    artemis  =cmd('ssh -n -N -L6022:artemis:22 clio.astro.princeton.edu',
+                 priority=-10),
+    sesame1  =cmd('ssh -n -N -L7022:sesame1:22 clio.astro.princeton.edu',
                  priority=-10),
 
     # Sshfs filesystems
@@ -130,7 +140,7 @@ commands = dict(
                        '-o volname="Sesame Home",%s' % sshfsOptions,
                        shutdown='umount /Volumes/sesame-home', sleep_before=2),
     sesameworkfs = cmd('mkdir /Volumes/sesame;' + 
-                       'sshfs sesame1:/sesame-hsm/gnovak /Volumes/sesame ' + 
+                       'sshfs sesame1:/scratch/lustre/gnovak /Volumes/sesame ' + 
                        '-o volname="Sesame",%s' % sshfsOptions,
                        shutdown='umount /Volumes/sesame', sleep_before=2),
     sesamefs = ['sesameworkfs', 'sesamehomefs'],
@@ -187,15 +197,25 @@ commands = dict(
 
     # Ucsc Pleaides
     ucscpleiadeshomefs = cmd('mkdir /Volumes/ucsc-pleiades-home;' + 
-                       'sshfs ucsc-pleiades:/home/novak /Volumes/ucsc-pleiades-home ' + 
-                       '-o volname="Ucsc-Pleiades Home",%s' % sshfsOptions,
+                       'sshfs pleiades:/home/novak /Volumes/ucsc-pleiades-home ' + 
+                       '-o volname="Ucsc Pleiades Home",%s' % sshfsOptions,
                        shutdown='umount /Volumes/ucsc-pleiades-home', sleep_before=2),
-    ucscpleiadesworkfs = cmd('mkdir /Volumes/ucsc-pleiades-work;' + 
-                       'sshfs ucsc-pleiades:/ifs/novak /Volumes/ucsc-pleiades-work ' + 
-                       '-o volname="Ucsc-Pleiades Work",%s' % sshfsOptions,
-                       shutdown='umount /Volumes/ucsc-pleiades-work', sleep_before=2),
-    ucscpleiadesfs = ['ucscpleiadesworkfs', 'ucscpleiadeshomefs'],
+    ucscpleiadesibrixfs = cmd('mkdir /Volumes/ucsc-pleiades-ibrixfs;' + 
+                  'sshfs pleiades:/ibrixfs/novak /Volumes/ucsc-pleiades-ibrixfs ' + 
+                       '-o volname="Ucsc Pleiades Ibrix",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/ucsc-pleiades-ibrixfs',
+                              sleep_before=2),
+    ucscpleiadesifs = cmd('mkdir /Volumes/ucsc-pleiades-ifs;' + 
+                       'sshfs pleiades:/ifs/novak /Volumes/ucsc-pleiades-ifs ' + 
+                       '-o volname="Ucsc Pleiades Ifs",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/ucsc-pleiades-ifs', sleep_before=2),
+    ucscpleiadesfs = ['ucscpleiadesibrixfs', 'ucscpleiadesifs', 'ucscpleiadeshomefs'],
          
+    jenfs = cmd('mkdir /Volumes/jen;' + 
+                       'sshfs 192.168.0.198:/Users/novak /Volumes/jen ' + 
+                       '-o volname="Jen",%s' % sshfsOptions,
+                       shutdown='umount /Volumes/jen', sleep_before=2),
+
     # Making IDL license server available
     idl =cmd('ssh -n -N -L:1700:mambo:1700 -L:32790:mambo:32790 ssh'),
 

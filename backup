@@ -80,36 +80,60 @@ config = dict(
 /bin/build
 """),
               
-    clio = dict(source='clio.local:/Users/novak/',
-    ##source='clio:/Users/novak/',
-    ## source='/Users/novak/',
+<<<<<<< TREE
+    clio = dict(source='/Users/novak/',
                   destination=default_destination,
                   exclude="""
-/.Trash                                                                         
-/Desktop/Orig-ucsc-files/euterpe/novak/Pictures                                 
-/Projects/Thesis/rudd                                                           
-/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/rudd                          
-/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/nv-data                       
+/.Trash
+/Desktop/Orig-ucsc-files/euterpe/novak/Pictures
+/Projects/Thesis/rudd
+/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/rudd
+/Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/nv-data
 """),
 
-    clio_jen = dict(source='clio.local:/Users/jen/',
-    ##source='clio:/Users/novak/',
-    ## source='/Users/novak/',
+    clio_jen = dict(source='/Users/jen/',
                   destination=default_destination,
                   exclude="""
-/.Trash                                                                         
+/.Trash
 """),
 
-    clio_shared = dict(source='jen@clio.local:/Users/Shared/',
-    ##source='clio:/Users/novak/',
-    ## source='/Users/novak/',
+    clio_shared = dict(source='/Users/Shared/',
                   destination=default_destination,
                   exclude="""
-/.Trash                                                                         
+/.Trash
 """),
 
-             # TEMPORARILY don't back up music
+##############################
+#### From laptop
+#     clio = dict(source='clio.local:/Users/novak/',
+#     ##source='clio:/Users/novak/',
+#     ## source='/Users/novak/',
+#                   destination=default_destination,
+#                   exclude="""
+# /.Trash                                                                         
+# /Desktop/Orig-ucsc-files/euterpe/novak/Pictures                                 
+# /Projects/Thesis/rudd                                                           
+# /Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/rudd                          
+# /Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/nv-data                       
+# """),
+#     clio_jen = dict(source='clio.local:/Users/jen/',
+#     ##source='clio:/Users/novak/',
+#     ## source='/Users/novak/',
+#                   destination=default_destination,
+#                   exclude="""
+# /.Trash                                                                         
+# """),
+#     clio_shared = dict(source='jen@clio.local:/Users/Shared/',
+#     ##source='clio:/Users/novak/',
+#     ## source='/Users/novak/',
+#                   destination=default_destination,
+#                   exclude="""
+# /.Trash                                                                         
+# """),
+#### End From laptop
+##############################
 
+# TEMPORARILY don't back up music
     thalia = dict(source='/Users/novak/',
                   destination=default_destination,
                   exclude="""

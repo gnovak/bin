@@ -80,7 +80,6 @@ config = dict(
 /bin/build
 """),
               
-<<<<<<< TREE
     clio = dict(source='/Users/novak/',
                   destination=default_destination,
                   exclude="""

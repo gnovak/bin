@@ -23,7 +23,7 @@ config = dict(
     ######################
     ## Home Computers
     
-    clio = dict(source='/Users/novak/',
+    clio = dict(source='clio.local:/Users/novak/',
                 destination=default_destination,
                 exclude="""
 /.Trash
@@ -33,7 +33,7 @@ config = dict(
 /Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/nv-data
 """),
 
-    clio_jen = dict(source='/Users/jen/',
+    clio_jen = dict(source='jen@clio.local:/Users/jen/',
                     destination=default_destination,
                     exclude="""
 /.Trash
@@ -59,7 +59,7 @@ config = dict(
 /Music/eMusic
 """),
 
-    thalia_jen = dict(source='thalia.local:/Users/jen/',
+    thalia_jen = dict(source='jen@thalia.local:/Users/jen/',
                   destination=default_destination,
                   exclude="""
 /.Trash

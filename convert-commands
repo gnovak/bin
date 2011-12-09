@@ -1,7 +1,13 @@
 #!/bin/bash
+# Sometimes useful commands:
+# ls -d -1 -t /scratch/lustre/gnovak/zagn-rs/OUT* | xargs -L 1 -P 4 ./extract zagn-text
+# ls -d -1 -t /scratch/lustre/gnovak/zagn-rs/OUT* | xargs -I{} -P 4 ./extract zagn-convert {} all snap-all.dat
+
 for f in $* ; do 
-    echo nice ./extract zagn-convert $f all snap-all.dat \& ; 
+#    echo zagn-text $f ; 
+    echo nice ./extract zagn-text $f \& ; 
 done
 for f in $* ; do 
-    echo nice ./extract zagn-text $f \& ; 
+#    echo zagn-convert $f all snap-all.dat ; 
+    echo nice ./extract zagn-convert $f all snap-all.dat \& ; 
 done

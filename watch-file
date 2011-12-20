@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #socket -l -f gsn.eps 192.168.1.7 10000
 
-debug=True
+debug=False
 
 import time, os.path, sys
 interval=1
@@ -31,19 +31,18 @@ while True:
             
     if not loaded and new_mtime != old_mtime:
         # If changed, get ready to send
-        print 'Loading up file...'
+        if debug: print 'Loading up file...'
         loaded=True
         old_mtime = new_mtime
 
     elif loaded and new_mtime != old_mtime:
-        print "File hasn't stabilized?"
+        if debug: print "File hasn't stabilized?"
         old_mtime = new_mtime
         
     elif loaded and new_mtime == old_mtime:
         # File has stabiliized?
-        print "Firing off file!"
-        os.system("echo socket %s %d < %s" % (host, port, file))
-        os.system("/Users/novak/bin/socket %s %d < %s" % (host, port, file))
+        if debug: print "Firing off file!"
+        os.system("~/bin/socket %s %d < %s" % (host, port, file))
         old_mtime=new_mtime
         loaded=False
     time.sleep(interval)

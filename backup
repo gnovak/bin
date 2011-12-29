@@ -39,7 +39,7 @@ config = dict(
 /.Trash
 """),
 
-    clio_shared = dict(source='/Users/Shared/',
+    clio_shared = dict(source='clio.local:/Users/Shared/',
                   destination=default_destination,
                   exclude="""
 /.Trash
@@ -142,7 +142,6 @@ config = dict(
 """),
 
 
-    # Will be removed soon...
     lerma90= dict(source='lerma90:',
                   destination=default_destination,
                   exclude= """
@@ -216,7 +215,8 @@ def main():
     system = sys.argv[1]
     
     backup(system)
-    prune_backup_series(system)
+    # GSN Dec 2011: disable deletions -- do this manually when I run out of space.
+    #prune_backup_series(system)
     
 def backup(system):
     starting_dir = os.getcwd()    

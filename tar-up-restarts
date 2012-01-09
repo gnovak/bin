@@ -1,0 +1,15 @@
+for f in $* ; do 
+    origdir=`pwd`
+    cd $f
+    if [ "$?" -eq "0" ]; then
+        # Try to tar up restarts
+        tar uf restarts.tar resaa*
+        # if successful, delete them
+        if [ "$?" -eq "0" ]; then
+            rm -f resaa* 
+        else
+            echo "ERROR! Tar failed on restarts for $f!"
+        fi
+        cd $origdir
+    fi
+done

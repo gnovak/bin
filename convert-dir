@@ -1,0 +1,5 @@
+echo "STARTING TExT"
+ls -d $1/OUT* | xargs --max-procs=3 -I % ./extract zagn-text % 
+echo "DONE WITH TExT"
+ls -d $1/OUT* | xargs --max-procs=3 -I % ./extract zagn-convert % all snap-all.dat 
+echo "DONE WITH SNAPSHOTS"

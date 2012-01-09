@@ -19,7 +19,7 @@ if [ -f ~/.hostname ]; then
 	        sed 's/.*inet //g' | sed 's/ .*//' 
 	    exit
         fi
-    elif ( grep --silent lerma90 ~/.hostname || grep --silent aramis ~/.hostname ); then
+    elif ( grep --silent lerma90 ~/.hostname || grep --silent aramis ~/.hostname || grep --silent sesame ~/.hostname ); then
         # Linux machines with more or less permanent wired connections
         /sbin/ifconfig eth0 | grep inet | grep Masque | \
             sed 's/.*adr://g' | sed 's/ .*//'

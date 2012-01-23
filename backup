@@ -28,7 +28,6 @@ config = dict(
                 exclude="""
 /.Trash
 /Desktop/Orig-ucsc-files/euterpe/novak/Pictures
-/Projects/Thesis/rudd
 /Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/rudd
 /Desktop/Orig-ucsc-files/dionysus/Projects/Thesis/nv-data
 """),
@@ -51,7 +50,6 @@ config = dict(
                   exclude="""
 /.Trash
 /Desktop/OSX-10-5.dmg
-/Projects/Simulations
 /Music/iTunes/iTunes Music/Podcasts
 /Music/iTunes/iTunes Music/iTunes U
 /Music/iTunes/iTunes Music/Foreign Service Institute
@@ -162,6 +160,13 @@ config = dict(
 """),
               
     sesame= dict(source='sesame1:',
+                 destination=default_destination,
+                 exclude= """
+/bin/local
+/bin/build
+"""),
+
+    hecate= dict(source='hecate:',
                  destination=default_destination,
                  exclude= """
 /bin/local

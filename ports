@@ -120,6 +120,9 @@ commands = dict(
     slime_jen         =cmd('ssh -n -N -L4005:127.0.0.1:4005 192.168.0.198'),
 
     # Programs: xload and emacs
+    aramis_emacs = cmd("ssh -f aramis /home/novak/bin/local/bin/emacs "),
+
+    # Programs: xload and emacs
     dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665',
                        priority=20, sleep_before=2),
 

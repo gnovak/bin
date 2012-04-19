@@ -90,23 +90,18 @@ def cmd(command,priority=0,sleep_after=0, sleep_before=0,
 sshfsOptions = 'compression=yes,auto_cache,jail_symlinks,follow_symlinks,transform_symlinks'
 
 commands = dict(
+    ##############################
+    # Aliases
+    #
     work=['tigressfs', ],
-    ### Getting to machines behind firewalls
-    # UCSC
-    governator =cmd('ssh -n -N -L1022:governator.ucsc.edu:22 dionysus.ucsc.edu'),
-
-    # Princeton
-    tigressdata  =cmd('ssh -n -N -L2022:tigressdata:22 armstrong.astro.princeton.edu',
-                 priority=-10),
-    sesame1  =cmd('ssh -n -N -L3022:sesame1:22 armstrong.astro.princeton.edu',
-                 priority=-10),
-    #newmachine=cmd('ssh -n -N -L4022:sesame1:22 armstrong.astro.princeton.edu',
-    #             priority=-10),
-
-    # Paris
-    aramis  =cmd('ssh -n -N -L5022:aramis:22 gnovak@rubicon.obspm.fr',
-                 priority=-10),
     
+    ##############################
+    # Port forwarding
+    #
+    # Slime 
+    slime_greymonster =cmd('ssh -n -N -L4005:192.168.1.1:4005 greymonster'),
+    slime_jen         =cmd('ssh -n -N -L4005:127.0.0.1:4005 192.168.0.198'),
+
     # Making IDL license server available
     # Keep around as an example
     # idl =cmd('ssh -n -N -L:1700:mambo:1700 -L:32790:mambo:32790 ssh'),
@@ -115,27 +110,22 @@ commands = dict(
     # Keep around as an example
     # ipy_upsand = cmd('ssh -n -N -L10105:upsand:10105 -L10113:upsand:10113 andromeda'),
 
-    # Slime 
-    slime_greymonster =cmd('ssh -n -N -L4005:192.168.1.1:4005 greymonster'),
-    slime_jen         =cmd('ssh -n -N -L4005:127.0.0.1:4005 192.168.0.198'),
+    ##############################
+    # Remote programs
+    #
+    # Emacs: make sure that emacs gets a full login environment
+    aramis_emacs = cmd("ssh aramis -f bash -l -c emacs"),
 
-    # Programs: xload and emacs
-    aramis_emacs = cmd("ssh -f aramis /home/novak/bin/local/bin/emacs "),
+    # Xload: doesn't care as much about the environment
+    dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665'),
 
-    # Programs: xload and emacs
-    dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665',
-                       priority=20, sleep_before=2),
-
-    emacs_hecate = cmd("ssh -f hecate /home/astro/gnovak/bin/local/bin/emacs " +
-                       "--name='emacs@hecate'"),
-
-    # Sshfs filesystems
+    ##############################
+    # Sshfs filesystems    
+    #
     dionysusfs = cmd('mkdir /Volumes/dionysus;' + 
                      'sshfs dionysus:/home/novak /Volumes/dionysus ' + 
                      '-o volname=Dionysus,%s' % sshfsOptions,
                      sleep_before=2),
-
-    # sesame
     sesamehomefs = cmd('mkdir /Volumes/sesame-home;' + 
                        'sshfs sesame1:/home/gnovak /Volumes/sesame-home ' + 
                        '-o volname="Sesame Home",%s' % sshfsOptions,
@@ -145,8 +135,6 @@ commands = dict(
                        '-o volname="Sesame",%s' % sshfsOptions,
                        shutdown='umount /Volumes/sesame', sleep_before=2),
     sesamefs = ['sesameworkfs', 'sesamehomefs'],
-
-    # tigress
     tigresshomefs = cmd('mkdir /Volumes/tigress-home;' + 
                        'sshfs tigressdata:/home/gnovak /Volumes/tigress-home ' + 
                        '-o volname="Tigress Home",%s' % sshfsOptions,
@@ -156,8 +144,6 @@ commands = dict(
                        '-o volname="Tigress",%s' % sshfsOptions,
                        shutdown='umount /Volumes/tigress', sleep_before=2),
     tigressfs = ['tigressworkfs', 'tigresshomefs'],
-
-    # Columbia
     columbiahomefs = cmd('echo mkdir /Volumes/columbia-home;' + 
                        'echo sshfs cfe2:/u/gnovak /Volumes/columbia-home ' + 
                        '-o volname=\"Columbia-Home\",%s' % sshfsOptions,
@@ -167,14 +153,10 @@ commands = dict(
                        '-o volname=\"Columbia-Work\",%s' % sshfsOptions,
                        shutdown='umount /Volumes/columbia-work'),
     columbiafs = ['columbiaworkfs', 'columbiahomefs'],
-
-    # Lou
     loufs = cmd('echo mkdir /Volumes/lou;' + 
                 'echo sshfs lou2:/u/gnovak /Volumes/lou ' + 
                 '-o volname="Lou",%s' % sshfsOptions,
                 shutdown='umount /Volumes/lou', sleep_before=2),
-
-    # Nasa Pleaides
     nasapleiadeshomefs = cmd('echo mkdir /Volumes/nasa-pleiades-home;' + 
                        'echo sshfs nasa-pleiades:/home/gnovak /Volumes/nasa-pleiades-home ' + 
                        '-o volname="Nasa-Pleiades Home",%s' % sshfsOptions,
@@ -184,8 +166,6 @@ commands = dict(
                        '-o volname="Nasa-Pleiades Work",%s' % sshfsOptions,
                        shutdown='umount /Volumes/nasa-pleiades-work', sleep_before=2),
     nasapleiadesfs = ['nasapleiadesworkfs', 'nasapleiadeshomefs'],
-
-    # Ucsc Pleaides
     ucscpleiadeshomefs = cmd('mkdir /Volumes/ucsc-pleiades-home;' + 
                        'sshfs pleiades:/home/novak /Volumes/ucsc-pleiades-home ' + 
                        '-o volname="Ucsc Pleiades Home",%s' % sshfsOptions,
@@ -199,9 +179,7 @@ commands = dict(
                        'sshfs pleiades:/ifs/novak /Volumes/ucsc-pleiades-ifs ' + 
                        '-o volname="Ucsc Pleiades Ifs",%s' % sshfsOptions,
                        shutdown='umount /Volumes/ucsc-pleiades-ifs', sleep_before=2),
-    ucscpleiadesfs = ['ucscpleiadesibrixfs', 'ucscpleiadesifs', 'ucscpleiadeshomefs'],
-         
-
+    ucscpleiadesfs = ['ucscpleiadesibrixfs', 'ucscpleiadesifs', 'ucscpleiadeshomefs'],         
     )
 
 commands['all'] = commands.keys()

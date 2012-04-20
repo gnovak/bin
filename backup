@@ -49,12 +49,6 @@ config = dict(
                   destination=default_destination,
                   exclude="""
 /.Trash
-/Desktop/OSX-10-5.dmg
-/Music/iTunes/iTunes Music/Podcasts
-/Music/iTunes/iTunes Music/iTunes U
-/Music/iTunes/iTunes Music/Foreign Service Institute
-/Music/iTunes/Mobile Applications
-/Music/eMusic
 """),
 
     thalia_jen = dict(source='jen@thalia.local:/Users/jen/',
@@ -166,7 +160,7 @@ config = dict(
 /bin/build
 """),
 
-    hecate= dict(source='hecate:',
+    hecate= dict(source='oldhecate:',
                  destination=default_destination,
                  exclude= """
 /bin/local

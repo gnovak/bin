@@ -11,10 +11,7 @@ import re
 
 base=4
 
-#default_destination = r'/Volumes/thalia/Backup'
 default_destination = r'/Volumes/My Passport/'
-#default_destination = r'/Volumes/My Passport 1/'
-#default_destination = r'/Volumes/Extra Storage Space/'
 
 rsync_command = "rsync"
 rsync_options="--archive --exclude-from=-"
@@ -57,7 +54,7 @@ config = dict(
 /.Trash
 """),
 
-    aaa = dict(source='thalia.local:/usr/local/.aaa/',
+    aaa = dict(source='clio.local:/usr/local/.aaa/',
                   destination=default_destination,
                   exclude="""
 /in

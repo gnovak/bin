@@ -1,0 +1,6 @@
+#!/bin/bash
+for f in $* ; do 
+    osascript ~/bin/safari-open.applescript http://www.larousse.com/en/dictionaries/french/$f
+    osascript ~/bin/safari-open.applescript http://www.larousse.com/en/dictionaries/french-english/$f
+    osascript ~/bin/safari-open.applescript https://www.google.com/search?q=$f\&tbm=isch
+done

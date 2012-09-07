@@ -1,0 +1,10 @@
+# persistent-remote-forward 22 host 2022
+# make port 22 on localhost available on host port 2022
+
+if [ "$#" != "3" ]; then
+	echo Usage: $0 22 host 2022
+        echo make port 22 on localhost available on host port 2022           
+	exit	
+fi
+
+respawn ssh -N -R $3:localhost:$1 $2

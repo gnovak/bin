@@ -119,6 +119,19 @@ commands = dict(
     # Xload: doesn't care as much about the environment
     dionysus_xload=cmd('ssh -f dionysus xload -geometry 70x80+877+665'),
 
+    ####
+    # Make clio available from Observatory
+    #
+    # This is not quite ideal since the whole reason I wrote this was
+    # so that I could reliably kill ssh processes that had allocated
+    # ports.  So this script needs to start the ssh process and then
+    # kill it.  Or it needs to monitor the ssh process itself and
+    # restart it.  Or I can just run the persistent forward command
+    # myself, since I'm not getting much out of this anyway.  Maybe I
+    # could print the PID for killing it?
+    #
+    clio_door = cmd('persistent-remote-forward 22 lerma90 9022'), 
+    
     ##############################
     # Sshfs filesystems    
     #

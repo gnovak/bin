@@ -7,6 +7,28 @@
 #    separately?  Or maybe I don't really need popen2 at all, if I
 #    want output to just inherit stdout and stderr
 
+# Jen's Accts
+#
+# time backup clio_jen 
+# time backup thalia_jen 
+# time backup france_jen_net 
+
+# All accts
+#
+# time backup usb_key 
+# time backup france_greg_net 
+# time backup clio_shared 
+# time backup rubicon
+# time backup armstrong
+# time backup tigressdata
+# time backup hecate
+# time backup sesame
+# time backup lerma90
+# time backup clio 
+# time backup aaa 
+# time backup thalia 
+# time backup aramis
+
 import re
 
 base=4

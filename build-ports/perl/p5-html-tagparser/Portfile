@@ -1,0 +1,18 @@
+PortSystem          1.0
+PortGroup           perl5 1.0
+
+perl5.setup         HTML-TagParser 0.16
+revision            1
+maintainers         greg.novak@gmail.com
+description         Perl extension for parsing HTML Tags
+license             {GPL Artistic}
+
+long_description    ${description}
+
+platforms           darwin
+
+checksums           md5 48b73e9cc132648a9bb790b952989413 \
+                    sha1 9b7a28f4a9d69e47fb6f0afe2d9bcd8c84bd6736 \
+                    rmd160 48f15521a13053910bbf2d5f188db1f2fd5fdba8
+
+supported_archs noarch

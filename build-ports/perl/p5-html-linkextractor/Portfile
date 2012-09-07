@@ -1,0 +1,18 @@
+PortSystem          1.0
+PortGroup           perl5 1.0
+
+perl5.setup         HTML-LinkExtractor 0.13
+revision            1
+maintainers         greg.novak@mail.com
+description         Perl extension for extracting links.
+license             {GPL Artistic}
+
+long_description    ${description}
+
+platforms           darwin
+
+checksums           md5 a30143b35ef76576fb984696746776de \
+                    sha1 f76464bd7ada970bd696b1986f5ccc92d952d84d \
+                    rmd160 fca996664d276f30725790ce4f37e2a1a115ff6f
+
+supported_archs noarch

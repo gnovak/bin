@@ -1,0 +1,4 @@
+#!/bin/bash
+for f in $* ; do 
+    osascript ~/bin/safari-open.applescript http://en.wiktionary.org/wiki/$f#Pronunciation
+done

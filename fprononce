@@ -1,0 +1,4 @@
+#!/bin/bash
+for f in $* ; do 
+    osascript ~/bin/safari-open.applescript http://fr.wiktionary.org/wiki/$f#Fran.C3.A7ais
+done

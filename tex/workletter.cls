@@ -4,14 +4,12 @@
 \ProcessOptions
 \LoadClass{letter}
 
-\signature{Gregory S. Novak}
+\signature{Gregory Novak}
 \address
 {
-  Dr. Gregory S. Novak \\ 
-  Department of Astrophysical Sciences \\
-%  Peyton Hall \\
-  Princeton University \\
-  Princeton, NJ  08544-1001 \\
-  609-865-0318 \\
-  novak@astro.princeton.edu
+  Dr. Gregory Novak \\ 
+  Observatoire de Paris\\
+  61 Avenue de l'Observatoire \\
+  75014 Paris \\
+  greg.novak@obspm.fr
   }

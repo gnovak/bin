@@ -26,8 +26,8 @@
 # time backup lerma90
 # time backup clio 
 # time backup aaa 
-# time backup thalia 
 # time backup aramis
+# time backup thalia 
 
 import re
 

@@ -51,3 +51,6 @@ tex/covington
 firefox-dir
 firefox
 matlab.el
+quicklisp
+quicklisp-abcl
+quicklisp-clisp

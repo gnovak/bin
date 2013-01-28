@@ -64,13 +64,15 @@ config = dict(
 """),
 
 # eMusic: Verify that these are duplicated.              
-    thalia = dict(source='thalia.local:/Users/novak/',
+#    thalia = dict(source='thalia.local:/Users/novak/',
+    thalia = dict(source='thalia:/Users/novak/',
                   destination=default_destination,
                   exclude="""
 /.Trash
 """),
 
-    thalia_jen = dict(source='jen@thalia.local:/Users/jen/',
+#    thalia_jen = dict(source='jen@thalia.local:/Users/jen/',
+    thalia_jen = dict(source='jen@thalia:/Users/jen/',
                   destination=default_destination,
                   exclude="""
 /.Trash

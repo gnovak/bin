@@ -181,7 +181,7 @@ config = dict(
 /bin/build
 """),
 
-    hecate= dict(source='oldhecate:',
+    hecate= dict(source='hecate:',
                  destination=default_destination,
                  exclude= """
 /bin/local

@@ -29,6 +29,12 @@
 # time backup aramis
 # time backup thalia 
 
+# Don't need to backup so often...
+# time backup nfsn_jen
+# time backup nfsn_greymonster
+# time backup nfsn_zugasaurus
+# time backup nfsn_greg
+
 import re
 
 base=4
@@ -116,6 +122,22 @@ config = dict(
 
     ######################
     ## Web space
+
+    nfsn_jen = dict(source='jen_web:/home/',
+                    destination=default_destination,
+                    exclude=""" """),
+
+    nfsn_greymonster = dict(source='greymonster:/home/',
+                            destination=default_destination,
+                            exclude=""" """),
+
+    nfsn_zugasaurus = dict(source='zugasaurus:/home/',
+                           destination=default_destination,
+                           exclude=""" """),
+
+    nfsn_greg = dict(source='gregnovak:/home/',
+                     destination=default_destination,
+                     exclude=""" """),
 
     web = dict(source='jenandgreg@jenandgreg.org:/home/jenandgreg/',
                destination=default_destination,

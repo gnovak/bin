@@ -51,6 +51,10 @@ tex/covington
 firefox-dir
 firefox
 matlab.el
+tex/background.sty
+tex/appendix.sty
+tex/comment.sty
+tex/multirow.sty
 quicklisp
 quicklisp-abcl
 quicklisp-clisp

@@ -22,18 +22,32 @@
 # time backup armstrong
 # time backup tigressdata
 # time backup hecate
-# time backup sesame
 # time backup lerma90
+# time backup thalia 
 # time backup clio 
 # time backup aaa 
 # time backup aramis
-# time backup thalia 
 
 # Don't need to backup so often...
 # time backup nfsn_jen
 # time backup nfsn_greymonster
 # time backup nfsn_zugasaurus
 # time backup nfsn_greg
+
+# Evaluating who's taking up space on disk
+# Get a list of 'tags'
+# ls | sed s/\\..*//g | sort | uniq
+# Get one key in reverse sorted order
+# ls -d -1 usb_key* | sort -t. -k 2 -n -r
+# get ordered summary for one tag
+# ls -d -1 usb_key* | sort -t. -k 2 -n -r | xargs du -h -s -c
+# Do something on sets of reverse-ordered tags
+# for tag in `ls | sed 's/\\..*//g' | sort | uniq` ; do ls -d -1 $tag* | sort -t. -k 2 -n -r | xargs echo ; done
+# Get du info on sets of reverse ordered tags
+# for tag in `ls | sed 's/\\..*//g' | sort | uniq` ; do ls -d -1 $tag* | sort -t. -k 2 -n -r | xargs echo ; done
+###### Big money command line below
+# Get du info on sets of reverse ordered tags, saving output.
+# for tag in `ls | sed 's/\\..*//g' | sort | uniq` ; do ls -d -1 $tag* | sort -t. -k 2 -n -r | xargs du -h -s -c ; done > ~/backup-disk.txt
 
 import re
 
@@ -212,6 +226,14 @@ config = dict(
 
     tigressdata= dict(source='tigressdata:',
                       destination=default_destination,
+                      exclude= """
+/bin/local
+/bin/build
+"""),
+
+    columbia = dict(source='cfe2:',
+                    destination="/Users/novak/Desktop/columbia-backup/",
+                    #destination=default_destination,
                       exclude= """
 /bin/local
 /bin/build

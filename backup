@@ -98,7 +98,13 @@ config = dict(
 /.Trash
 """),
 
-    aaa = dict(source='clio.local:/usr/local/.aaa/',
+#     aaa = dict(source='clio.local:/usr/local/.aaa/',
+#                   destination=default_destination,
+#                   exclude="""
+# /in
+# """),
+
+    aaa = dict(source=r'clio.local:/Volumes/WD 300G/.aaa/',
                   destination=default_destination,
                   exclude="""
 /in

@@ -56,7 +56,11 @@ base=4
 default_destination = r'/Volumes/My Passport/'
 
 rsync_command = "rsync"
-rsync_options="--archive --exclude-from=-"
+# the options are equivalent to --archive, except without the -g to
+# preserve groups.  The requirement to preserve groups causes problems
+# on some remote machines when rsync is not run as root, in that it
+# causes files to be spuriously transferred instead of hard linked.
+rsync_options="-rlptoD --exclude-from=-"
 
 config = dict(
     ######################

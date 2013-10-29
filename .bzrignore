@@ -58,6 +58,9 @@ tex/multirow.sty
 quicklisp
 quicklisp-abcl
 quicklisp-clisp
+crashplan
+tex/foils.sty
+CrashPlanEngine.pid
 c13.00_rc1
 pp4p.jar
 build-ports/editors

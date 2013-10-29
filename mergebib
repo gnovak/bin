@@ -1,0 +1,39 @@
+#!/usr/bin/env python
+# mergebib.py version 0.3
+# Dave Spiegel, created 10 December 2008, updated 11 December 2008
+# dsp@astro.princeton.edu
+# usage:
+# mergebib.py biblio1.bib biblio2.bib biblio3.bib ... > newbib.bib
+import sys
+dictionary,new_dictionary = {},{}
+for fname in sys.argv[1:]: # Loop through files
+    # Open file
+    thisfile = open(fname,'r')
+    in_bib_entry = False
+    # Read through file
+    for line in thisfile:
+        if line.startswith('@'): # This begins an entry
+            in_bib_entry = True
+            bib_entry = [line]
+            ndx = line.index('{')
+            auth = line[ndx+1:-2]
+        elif in_bib_entry: # If in an entry, just add the line to bib_entry
+            bib_entry.append(line)
+            if line.startswith('}'): # This ends an entry
+                in_bib_entry = False
+                bib_entry_str = "".join(bib_entry[1:]) #1: bc this determines real entry
+                bib_entry_str = "".join(bib_entry_str.split()) #no wspace
+                total_entry = [auth, "".join(bib_entry)] # bib_entry to string
+                if dictionary.has_key(bib_entry_str): continue
+                dictionary[bib_entry_str] = total_entry
+for thiskey in dictionary:
+    auth = dictionary[thiskey][0]
+    while new_dictionary.has_key(auth):
+        auth += 'M' # 'M' indicates result of merger
+    de = dictionary[thiskey][1] # dictionary entry
+    nde = de[:(de.index('{')+1)] + auth + de[de.index('\n')-1:] # new de
+    new_dictionary[auth] = [auth,nde]
+values = new_dictionary.values()
+values.sort(key=lambda s: s[0].lower())
+for v in values:
+    print v[1]

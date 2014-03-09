@@ -7,13 +7,34 @@
 #    separately?  Or maybe I don't really need popen2 at all, if I
 #    want output to just inherit stdout and stderr
 
+#
+# Accounts not on Crashplan
+#
+# time backup usb_key 
+# time backup rubicon
+# time backup armstrong
+# time backup tigressdata
+# time backup hecate
+# time backup lerma90
+# time backup nfsn_greymonster
+# time backup nfsn_zugasaurus
+# time backup nfsn_greg
+# time backup aaa 
+
+
 # Jen's Accts
 #
 # time backup clio_jen 
 # time backup thalia_jen 
 # time backup france_jen_net 
 
-# All accts
+# All accts - long
+# time backup thalia 
+# time backup clio 
+# time backup aaa 
+# time backup aramis 
+
+# All accts - short
 #
 # time backup usb_key 
 # time backup france_greg_net 
@@ -23,13 +44,8 @@
 # time backup tigressdata
 # time backup hecate
 # time backup lerma90
-# time backup thalia 
-# time backup clio 
-# time backup aaa 
-# time backup aramis
 
 # Don't need to backup so often...
-# time backup nfsn_jen
 # time backup nfsn_greymonster
 # time backup nfsn_zugasaurus
 # time backup nfsn_greg
@@ -102,16 +118,9 @@ config = dict(
 /.Trash
 """),
 
-#     aaa = dict(source='clio.local:/usr/local/.aaa/',
-#                   destination=default_destination,
-#                   exclude="""
-# /in
-# """),
-
-    aaa = dict(source=r'clio.local:/Volumes/WD 300G/.aaa/',
+    aaa = dict(source=r'clio.local:/Volumes/WD-300G/.aaa/',
                   destination=default_destination,
                   exclude="""
-/in
 """),
 
     france_jen_net = dict(source='jen@zuggernaut.local:/Users/jen/',

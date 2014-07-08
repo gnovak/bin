@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ "$*" == "" ]; then 
+   terminal-notifier -message "Done!"
+else
+   terminal-notifier -message "$*"
+fi       

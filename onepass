@@ -1,0 +1,17 @@
+#!/bin/bash
+#hashapass.com method for generating passwords
+#script by Simon Elmir
+export IFS="" #read will now preserve whitespace
+read -rp "parameter: " PARAMETER
+read -rsp "password: " PASSWORD
+echo
+
+# Would be nice to accept the parameter on the command line, but
+# something funny happens to whitespace when you do that.
+# PASS=`echo -n $* \
+PASS=`echo -n "$PARAMETER" \
+| openssl dgst -sha1 -binary -hmac "$PASSWORD" \
+| openssl enc -base64 \
+| cut -c 1-16`
+echo -n "$PASS" | pbcopy
+

@@ -1,2 +1,2 @@
 # recusively count the cumulative number of files below the current directory.
-find . -type d | while read -r dir; do printf "%d  %s\n" `find "$dir" | wc -l` $dir ; done
+find . -type d | while read -r dir; do printf "%d\t%s\n" `find "$dir" | wc -l` "$dir" ; done

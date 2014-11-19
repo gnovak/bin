@@ -1,1 +1,1 @@
-echo `ls $1 | wc --lines` $1
+echo `ls $1 | gwc --lines` $1

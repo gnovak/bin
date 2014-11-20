@@ -80,3 +80,5 @@ tex/revtex4-1
 tex/texpause.sty
 tex/pp4sty.zip
 tex/subfigure.sty
+sshuttle
+elisp/js-comint.el

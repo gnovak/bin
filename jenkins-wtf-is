@@ -1,0 +1,1 @@
+ssh jenkins find /var/lib/jenkins/jobs -name config.xml -exec grep --with-filename \"$*\" {} \\\; 

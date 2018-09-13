@@ -5,7 +5,7 @@
 # This is necessary b/c DHCP sometimes gives the computer a 
 # different hostname
 if [ -f ~/.hostname ]; then 
-    if ( grep --silent clio ~/.hostname || grep --silent thalia ~/.hostname || grep --silent euterpe ~/.hostname || grep --silent jen ~/.hostname); then        
+    if ( grep --silent clio ~/.hostname || grep --silent thalia ~/.hostname || grep --silent euterpe ~/.hostname || grep --silent jen ~/.hostname || grep --silent stitchfix ~/.hostname); then
     # Mac systems, some laptops, may or may not actually be connected.
     # Prefer wired connections
         if ( /sbin/ifconfig en0 | grep --silent inet ); then

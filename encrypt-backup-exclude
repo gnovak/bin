@@ -1,0 +1,23 @@
+./Dropbox
+./Box Sync
+./Library
+./.Trash
+./Desktop/sandbox/explore/*.pkl
+./Desktop/novak
+./Out
+./Desktop/movie/ml-100k
+./Desktop/movie/ml-1m
+./Desktop/movie/ml-20m
+./Desktop/movie/ml-10M100K
+./Desktop/movie/*.pkl
+./Desktop/movie/*.zip
+./Music
+./Pictures
+./Downloads
+./Desktop/maps/gadm27.gdb
+./Desktop/maps/ne_admin_0
+./Desktop/maps/gadm27.gdb.zip
+./Desktop/maps/gadm_v2_shp.zip
+./Desktop/code/dw-etl/transform/qualification/trash
+./Desktop/cse/*.pkl
+./Desktop/code/luna-park/gnovak/*.pkl

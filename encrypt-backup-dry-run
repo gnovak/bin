@@ -1,0 +1,4 @@
+cd 
+gdu -X ~/bin/encrypt-backup-exclude . | sort -n 
+
+

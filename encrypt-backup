@@ -1,0 +1,5 @@
+cd 
+# tar cf - -X ~/bin/encrypt-backup-exclude . | gpg --output /Volumes/Nesoi/sf.tar.gpg --encrypt --recipient novak@ucolick.org
+tar cf - -X ~/bin/encrypt-backup-exclude . | gpg1 --output "/Volumes/My Passport/sf.tar.gpg" --encrypt --recipient novak@ucolick.org
+
+
